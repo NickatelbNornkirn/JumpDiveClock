@@ -1,4 +1,23 @@
+/*
+    JumpDiveClock -  Simple-ish speedrun timer for X11. 
+    Copyright (C) 2023  Nickatelb Nornkirn
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
 using Raylib_cs;
+using System.Numerics;
 using YamlDotNet.Serialization;
 using YamlDotNet.Core;
 using YamlDotNet.Serialization.NamingConventions;
@@ -10,6 +29,7 @@ namespace JumpDiveClock
     {
         private Config _appConfig;
         private Split _split;
+        private Font _font;
         private IDeserializer _deserializer = new DeserializerBuilder()
                 .WithNamingConvention(UnderscoredNamingConvention.Instance)
                 .Build();
@@ -46,6 +66,8 @@ namespace JumpDiveClock
 
             SetupWindow();
 
+            _font = Raylib.LoadFont("fonts/PublicPixel-z84yD.ttf");
+
             return result;
         }
 
@@ -67,7 +89,7 @@ namespace JumpDiveClock
 
         public void Exit()
         {
-
+            Raylib.UnloadFont(_font);
         }
 
         private void SetupWindow()
@@ -171,20 +193,26 @@ namespace JumpDiveClock
 
         private void Draw()
         {
+            Color backgroundColor = ToColor(_split.BackgroundColor);
+            Color baseColor = ToColor(_split.BaseColor);
+
+            int effectiveHeight = Raylib.GetScreenHeight() - _split.SeparatorSize * (_split.Segments.Count - 1);
+
             Raylib.BeginDrawing();
-            {
-                Raylib.ClearBackground(Color.DARKGRAY);
-                Raylib.DrawFPS(5, 5);
-            }
+            Raylib.ClearBackground(backgroundColor);
+
+            Raylib.DrawRectangle(0, 0, 2000, (int)(effectiveHeight * 0.10f), Color.RED);
+            Raylib.DrawTextEx(_font, "title", new Vector2(10, 10), 12, 2, baseColor);
+
             Raylib.EndDrawing();
         }
 
         private Color ToColor(string hexColor)
         {
             return new Color(
-                Convert.ToInt32(hexColor.Substring(1, 2)),
-                Convert.ToInt32(hexColor.Substring(3, 2)),
-                Convert.ToInt32(hexColor.Substring(5, 2)),
+                Convert.ToInt32(hexColor.Substring(1, 2), 16),
+                Convert.ToInt32(hexColor.Substring(3, 2), 16),
+                Convert.ToInt32(hexColor.Substring(5, 2), 16),
                 255
             );
         }

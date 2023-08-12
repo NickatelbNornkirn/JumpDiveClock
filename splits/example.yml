@@ -1,10 +1,5 @@
-# The default colors aren´t supposed to be beatiful, change them to match your tastes.
-background_color: "#000000"
-base_color: "#ffffff"
-ahead_color: "#00ff00"
-behind_color: "#ff0000"
-best_color: "#fdff00"
-
+game_name: "Super Cool Example"
+category: "Any% Glitchless"
 reset_count: 150
 
 segments:
@@ -20,3 +15,15 @@ segments:
   pb_time: 6.0
   best_segment: 5.0
   reset_count: 10
+
+# The default colors aren´t supposed to be beatiful, change them to match your tastes.
+background_color: "#000000"
+base_color: "#ffffff"
+ahead_color: "#00ff00"
+behind_color: "#ff0000"
+best_color: "#fdff00"
+separator_color: "#111111"
+
+header_size: 10.0 # Percentage.
+timer_size: 15.0 # Percentage.
+separator_size: 2 # Pixels.
