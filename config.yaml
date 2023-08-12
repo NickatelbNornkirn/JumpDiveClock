@@ -1,0 +1,12 @@
+# Reccomended value: the same as the framerate of your video/stream.
+maximum_framerate: 30
+
+# Use "xinput list" to find the ID of your keyboard.
+keyboard_id: 10
+
+# Use "xev" to find the IDs. Look for "keycode".
+keybindings:
+  split: 41 # "F".
+  reset: 22 # "Backspace".
+  undo: 30 # "U".
+  redo: 27 # "R".
