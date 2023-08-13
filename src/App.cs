@@ -17,7 +17,6 @@
 */
 
 using Raylib_cs;
-using System.Numerics;
 using YamlDotNet.Serialization;
 using YamlDotNet.Core;
 using YamlDotNet.Serialization.NamingConventions;
@@ -95,9 +94,24 @@ namespace JumpDiveClock
         private void SetupWindow()
         {
             const string Title = "Deinapar";
-            Raylib.InitWindow(400, 800, Title);
+            Raylib.InitWindow(_appConfig.DefaultWidth, _appConfig.DefaultHeight, Title);
             Raylib.SetWindowState(ConfigFlags.FLAG_WINDOW_RESIZABLE);
             Raylib.SetTargetFPS(_appConfig.MaximumFramerate);
+        }
+
+        private void Update()
+        {
+            List<int> pressedKeys = GetPressedKeys();
+            float deltaTime = Raylib.GetFrameTime();
+            _split.Update(deltaTime);
+        }
+
+        private void Draw()
+        {
+
+            Raylib.BeginDrawing();
+            _split.Draw(_font);
+            Raylib.EndDrawing();
         }
 
         private Config? LoadConfig(string configPath)
@@ -160,12 +174,6 @@ namespace JumpDiveClock
             }
         }
 
-        private void Update()
-        {
-            float deltaTime = Raylib.GetFrameTime();
-            List<int> pressedKeys = GetPressedKeys();
-        }
-
         private List<int> GetPressedKeys()
         {
             var p = new Process
@@ -191,30 +199,5 @@ namespace JumpDiveClock
             return kbStates;
         }
 
-        private void Draw()
-        {
-            Color backgroundColor = ToColor(_split.BackgroundColor);
-            Color baseColor = ToColor(_split.BaseColor);
-
-            int effectiveHeight = Raylib.GetScreenHeight() - _split.SeparatorSize * (_split.Segments.Count - 1);
-
-            Raylib.BeginDrawing();
-            Raylib.ClearBackground(backgroundColor);
-
-            Raylib.DrawRectangle(0, 0, 2000, (int)(effectiveHeight * 0.10f), Color.RED);
-            Raylib.DrawTextEx(_font, "title", new Vector2(10, 10), 12, 2, baseColor);
-
-            Raylib.EndDrawing();
-        }
-
-        private Color ToColor(string hexColor)
-        {
-            return new Color(
-                Convert.ToInt32(hexColor.Substring(1, 2), 16),
-                Convert.ToInt32(hexColor.Substring(3, 2), 16),
-                Convert.ToInt32(hexColor.Substring(5, 2), 16),
-                255
-            );
-        }
     }
 }

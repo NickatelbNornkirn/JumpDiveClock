@@ -16,6 +16,9 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+using Raylib_cs;
+using System.Numerics;
+
 namespace JumpDiveClock
 {
     public class Split
@@ -38,5 +41,40 @@ namespace JumpDiveClock
         public float TimerSize;
 
         public int SeparatorSize;
+
+        private float _timeSecs;
+        private bool paused;
+
+        public void Update(float deltaTime)
+        {
+            if (!paused)
+            {
+                _timeSecs += deltaTime;
+            }
+        }
+
+        public void Draw(Font font)
+        {
+            Color backgroundColor = ToColor(BackgroundColor);
+            Color baseColor = ToColor(BaseColor);
+
+            int effectiveHeight = Raylib.GetScreenHeight() - SeparatorSize * (Segments.Count - 1);
+
+            Raylib.ClearBackground(backgroundColor);
+
+            Raylib.DrawRectangle(0, 0, 2000, (int)(effectiveHeight * 0.10f), Color.RED);
+            Raylib.DrawTextEx(font, "title", new Vector2(10, 10), 12, 2, baseColor);
+        }
+
+        private Color ToColor(string hexColor)
+        {
+            // Colors are in the #rrggbb format.
+            return new Color(
+                Convert.ToInt32(hexColor.Substring(1, 2), 16),
+                Convert.ToInt32(hexColor.Substring(3, 2), 16),
+                Convert.ToInt32(hexColor.Substring(5, 2), 16),
+                255
+            );
+        }
     }
 }

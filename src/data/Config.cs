@@ -23,5 +23,7 @@ namespace JumpDiveClock
         public int MaximumFramerate;
         public int KeyboardId;
         public Keybindings Keybindings;
+        public int DefaultWidth;
+        public int DefaultHeight;
     }
 }

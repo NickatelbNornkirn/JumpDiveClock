@@ -30,7 +30,9 @@ namespace JumpDiveClock
             {
                 Console.WriteLine("Failed to read initialize app.");
                 Console.WriteLine(r.Error);
+                return;
             }
+
             app.Loop();
             app.Exit();
         }

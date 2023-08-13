@@ -1,6 +1,9 @@
 # Reccomended value: the same as the framerate of your video/stream.
 maximum_framerate: 30
 
+default_width: 400
+default_height: 800
+
 # Use "xinput list" to find the ID of your keyboard.
 keyboard_id: 10
 
