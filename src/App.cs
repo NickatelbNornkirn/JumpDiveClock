@@ -20,26 +20,25 @@ using Raylib_cs;
 using YamlDotNet.Serialization;
 using YamlDotNet.Core;
 using YamlDotNet.Serialization.NamingConventions;
-using System.Diagnostics;
 
 namespace JumpDiveClock
 {
     public class App
     {
         private Config _appConfig;
-        private Split _split;
+        private Split _split = null!;
         private Font _font;
         private IDeserializer _deserializer = new DeserializerBuilder()
                 .WithNamingConvention(UnderscoredNamingConvention.Instance)
                 .Build();
 
-        public Result Init()
+        public Result Init(string configPath = "config.yaml", string splitPath = "splits/example.yml")
         {
             var result = new Result() { Success = true };
 
             Console.WriteLine("Initializing app...");
 
-            if (LoadConfig("config.yaml") is Config loadedConfig)
+            if (LoadConfig(configPath) is Config loadedConfig)
             {
                 _appConfig = loadedConfig;
             }
@@ -50,8 +49,7 @@ namespace JumpDiveClock
                 return result;
             }
 
-
-            if (LoadSplit("splits/example.yml") is Split loadedSplit)
+            if (LoadSplit(splitPath) is Split loadedSplit)
             {
                 _split = loadedSplit;
             }
@@ -62,9 +60,11 @@ namespace JumpDiveClock
                 return result;
             }
 
+            _split.ConvertHexColorsToRgb();
 
             SetupWindow();
 
+            // TODO: custom fonts.
             _font = Raylib.LoadFont("fonts/PublicPixel-z84yD.ttf");
 
             return result;
@@ -101,14 +101,11 @@ namespace JumpDiveClock
 
         private void Update()
         {
-            List<int> pressedKeys = GetPressedKeys();
-            float deltaTime = Raylib.GetFrameTime();
-            _split.Update(deltaTime);
+            _split.Update(_appConfig);
         }
 
         private void Draw()
         {
-
             Raylib.BeginDrawing();
             _split.Draw(_font);
             Raylib.EndDrawing();
@@ -116,7 +113,6 @@ namespace JumpDiveClock
 
         private Config? LoadConfig(string configPath)
         {
-
             if (!File.Exists(configPath))
             {
                 Console.WriteLine($"Config file \"{configPath}\" could not be found.");
@@ -173,31 +169,5 @@ namespace JumpDiveClock
                 return null;
             }
         }
-
-        private List<int> GetPressedKeys()
-        {
-            var p = new Process
-            {
-                StartInfo = new ProcessStartInfo
-                {
-                    FileName = "xinput",
-                    Arguments = $"query-state {_appConfig.KeyboardId}",
-                    UseShellExecute = false,
-                    RedirectStandardOutput = true,
-                    CreateNoWindow = true
-                }
-            };
-
-            p.Start();
-            string[] lines = p.StandardOutput.ReadToEnd().Split('\n');
-
-            var kbStates = new List<int>();
-            lines
-                .Where(line => line.Contains("=down")).ToList()
-                .ForEach(line => kbStates.Add(Int32.Parse(line.Split('[')[1].Split(']')[0])));
-
-            return kbStates;
-        }
-
     }
 }

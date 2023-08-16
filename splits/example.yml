@@ -8,22 +8,33 @@ segments:
   best_segment: 5.0
   reset_count: 100
 - name: "Middle"
-  pb_time: 6.0
-  best_segment: 5.0
+  pb_time: 7.5
+  best_segment: 6.0
   reset_count: 40
 - name: "End"
-  pb_time: 6.0
-  best_segment: 5.0
+  pb_time: 9.2
+  best_segment: 8.0
   reset_count: 10
 
+segment_margin: 3 # Pixels.
+
 # The default colors aren´t supposed to be beatiful, change them to match your tastes.
-background_color: "#000000"
-base_color: "#ffffff"
-ahead_color: "#00ff00"
-behind_color: "#ff0000"
-best_color: "#fdff00"
-separator_color: "#111111"
+background_color_hex: "#000000"
+base_color_hex: "#ffffff"
+ahead_color_hex: "#00ff00"
+behind_color_hex: "#ff0000"
+best_color_hex: "#fdff00"
+separator_color_hex: "#555555"
 
 header_size: 10.0 # Percentage.
 timer_size: 15.0 # Percentage.
+max_segment_size: 8.0 # Percentage.
 separator_size: 2 # Pixels.
+
+game_title_font_size: 18
+game_title_font_spacing: 4
+category_title_font_size: 16
+category_title_font_spacing: 2
+title_category_titles_gap: 3 # Pixels.
+segment_font_size: 12
+segment_font_spacing: 2
