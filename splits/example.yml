@@ -18,13 +18,14 @@ segments:
 
 segment_margin: 3 # Pixels.
 
-# The default colors aren´t supposed to be beatiful, change them to match your tastes.
-background_color_hex: "#000000"
-base_color_hex: "#ffffff"
-ahead_color_hex: "#00ff00"
-behind_color_hex: "#ff0000"
-best_color_hex: "#fdff00"
-separator_color_hex: "#555555"
+# The default colors aren't supposed to be beatiful, change them to match your tastes.
+hex_colors:
+  background: "#000000"
+  text_base: "#ffffff"
+  pace_ahead: "#00ff00"
+  pace_behind: "#ff0000"
+  pace_best: "#fdff00"
+  separator: "#555555"
 
 header_size: 10.0 # Percentage.
 timer_size: 15.0 # Percentage.
@@ -38,3 +39,13 @@ category_title_font_spacing: 2
 title_category_titles_gap: 3 # Pixels.
 segment_font_size: 12
 segment_font_spacing: 2
+
+timer_font_size: 36
+timer_font_spacing: 4
+
+# Extra stats at the bottom.
+# Allowed values:
+# - "cp" (current pace);
+# - "sob" (sum of best segments);
+# - "rtrr" (runs that reach here).
+extra_stats: ["cp", "sob", "rtrr"]

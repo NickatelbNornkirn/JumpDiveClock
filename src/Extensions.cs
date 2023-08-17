@@ -16,41 +16,14 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-using Raylib_cs;
-
 namespace JumpDiveClock
 {
-    public class Segment
+    public static class Extensions
     {
-        public string Name = null!;
-        public float PbTime;
-        public float BestSegment;
-        public int ResetCount;
-
-        public bool CompletedSegment = false;
-        public float CompletedTime = 0;
-
-        public string GetSegmentText(float runTime)
+        public static void ForeachI<T>(this IEnumerable<T> enumerable, Action<T, int> action)
         {
-            float time = CompletedSegment ? CompletedTime : runTime;
-
-            string timeText;
-            if (time > PbTime)
-            {
-                timeText = "+";
-            }
-            else if (time < PbTime)
-            {
-                timeText = "-";
-            }
-            else
-            {
-                timeText = " ";
-            }
-
-            timeText += Formatter.SecondsToTime(time);
-
-            return timeText;
+            int c = 0;
+            enumerable.ToList().ForEach(x => action(x, c++));
         }
     }
 }

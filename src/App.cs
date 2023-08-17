@@ -26,7 +26,7 @@ namespace JumpDiveClock
     public class App
     {
         private Config _appConfig;
-        private Split _split = null!;
+        private Timer _split = null!;
         private Font _font;
         private IDeserializer _deserializer = new DeserializerBuilder()
                 .WithNamingConvention(UnderscoredNamingConvention.Instance)
@@ -49,7 +49,7 @@ namespace JumpDiveClock
                 return result;
             }
 
-            if (LoadSplit(splitPath) is Split loadedSplit)
+            if (LoadSplit(splitPath) is Timer loadedSplit)
             {
                 _split = loadedSplit;
             }
@@ -151,13 +151,14 @@ namespace JumpDiveClock
             return text;
         }
 
-        private Split? LoadSplit(string path)
+        private Timer? LoadSplit(string path)
         {
             if (LoadText(path) is string splitsYml)
             {
                 try
                 {
-                    return _deserializer.Deserialize<Split>(splitsYml);
+                    // TODO: better errors.
+                    return _deserializer.Deserialize<Timer>(splitsYml);
                 }
                 catch (YamlException)
                 {

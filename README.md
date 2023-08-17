@@ -2,6 +2,12 @@
 
 A simple speedrun timer for X11.
 
+## Installation
+
+### Dependencies
+
+* xinput.
+
 ## FAQ
 
 ### Why?

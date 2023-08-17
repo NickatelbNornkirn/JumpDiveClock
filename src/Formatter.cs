@@ -16,41 +16,31 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-using Raylib_cs;
-
 namespace JumpDiveClock
 {
-    public class Segment
+    public static class Formatter
     {
-        public string Name = null!;
-        public float PbTime;
-        public float BestSegment;
-        public int ResetCount;
-
-        public bool CompletedSegment = false;
-        public float CompletedTime = 0;
-
-        public string GetSegmentText(float runTime)
+        // TODO: test throughly.
+        public static string SecondsToTime(float seconds)
         {
-            float time = CompletedSegment ? CompletedTime : runTime;
+            const int MinuteInSecs = 60;
+            const int HourInSecs = MinuteInSecs * 60;
+            const char Separator = ':';
 
-            string timeText;
-            if (time > PbTime)
+            var ss = (int)(seconds < MinuteInSecs ? seconds : seconds % MinuteInSecs);
+            var mm = (int)(seconds < HourInSecs ? seconds / MinuteInSecs : seconds % HourInSecs);
+            var hh = (int)(seconds >= HourInSecs ? seconds / HourInSecs : 0);
+
+            string result = "";
+
+            if (hh > 0)
             {
-                timeText = "+";
-            }
-            else if (time < PbTime)
-            {
-                timeText = "-";
-            }
-            else
-            {
-                timeText = " ";
+                result += hh + Separator;
             }
 
-            timeText += Formatter.SecondsToTime(time);
+            result += $"{mm.ToString("D2")}{Separator}{ss.ToString("D2")}";
 
-            return timeText;
+            return result;
         }
     }
 }
