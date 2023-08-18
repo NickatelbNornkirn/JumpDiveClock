@@ -16,23 +16,21 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-using Raylib_cs;
-
 namespace JumpDiveClock
 {
     public class Segment
     {
         public string Name = null!;
-        public float PbTime;
-        public float BestSegment;
+        public double PbTime;
+        public double BestSegment;
         public int ResetCount;
 
         public bool CompletedSegment = false;
-        public float CompletedTime = 0;
+        public double CompletedTime = 0;
 
-        public string GetSegmentText(float runTime)
+        public string GetSegmentText(double runTime)
         {
-            float time = CompletedSegment ? CompletedTime : runTime;
+            double time = CompletedSegment ? CompletedTime : runTime;
 
             string timeText;
             if (time > PbTime)

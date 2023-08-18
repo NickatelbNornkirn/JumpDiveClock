@@ -41,7 +41,7 @@ segment_font_size: 12
 segment_font_spacing: 2
 
 timer_font_size: 36
-timer_font_spacing: 4
+timer_font_spacing: 2
 
 # Extra stats at the bottom.
 # Allowed values:

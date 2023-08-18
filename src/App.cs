@@ -17,8 +17,8 @@
 */
 
 using Raylib_cs;
-using YamlDotNet.Serialization;
 using YamlDotNet.Core;
+using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
 namespace JumpDiveClock
@@ -32,7 +32,8 @@ namespace JumpDiveClock
                 .WithNamingConvention(UnderscoredNamingConvention.Instance)
                 .Build();
 
-        public Result Init(string configPath = "config.yaml", string splitPath = "splits/example.yml")
+        public Result Init(string configPath = "config.yaml",
+            string splitPath = "splits/example.yml")
         {
             var result = new Result() { Success = true };
 

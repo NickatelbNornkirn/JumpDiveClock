@@ -21,21 +21,21 @@ namespace JumpDiveClock
     public static class Formatter
     {
         // TODO: test throughly.
-        public static string SecondsToTime(float seconds)
+        public static string SecondsToTime(double seconds)
         {
             const int MinuteInSecs = 60;
             const int HourInSecs = MinuteInSecs * 60;
             const char Separator = ':';
 
             var ss = (int)(seconds < MinuteInSecs ? seconds : seconds % MinuteInSecs);
-            var mm = (int)(seconds < HourInSecs ? seconds / MinuteInSecs : seconds % HourInSecs);
             var hh = (int)(seconds >= HourInSecs ? seconds / HourInSecs : 0);
+            var mm = (int)(seconds < HourInSecs ? seconds / MinuteInSecs : (seconds - hh * HourInSecs) / MinuteInSecs);
 
             string result = "";
 
             if (hh > 0)
             {
-                result += hh + Separator;
+                result += $"{hh}{Separator}";
             }
 
             result += $"{mm.ToString("D2")}{Separator}{ss.ToString("D2")}";

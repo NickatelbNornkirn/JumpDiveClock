@@ -20,10 +20,11 @@ namespace JumpDiveClock
 {
     public static class Extensions
     {
-        public static void ForeachI<T>(this IEnumerable<T> enumerable, Action<T, int> action)
+        public static void ForeachI<T>(this IEnumerable<T> enumerable, Action<T, int> action, bool reverse = false)
         {
-            int c = 0;
-            enumerable.ToList().ForEach(x => action(x, c++));
+            List<T> list = enumerable.ToList();
+            int c = reverse ? list.Count : 0;
+            list.ForEach(x => action(x, reverse ? --c : c++));
         }
     }
 }
