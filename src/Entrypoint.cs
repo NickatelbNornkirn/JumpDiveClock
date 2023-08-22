@@ -22,6 +22,12 @@ namespace JumpDiveClock
     {
         public static void Main(string[] args)
         {
+            if (!InputManager.IsXInputAvailable())
+            {
+                Console.WriteLine("XInput is required for running this program.");
+                return;
+            }
+
             var app = new App();
 
             Result r = app.Init();

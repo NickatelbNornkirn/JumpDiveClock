@@ -16,6 +16,9 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+using Raylib_cs;
+using System.Numerics;
+
 namespace JumpDiveClock
 {
     public class Segment
@@ -49,6 +52,43 @@ namespace JumpDiveClock
             timeText += Formatter.SecondsToTime(time);
 
             return timeText;
+        }
+
+        /// <summary>
+        /// Draw segment.
+        /// </summary>
+        /// <param name="headerHeight">The height of the timer's header.</param>
+        /// <param name="drawIndex">The index of this segment in the list of segments.</param>
+        /// <param name="separatorHeight">The height of the timer's separator.</param>
+        public void Draw(float headerHeight, int drawIndex, float segmentHeight, Font font,
+            int fontSpacing, Color textColor, int separatorHeight, int fontSize, int marginSize)
+        {
+            string pbTimeText = Formatter.SecondsToTime(PbTime);
+            float segmentStartY = headerHeight + segmentHeight * drawIndex + separatorHeight *
+                (drawIndex + 1);
+            Vector2 segmentNameSize = Raylib.MeasureTextEx(font, Name, fontSize,
+                fontSpacing
+            );
+            // TODO: include time loss/gain.
+            Vector2 pbTimeSize = Raylib.MeasureTextEx(font, pbTimeText, fontSize,
+                fontSpacing
+            );
+
+            var segmentNamePos = new Vector2(
+                marginSize, segmentStartY + ((segmentHeight - segmentNameSize.Y) / 2.0f)
+            );
+
+            var pbTimePos = new Vector2(
+                Raylib.GetScreenWidth() - pbTimeSize.X - marginSize,
+                segmentStartY + ((segmentHeight - pbTimeSize.Y) / 2.0f)
+            );
+
+            Raylib.DrawTextEx(font, Name, segmentNamePos, fontSize,
+                fontSpacing, textColor
+            );
+            Raylib.DrawTextEx(font, pbTimeText, pbTimePos, fontSize, fontSpacing,
+                textColor
+            );
         }
     }
 }

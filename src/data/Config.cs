@@ -18,7 +18,7 @@
 
 namespace JumpDiveClock
 {
-    public struct Config
+    public class Config
     {
         public int MaximumFramerate;
         public int KeyboardId;

@@ -17,21 +17,23 @@
 */
 
 using Raylib_cs;
-using System.Data;
-using System.Diagnostics;
 using System.Numerics;
 
 namespace JumpDiveClock
 {
+    // TODO: max number of segments per line.
+    // TODO: don't stop counting after a reset, so you can undo a reset.
     public class Timer
     {
         private const string CurrentPace = "cp";
         private const string SumOfBest = "sob";
         private const string RunsThatReachHere = "rtrr";
+        private const string BestPossibleTime = "bpt";
         private readonly Dictionary<string, string> _statNames = new Dictionary<string, string>() {
-            {CurrentPace, "Current pace:" },
-            {SumOfBest, "Sum of best segments:" },
-            {RunsThatReachHere, "Runs that reach here:" },
+            { CurrentPace, "Current pace:" },
+            { SumOfBest, "Sum of best segments:" },
+            { RunsThatReachHere, "Runs that reach here:" },
+            { BestPossibleTime, "Best possible time:" },
         };
 
         // TODO: check if all these values are really set by the configuration file.
@@ -46,7 +48,7 @@ namespace JumpDiveClock
         // TODO: error check.
         public Segment[] Segments = null!;
 
-        public float HeaderSize;
+        public float HeaderHeight;
         public float TimerSize;
         public float MaxSegmentSize;
 
@@ -69,7 +71,9 @@ namespace JumpDiveClock
 
         private double _timeSecs;
         int _currentSegment;
-        private bool _counting;
+
+        private InputManager _inputManager = null!;
+        private Config _config = null!;
 
         private Color _backgroundColor;
         private Color _baseColor;
@@ -77,6 +81,21 @@ namespace JumpDiveClock
         private Color _behindColor;
         private Color _bestColor;
         private Color _separatorColor;
+
+        /*
+            This is being used instead of a normal constructor as a workaround. That is because
+            YamlDotNet's deserializing function requires this class to have a parameterless
+            constructor.
+        */
+        public Timer Construct(Config config)
+        {
+            _config = config;
+            _inputManager = new InputManager(_config);
+            ConvertHexColorsToRgb();
+            Reset();
+
+            return this;
+        }
 
         public void ConvertHexColorsToRgb()
         {
@@ -88,22 +107,34 @@ namespace JumpDiveClock
             _separatorColor = ToColor(HexColors.Separator);
         }
 
-        public void Update(Config appConfig)
+        public void Update()
         {
-            List<int> pressedKeys = GetPressedKeys(appConfig);
+            _inputManager.UpdateKeyboardState(_config);
+
             float deltaTime = Raylib.GetFrameTime();
 
-            if (_counting)
+            if (_currentSegment >= 0)
             {
                 _timeSecs += deltaTime;
             }
+
+            if (_inputManager.IsKeyPressed(_config.Keybindings.Split))
+            {
+                _currentSegment++;
+            }
+            
+            if (_inputManager.IsKeyPressed(_config.Keybindings.Reset))
+            {
+                Reset();
+            }
+
         }
 
         public void Draw(Font font)
         {
             int effectiveHeight = Raylib.GetScreenHeight() - SeparatorSize * (Segments.Length - 1);
 
-            var headerHeight = (int)(effectiveHeight * (HeaderSize / 100.0f));
+            var headerHeight = (int)(effectiveHeight * (HeaderHeight / 100.0f));
             var timerHeight = (int)(effectiveHeight * (TimerSize / 100.0f));
 
             effectiveHeight -= headerHeight + timerHeight;
@@ -113,20 +144,18 @@ namespace JumpDiveClock
             );
 
             Raylib.ClearBackground(_backgroundColor);
-            
+
             DrawSeparators(headerHeight, segmentHeight, timerHeight);
             DrawHeader(font, headerHeight);
             DrawSegments(font, headerHeight, segmentHeight);
             DrawTimer(font, timerHeight, segmentHeight, headerHeight);
             DrawExtraStats(font, segmentHeight);
-
         }
 
         private void Reset()
         {
             _timeSecs = 0;
-            _currentSegment = 0;
-            _counting = false;
+            _currentSegment = -1;
         }
 
         private void DrawTimer(Font font, float timerHeight, float segmentHeight, float headerHeight)
@@ -150,21 +179,22 @@ namespace JumpDiveClock
 
         private void DrawExtraStats(Font font, float segmentHeight)
         {
-            ExtraStats.ForeachI((statCode, i) => {
-                    string statName = _statNames[statCode];
-                    Vector2 statNameSize = Raylib.MeasureTextEx(
-                        font, statName, SegmentFontSize, SegmentFontSpacing
-                    );
-                    var leftTextDrawPos = new Vector2(SegmentMargin,
-                        Raylib.GetRenderHeight() -
-                            ((i + 1) * segmentHeight + (i + 1) * SeparatorSize)
-                            + (segmentHeight - statNameSize.Y) / 2.0f
-                    );
+            ExtraStats.ForeachI((statCode, i) =>
+            {
+                string statName = _statNames[statCode];
+                Vector2 statNameSize = Raylib.MeasureTextEx(
+                    font, statName, SegmentFontSize, SegmentFontSpacing
+                );
+                var leftTextDrawPos = new Vector2(SegmentMargin,
+                    Raylib.GetRenderHeight() -
+                        ((i + 1) * segmentHeight + (i + 1) * SeparatorSize)
+                        + (segmentHeight - statNameSize.Y) / 2.0f
+                );
 
-                    Raylib.DrawTextEx(font, statName, leftTextDrawPos, SegmentFontSize,
-                        SegmentFontSpacing, _baseColor
-                    );
-                },
+                Raylib.DrawTextEx(font, statName, leftTextDrawPos, SegmentFontSize,
+                    SegmentFontSpacing, _baseColor
+                );
+            },
                 true
             );
         }
@@ -185,7 +215,7 @@ namespace JumpDiveClock
             int timerOffset = ExtraStats.Length * segmentSize +
                 (ExtraStats.Length - 1) * SeparatorSize;
             int timerY = Raylib.GetRenderHeight() - timerHeight - SeparatorSize - timerOffset;
-            Raylib.DrawRectangle(0, timerY, Raylib.GetRenderWidth(),SeparatorSize, _separatorColor);
+            Raylib.DrawRectangle(0, timerY, Raylib.GetRenderWidth(), SeparatorSize, _separatorColor);
             Raylib.DrawRectangle(0, timerY + timerHeight, Raylib.GetRenderWidth(), SeparatorSize,
                 _separatorColor
             );
@@ -227,33 +257,12 @@ namespace JumpDiveClock
 
         private void DrawSegments(Font font, float headerHeight, float segmentHeight)
         {
-            Segments.ForeachI((segment, i) => {
-                string pbTimeText = Formatter.SecondsToTime(segment.PbTime);
-                float segmentStartY = headerHeight + segmentHeight * i + SeparatorSize * (i + 1);
-                Vector2 segmentNameSize = Raylib.MeasureTextEx(font, segment.Name, SegmentFontSize,
-                    SegmentFontSpacing
+            for (int i = 0; i < Segments.Length; i++)
+            {
+                Segments[i].Draw(headerHeight, i, segmentHeight, font, SegmentFontSpacing,
+                    _baseColor, SeparatorSize, SegmentFontSize, SegmentMargin
                 );
-                // TODO: include time loss/gain.
-                Vector2 pbTimeSize = Raylib.MeasureTextEx(font, pbTimeText, SegmentFontSize,
-                    SegmentFontSpacing
-                );
-
-                var segmentNamePos = new Vector2(
-                    SegmentMargin, segmentStartY + ((segmentHeight - segmentNameSize.Y) / 2.0f)
-                );
-
-                var pbTimePos = new Vector2(
-                    Raylib.GetScreenWidth() - pbTimeSize.X - SegmentMargin,
-                    segmentStartY + ((segmentHeight - pbTimeSize.Y) / 2.0f)
-                );
-
-                Raylib.DrawTextEx(font, segment.Name, segmentNamePos, SegmentFontSize,
-                    SegmentFontSpacing, _baseColor
-                );
-                Raylib.DrawTextEx(font, pbTimeText, pbTimePos, SegmentFontSize, SegmentFontSpacing,
-                    _baseColor
-                );
-            });
+            }
         }
 
         private Color ToColor(string hexColor)
@@ -267,29 +276,5 @@ namespace JumpDiveClock
             );
         }
 
-        private List<int> GetPressedKeys(Config appConfig)
-        {
-            var p = new Process
-            {
-                StartInfo = new ProcessStartInfo
-                {
-                    FileName = "xinput",
-                    Arguments = $"query-state {appConfig.KeyboardId}",
-                    UseShellExecute = false,
-                    RedirectStandardOutput = true,
-                    CreateNoWindow = true
-                }
-            };
-
-            p.Start();
-            string[] lines = p.StandardOutput.ReadToEnd().Split('\n');
-
-            var kbStates = new List<int>();
-            lines
-                .Where(line => line.Contains("=down")).ToList()
-                .ForEach(line => kbStates.Add(Int32.Parse(line.Split('[')[1].Split(']')[0])));
-
-            return kbStates;
-        }
     }
 }

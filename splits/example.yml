@@ -27,7 +27,7 @@ hex_colors:
   pace_best: "#fdff00"
   separator: "#555555"
 
-header_size: 10.0 # Percentage.
+header_height: 10.0 # Percentage.
 timer_size: 15.0 # Percentage.
 max_segment_size: 8.0 # Percentage.
 separator_size: 2 # Pixels.
@@ -47,5 +47,6 @@ timer_font_spacing: 2
 # Allowed values:
 # - "cp" (current pace);
 # - "sob" (sum of best segments);
+# - "bpt" (best possible time);
 # - "rtrr" (runs that reach here).
-extra_stats: ["cp", "sob", "rtrr"]
+extra_stats: ["cp", "bpt", "sob", "rtrr"]

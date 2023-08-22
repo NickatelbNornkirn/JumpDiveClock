@@ -26,7 +26,7 @@ namespace JumpDiveClock
     public class App
     {
         private Config _appConfig;
-        private Timer _split = null!;
+        private Timer _timer = null!;
         private Font _font;
         private IDeserializer _deserializer = new DeserializerBuilder()
                 .WithNamingConvention(UnderscoredNamingConvention.Instance)
@@ -50,9 +50,9 @@ namespace JumpDiveClock
                 return result;
             }
 
-            if (LoadSplit(splitPath) is Timer loadedSplit)
+            if (LoadTimer(splitPath, _appConfig) is Timer loadedTimer)
             {
-                _split = loadedSplit;
+                _timer = loadedTimer;
             }
             else
             {
@@ -60,8 +60,6 @@ namespace JumpDiveClock
                 result.Error = "Failed to read split.";
                 return result;
             }
-
-            _split.ConvertHexColorsToRgb();
 
             SetupWindow();
 
@@ -102,13 +100,13 @@ namespace JumpDiveClock
 
         private void Update()
         {
-            _split.Update(_appConfig);
+            _timer.Update();
         }
 
         private void Draw()
         {
             Raylib.BeginDrawing();
-            _split.Draw(_font);
+            _timer.Draw(_font);
             Raylib.EndDrawing();
         }
 
@@ -152,14 +150,14 @@ namespace JumpDiveClock
             return text;
         }
 
-        private Timer? LoadSplit(string path)
+        private Timer? LoadTimer(string path, Config config)
         {
             if (LoadText(path) is string splitsYml)
             {
                 try
                 {
                     // TODO: better errors.
-                    return _deserializer.Deserialize<Timer>(splitsYml);
+                    return _deserializer.Deserialize<Timer>(splitsYml).Construct(config);
                 }
                 catch (YamlException)
                 {

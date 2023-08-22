@@ -22,7 +22,6 @@ I speedrun a Mario fangame where the fastest way to move without equipment is to
 
 ## TODO
 
-* timer;
 * splitting;
 * green, reds & golds;
 * reset statistics;
