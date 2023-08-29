@@ -19,6 +19,14 @@
 using Raylib_cs;
 using System.Numerics;
 
+/*
+    TODO:
+
+    Condition for saving golds
+
+    Advanced to the next split, 5 seconds after end of run or reset.
+*/
+
 namespace JumpDiveClock
 {
     // TODO: max number of segments per line.
@@ -38,47 +46,52 @@ namespace JumpDiveClock
 
         // TODO: check if all these values are really set by the configuration file.
         // TODO: REFACTOR: better declaration order for these variables.
-        public string GameName = null!;
-        public string Category = null!;
+        public string GameName { get; set; } = null!;
+        public string Category { get; set; } = null!;
 
-        public HexColors HexColors = null!;
+        public HexColors HexColors { get; set; } = null!;
 
-        public int ResetCount;
+        public int ResetCount { get; set; }
 
         // TODO: error check.
-        public Segment[] Segments = null!;
+        public Segment[] Segments { get; set; } = null!;
 
-        public float HeaderHeight;
-        public float TimerSize;
-        public float MaxSegmentSize;
+        public float HeaderHeight { get; set; }
+        public float TimerSize { get; set; }
+        public float MaxSegmentSize { get; set; }
 
-        public int SeparatorSize;
+        public int SeparatorSize { get; set; }
 
-        public int GameTitleFontSize;
-        public int GameTitleFontSpacing;
-        public int CategoryTitleFontSize;
-        public int CategoryTitleFontSpacing;
-        public int TitleCategoryTitlesGap;
+        public int GameTitleFontSize { get; set; }
+        public int GameTitleFontSpacing { get; set; }
+        public int CategoryTitleFontSize { get; set; }
+        public int CategoryTitleFontSpacing { get; set; }
+        public int TitleCategoryTitlesGap { get; set; }
 
-        public int SegmentMargin;
-        public int SegmentFontSize;
-        public int SegmentFontSpacing;
+        public int SegmentMargin { get; set; }
+        public int SegmentFontSize { get; set; }
+        public int SegmentFontSpacing { get; set; }
 
-        public int TimerFontSize;
-        public int TimerFontSpacing;
+        public int TimerFontSize { get; set; }
+        public int TimerFontSpacing { get; set; }
 
-        public string[] ExtraStats = null!;
+        public string[] ExtraStats { get; set; } = null!;
 
-        private double _timeSecs;
-        int _currentSegment;
+        private double _currentTimeSecs;
+        private double _displayedTimeSecs;
+        private int _currentSegment;
+        private int _displayedSegment;
 
         private InputManager _inputManager = null!;
+        private HistoryManager _historyManager = new HistoryManager();
         private Config _config = null!;
 
         private Color _backgroundColor;
         private Color _baseColor;
-        private Color _aheadColor;
-        private Color _behindColor;
+        private Color _aheadGainingColor;
+        private Color _aheadLosingColor;
+        private Color _behindGainingColor;
+        private Color _behindLosingColor;
         private Color _bestColor;
         private Color _separatorColor;
 
@@ -101,8 +114,10 @@ namespace JumpDiveClock
         {
             _backgroundColor = ToColor(HexColors.Background);
             _baseColor = ToColor(HexColors.TextBase);
-            _aheadColor = ToColor(HexColors.PaceAhead);
-            _behindColor = ToColor(HexColors.PaceBehind);
+            _aheadGainingColor = ToColor(HexColors.PaceAheadGaining);
+            _aheadLosingColor = ToColor(HexColors.PaceAheadLosing);
+            _behindGainingColor = ToColor(HexColors.PaceBehindGaining);
+            _behindLosingColor = ToColor(HexColors.PaceBehindLosing);
             _bestColor = ToColor(HexColors.PaceBest);
             _separatorColor = ToColor(HexColors.Separator);
         }
@@ -115,17 +130,19 @@ namespace JumpDiveClock
 
             if (_currentSegment >= 0)
             {
-                _timeSecs += deltaTime;
+                _currentTimeSecs += deltaTime;
             }
 
             if (_inputManager.IsKeyPressed(_config.Keybindings.Split))
             {
-                _currentSegment++;
+                Split();
+                _historyManager.RegisterActionExecution(ActionType.Split);
             }
             
             if (_inputManager.IsKeyPressed(_config.Keybindings.Reset))
             {
                 Reset();
+                _historyManager.RegisterActionExecution(ActionType.Reset);
             }
 
         }
@@ -152,15 +169,21 @@ namespace JumpDiveClock
             DrawExtraStats(font, segmentHeight);
         }
 
-        private void Reset()
+        private void Split(bool reverse = false)
         {
-            _timeSecs = 0;
-            _currentSegment = -1;
+            _currentSegment += reverse ? -1 : 1;
         }
 
+        private void Reset(bool reverse = false)
+        {
+            _currentTimeSecs = reverse ? _displayedTimeSecs : 0;
+            _currentSegment = reverse ? _displayedSegment : -1;
+        }
+
+        // TODO: replace real variables with display variables
         private void DrawTimer(Font font, float timerHeight, float segmentHeight, float headerHeight)
         {
-            string timerText = Formatter.SecondsToTime(_timeSecs);
+            string timerText = Formatter.SecondsToTime(_displayedTimeSecs);
             Vector2 textSize = Raylib.MeasureTextEx(
                 font, timerText, TimerFontSize, TimerFontSpacing
             );

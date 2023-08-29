@@ -25,7 +25,7 @@ namespace JumpDiveClock
 {
     public class App
     {
-        private Config _appConfig;
+        private Config _appConfig = null!;
         private Timer _timer = null!;
         private Font _font;
         private IDeserializer _deserializer = new DeserializerBuilder()

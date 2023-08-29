@@ -18,15 +18,11 @@
 
 namespace JumpDiveClock
 {
-    public class HexColors
+    public enum ActionType
     {
-        public string Background = null!;
-        public string TextBase = null!;
-        public string PaceAheadGaining = null!;
-        public string PaceAheadLosing = null!;
-        public string PaceBehindGaining = null!;
-        public string PaceBehindLosing = null!;
-        public string PaceBest = null!;
-        public string Separator = null!;
+        Split,
+        Reset,
+        // This one isn't an action by itself, but it points to an action at the redo stack.
+        PointerRedo
     }
 }

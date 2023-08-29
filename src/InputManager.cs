@@ -88,6 +88,7 @@ namespace JumpDiveClock
             p.Close();
         }
 
+        // TODO: less scuffed implementation.
         public bool IsKeyPressed(int keyCode)
         {
             if (_pressedKeys.Count > 0)

@@ -22,8 +22,10 @@ segment_margin: 3 # Pixels.
 hex_colors:
   background: "#000000"
   text_base: "#ffffff"
-  pace_ahead: "#00ff00"
-  pace_behind: "#ff0000"
+  pace_ahead_gaining: "#00aa00"
+  pace_ahead_losing: "#00ff00"
+  pace_behind_gaining: "#aa0000"
+  pace_behind_losing: "#ff0000"
   pace_best: "#fdff00"
   separator: "#555555"
 

@@ -23,7 +23,7 @@ I speedrun a Mario fangame where the fastest way to move without equipment is to
 ## TODO
 
 * splitting;
-* green, reds & golds;
+* green, reds, light variants & golds;
 * reset statistics;
 * compare against pb;
 * calculate pace based on the average time to complete a split or comparing to the performance of the last run;
