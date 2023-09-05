@@ -4,21 +4,21 @@ reset_count: 150
 
 segments:
 - name: "Beggining"
-  pb_time: 6.0
-  best_segment: 5.0
+  pb_time_rel: 6.0
+  best_segment_time_rel: 2.0
   reset_count: 100
 - name: "Middle"
-  pb_time: 7.5
-  best_segment: 6.0
+  pb_time_rel: 9.0
+  best_segment_time_rel: 1.0
   reset_count: 40
 - name: "End"
-  pb_time: 9.2
-  best_segment: 8.0
+  pb_time_rel: 12.0 
+  best_segment_time_rel: 2.0
   reset_count: 10
 
 segment_margin: 3 # Pixels.
 
-# The default colors aren't supposed to be beatiful, change them to match your tastes.
+# The default colors aren't supposed to be beautiful, change them to match your tastes.
 hex_colors:
   background: "#000000"
   text_base: "#ffffff"

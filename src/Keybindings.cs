@@ -20,9 +20,9 @@ namespace JumpDiveClock
 {
     public struct Keybindings
     {
-        public int Split;
-        public int Reset;
-        public int Undo;
-        public int Redo;
+        public int Split { get; set; }
+        public int Reset { get; set; }
+        public int Undo { get; set; }
+        public int Redo { get; set; }
     }
 }

@@ -157,10 +157,13 @@ namespace JumpDiveClock
                 try
                 {
                     // TODO: better errors.
-                    return _deserializer.Deserialize<Timer>(splitsYml).Construct(config);
+                    Timer timer = _deserializer.Deserialize<Timer>(splitsYml);
+                    timer.Construct(config);
+                    return timer;
                 }
-                catch (YamlException)
+                catch (YamlException ex)
                 {
+                    Console.WriteLine(ex.Message);
                     return null;
                 }
             }

@@ -20,8 +20,8 @@ namespace JumpDiveClock
 {
     public struct Result
     {
-        public bool Success;
+        public bool Success { get; set; }
         // Null unless Sucess == false.
-        public string? Error;
+        public string? Error { get; set; }
     }
 }

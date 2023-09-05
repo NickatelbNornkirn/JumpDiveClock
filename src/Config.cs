@@ -18,15 +18,12 @@
 
 namespace JumpDiveClock
 {
-    public class HexColors
+    public class Config
     {
-        public string Background = null!;
-        public string TextBase = null!;
-        public string PaceAheadGaining = null!;
-        public string PaceAheadLosing = null!;
-        public string PaceBehindGaining = null!;
-        public string PaceBehindLosing = null!;
-        public string PaceBest = null!;
-        public string Separator = null!;
+        public int MaximumFramerate { get; set; }
+        public int KeyboardId { get; set; }
+        public Keybindings Keybindings { get; set; }
+        public int DefaultWidth { get; set; }
+        public int DefaultHeight { get; set; }
     }
 }
