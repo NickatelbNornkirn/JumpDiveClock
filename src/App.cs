@@ -1,5 +1,5 @@
 /*
-    JumpDiveClock -  Simple-ish speedrun timer for X11. 
+    JumpDiveClock -  Simple-ish speedrun timer for X11.
     Copyright (C) 2023  Nickatelb Nornkirn
 
     This program is free software: you can redistribute it and/or modify
@@ -26,11 +26,16 @@ namespace JumpDiveClock
     public class App
     {
         private Config _appConfig = null!;
-        private Timer _timer = null!;
-        private Font _font;
         private IDeserializer _deserializer = new DeserializerBuilder()
                 .WithNamingConvention(UnderscoredNamingConvention.Instance)
                 .Build();
+        private Font _font;
+        private Timer _timer = null!;
+
+        public void Exit()
+        {
+            Raylib.UnloadFont(_font);
+        }
 
         public Result Init(string configPath = "config.yaml",
             string splitPath = "splits/example.yml")
@@ -83,24 +88,6 @@ namespace JumpDiveClock
                     running = false;
                 }
             }
-        }
-
-        public void Exit()
-        {
-            Raylib.UnloadFont(_font);
-        }
-
-        private void SetupWindow()
-        {
-            const string Title = "Deinapar";
-            Raylib.InitWindow(_appConfig.DefaultWidth, _appConfig.DefaultHeight, Title);
-            Raylib.SetWindowState(ConfigFlags.FLAG_WINDOW_RESIZABLE);
-            Raylib.SetTargetFPS(_appConfig.MaximumFramerate);
-        }
-
-        private void Update()
-        {
-            _timer.Update();
         }
 
         private void Draw()
@@ -171,6 +158,19 @@ namespace JumpDiveClock
             {
                 return null;
             }
+        }
+
+        private void SetupWindow()
+        {
+            const string Title = "Deinapar";
+            Raylib.InitWindow(_appConfig.DefaultWidth, _appConfig.DefaultHeight, Title);
+            Raylib.SetWindowState(ConfigFlags.FLAG_WINDOW_RESIZABLE);
+            Raylib.SetTargetFPS(_appConfig.MaximumFramerate);
+        }
+
+        private void Update()
+        {
+            _timer.Update();
         }
     }
 }

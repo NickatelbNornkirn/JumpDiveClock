@@ -1,5 +1,5 @@
 /*
-    JumpDiveClock -  Simple-ish speedrun timer for X11. 
+    JumpDiveClock -  Simple-ish speedrun timer for X11.
     Copyright (C) 2023  Nickatelb Nornkirn
 
     This program is free software: you can redistribute it and/or modify
@@ -16,12 +16,13 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
-using System.ComponentModel;
 
 namespace JumpDiveClock
 {
+    // REFACTOR: better implementation?
     public class InputManager
     {
         private Keybindings _keybindings;
@@ -61,6 +62,19 @@ namespace JumpDiveClock
             }
         }
 
+        public bool IsKeyPressed(int keyCode)
+        {
+            if (_pressedKeys.Count > 0)
+            {
+                Console.WriteLine(_pressedKeys);
+            }
+
+            bool keyDown = _pressedKeys.Contains(keyCode);
+            bool result = keyDown && !JustPressedKey(keyCode, keyDown);
+
+            return result;
+        }
+
         // Call once per frame.
         public void UpdateKeyboardState(Config appConfig)
         {
@@ -88,20 +102,6 @@ namespace JumpDiveClock
             p.Close();
         }
 
-        // TODO: less scuffed implementation.
-        public bool IsKeyPressed(int keyCode)
-        {
-            if (_pressedKeys.Count > 0)
-            {
-                Console.WriteLine(_pressedKeys);
-            }
-
-            bool keyDown = _pressedKeys.Contains(keyCode);
-            bool result = keyDown && !JustPressedKey(keyCode, keyDown);
-
-            return result;
-        }
-
         private bool JustPressedKey(int keyCode, bool keyDown)
         {
             DateTime now = DateTime.Now;
@@ -115,7 +115,6 @@ namespace JumpDiveClock
 
             return result;
         }
-
 
     }
 }

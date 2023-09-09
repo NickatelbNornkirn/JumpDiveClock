@@ -1,5 +1,5 @@
 /*
-    JumpDiveClock -  Simple-ish speedrun timer for X11. 
+    JumpDiveClock -  Simple-ish speedrun timer for X11.
     Copyright (C) 2023  Nickatelb Nornkirn
 
     This program is free software: you can redistribute it and/or modify
@@ -20,8 +20,8 @@ namespace JumpDiveClock
 {
     public struct Result
     {
-        public bool Success { get; set; }
         // Null unless Sucess == false.
         public string? Error { get; set; }
+        public bool Success { get; set; }
     }
 }

@@ -4,15 +4,15 @@ reset_count: 150
 
 segments:
 - name: "Beggining"
-  pb_time_rel: 6.0
+  pb_time_rel: 2.0
   best_segment_time_rel: 2.0
   reset_count: 100
 - name: "Middle"
-  pb_time_rel: 9.0
+  pb_time_rel: 2.0
   best_segment_time_rel: 1.0
   reset_count: 40
 - name: "End"
-  pb_time_rel: 12.0 
+  pb_time_rel: 2.0 
   best_segment_time_rel: 2.0
   reset_count: 10
 

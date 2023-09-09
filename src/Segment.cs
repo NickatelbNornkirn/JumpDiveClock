@@ -1,5 +1,5 @@
 /*
-    JumpDiveClock -  Simple-ish speedrun timer for X11. 
+    JumpDiveClock -  Simple-ish speedrun timer for X11.
     Copyright (C) 2023  Nickatelb Nornkirn
 
     This program is free software: you can redistribute it and/or modify
@@ -16,22 +16,27 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-using Raylib_cs;
 using System.Numerics;
+using Raylib_cs;
 
 namespace JumpDiveClock
 {
     public class Segment
     {
-        public string Name { get; set; } = null!;
-        public double PbTimeRel { get; set; }
-        public double BestSegmentTimeRel { get; set; }
-        public int ResetCount { get; set; }
 
         private bool _completedSegment;
-        private double _pbCompletedTimeAbs;
         private double _completedTimeAbs;
+        private double _pbCompletedTimeAbs;
         private double _startedSegmentTimeAbs;
+        public double BestSegmentTimeRel { get; private set; }
+        public string Name { get; private set; } = null!;
+        public double PbTimeRel { get; private set; }
+        public int ResetCount { get; private set; }
+
+        public void BeginSegment(double time)
+        {
+            _startedSegmentTimeAbs = time;
+        }
 
         /*
             This is being used instead of a normal constructor as a workaround. That is because
@@ -44,15 +49,6 @@ namespace JumpDiveClock
             Reset();
         }
 
-        public void Reset()
-        {
-            _completedSegment = false;
-            _completedTimeAbs = 0;
-        }
-
-        public bool IsAhead(double timeAbs)
-            => timeAbs < _pbCompletedTimeAbs;
-
         // TODO: FIXME: pace not showing correctly.
         /// <summary>
         /// Draw segment.
@@ -64,7 +60,7 @@ namespace JumpDiveClock
             int fontSpacing, ColorManager colorManager, int separatorHeight, int fontSize,
             int marginSize)
         {
-            string pbTimeText = Formatter.SecondsToTime(PbTimeRel);
+            string pbTimeText = Formatter.SecondsToTime(_pbCompletedTimeAbs);
             float segmentStartY = headerHeight + segmentHeight * drawIndex + separatorHeight *
                 (drawIndex + 1);
             Vector2 segmentNameSize = Raylib.MeasureTextEx(font, Name, fontSize,
@@ -86,9 +82,8 @@ namespace JumpDiveClock
 
             if (_completedTimeAbs != 0)
             {
-                double time = _completedTimeAbs;
                 string completedTimeTxt = (IsAhead(_completedTimeAbs) ? "-" : "+") +
-                    Formatter.SecondsToTime(Math.Abs(GetRelTime() - PbTimeRel));
+                    Formatter.SecondsToTime(Math.Abs(_completedTimeAbs - _pbCompletedTimeAbs));
 
                 Vector2 completedTimeSize = Raylib.MeasureTextEx(
                     font, completedTimeTxt, fontSize, marginSize
@@ -112,14 +107,18 @@ namespace JumpDiveClock
             );
         }
 
-        public void BeginSegment(double time)
-        {
-            _startedSegmentTimeAbs = time;
-        }
-
         public void FinishSegment(double time)
         {
             _completedTimeAbs = time;
+        }
+
+        public bool IsAhead(double timeAbs)
+            => timeAbs < _pbCompletedTimeAbs;
+
+        public void Reset()
+        {
+            _completedSegment = false;
+            _completedTimeAbs = 0;
         }
 
         private double GetRelTime()

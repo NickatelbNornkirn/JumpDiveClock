@@ -1,5 +1,5 @@
 /*
-    JumpDiveClock -  Simple-ish speedrun timer for X11. 
+    JumpDiveClock -  Simple-ish speedrun timer for X11.
     Copyright (C) 2023  Nickatelb Nornkirn
 
     This program is free software: you can redistribute it and/or modify
@@ -21,12 +21,12 @@ namespace JumpDiveClock
     public class HexColors
     {
         public string Background { get; set; } = null!;
-        public string TextBase { get; set; } = null!;
         public string PaceAheadGaining { get; set; } = null!;
         public string PaceAheadLosing { get; set; } = null!;
         public string PaceBehindGaining { get; set; } = null!;
-        public string PaceBehindLosing {get; set; } = null!;
+        public string PaceBehindLosing { get; set; } = null!;
         public string PaceBest { get; set; } = null!;
         public string Separator { get; set; } = null!;
+        public string TextBase { get; set; } = null!;
     }
 }

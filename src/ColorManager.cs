@@ -4,20 +4,12 @@ namespace JumpDiveClock
 {
     public class ColorManager
     {
-        public Color Background { get; }
-        public Color Base { get; }
-        public Color AheadGaining { get; }
-        public Color AheadLosing { get; }
-        public Color BehindGaining { get; }
-        public Color BehindLosing { get; }
-        public Color Best { get; }
-        public Color Separator { get; }
 
         /*
             The constructors receives #rrggbb colors.
         */
         public ColorManager(string backgroundColor, string baseColor, string aheadGainingColor,
-                            string aheadLosingColor, string behindGainingColor, 
+                            string aheadLosingColor, string behindGainingColor,
                             string behindLosingColor, string bestColor, string separatorColor)
         {
             Background = ToColor(backgroundColor);
@@ -29,6 +21,15 @@ namespace JumpDiveClock
             Best = ToColor(bestColor);
             Separator = ToColor(separatorColor);
         }
+
+        public Color AheadGaining { get; }
+        public Color AheadLosing { get; }
+        public Color Background { get; }
+        public Color Base { get; }
+        public Color BehindGaining { get; }
+        public Color BehindLosing { get; }
+        public Color Best { get; }
+        public Color Separator { get; }
 
         private Color ToColor(string hexColor)
         {

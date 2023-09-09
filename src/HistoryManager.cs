@@ -1,6 +1,6 @@
 
 /*
-    JumpDiveClock -  Simple-ish speedrun timer for X11. 
+    JumpDiveClock -  Simple-ish speedrun timer for X11.
     Copyright (C) 2023  Nickatelb Nornkirn
 
     This program is free software: you can redistribute it and/or modify
@@ -21,52 +21,34 @@ namespace JumpDiveClock
 {
     public class HistoryManager
     {
-        private Stack<ActionType> _mainStack = new Stack<ActionType>();
-        private Stack<ActionType> _undoStack = new Stack<ActionType>();
-        private Stack<ActionType> _redoStack = new Stack<ActionType>();
+        private Stack<double> _undoSplitTimes = new Stack<double>();
 
-        public void RegisterActionExecution(ActionType action)
+        public bool CanRedo()
         {
-            _mainStack.Push(action);
-            _redoStack.Clear();
+            return _undoSplitTimes.Count > 0;
         }
 
-        // Returns null if there are no more actions to undo.
-        public ActionType? RegisterActionUndo()
+        public void ClearHistory()
         {
-            if (_mainStack.Count < 1 && _redoStack.Count < 1)
-            {
-                return null;
-            }
-
-            ActionType action = _mainStack.Pop();
-            /* 
-                PointerRedo means that the last action was a redo, so we get the action from the
-                redo stack instead of the main one.
-            */
-            if (action == ActionType.PointerRedo)
-            {
-                action = _redoStack.Pop();
-            }
-
-            _undoStack.Push(action);
-
-            return action;
+            _undoSplitTimes.Clear();
         }
 
-        // Returns null if there are no more actions to redo.
-        public ActionType? RegisterActionRedo()
+        public double RegisterRedo()
         {
-            if (_undoStack.Count < 1)
+            double result = -1;
+
+            if (_undoSplitTimes.Count > 0)
             {
-                return null;
+                result = _undoSplitTimes.Pop();
             }
 
-            ActionType action = _undoStack.Pop();
-            _mainStack.Push(ActionType.PointerRedo);
-            _redoStack.Push(action);
-
-            return action;
+            return result;
         }
+
+        public void RegisterUndo(double actionTime)
+        {
+            _undoSplitTimes.Push(actionTime);
+        }
+
     }
 }
