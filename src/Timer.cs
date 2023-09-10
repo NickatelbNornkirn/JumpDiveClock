@@ -1,4 +1,3 @@
-using System.Numerics;
 /*
     JumpDiveClock -  Simple-ish speedrun timer for X11.
     Copyright (C) 2023  Nickatelb Nornkirn
@@ -18,6 +17,7 @@ using System.Numerics;
 */
 
 using Raylib_cs;
+using System.Numerics;
 
 /*
     TODO:
@@ -47,14 +47,13 @@ namespace JumpDiveClock
             { RunsThatReachHere, "Runs that reach here:" },
             { BestPossibleTime, "Best possible time:" },
         };
+
         private ColorManager _colorManager = null!;
         private Config _config = null!;
         private int _currentSegment;
 
         private double _currentTimeSecs;
-        private int _displayedSegment;
-        private double _displayedTimeSecs;
-        private HistoryManager _historyManager = new HistoryManager();
+        private HistoryManager _history = new HistoryManager();
 
         private InputManager _inputManager = null!;
         public string Category { get; private set; } = null!;
@@ -64,7 +63,6 @@ namespace JumpDiveClock
         public string[] ExtraStats { get; private set; } = null!;
 
         // TODO: check if all these values are really set by the configuration file.
-        // TODO: REFACTOR: better declaration order for these variables.
         public string GameName { get; private set; } = null!;
 
         public int GameTitleFontSize { get; private set; }
@@ -140,12 +138,6 @@ namespace JumpDiveClock
             if (_currentSegment >= 0 && _currentSegment < Segments.Length)
             {
                 _currentTimeSecs += deltaTime;
-            }
-
-            if (_currentSegment != ClearTimerIndex)
-            {
-                _displayedSegment = _currentSegment;
-                _displayedTimeSecs = _currentTimeSecs;
             }
 
             if (_inputManager.IsKeyPressed(_config.Keybindings.Split))
@@ -264,7 +256,7 @@ namespace JumpDiveClock
         private void DrawTimer(Font font, float timerHeight, float segmentHeight,
                 float headerHeight)
         {
-            string timerText = Formatter.SecondsToTime(_displayedTimeSecs);
+            string timerText = Formatter.SecondsToTime(_currentTimeSecs);
             Vector2 textSize = Raylib.MeasureTextEx(
                 font, timerText, TimerFontSize, TimerFontSpacing
             );
@@ -295,42 +287,60 @@ namespace JumpDiveClock
             }
         }
 
-        private void Pause()
-        {
-
-        }
-
         private void Redo()
         {
+            if (_currentSegment <= ClearTimerIndex || _currentSegment >= Segments.Length)
+            {
+                return;
+            }
 
+            double originalTime = _history.RegisterRedo();
+
+            Segments[_currentSegment].FinishSegment(originalTime);
+            _currentSegment++;
+
+            if (_currentSegment == Segments.Length)
+            {
+                _currentTimeSecs = originalTime;
+            }
         }
 
         private void Reset()
         {
             _currentTimeSecs = 0;
             _currentSegment = ClearTimerIndex;
-            _historyManager.ClearHistory();
+            _history.ClearHistory();
         }
 
         private void Split()
         {
-            if (_currentSegment <= ClearTimerIndex)
+            if (_currentSegment >= Segments.Length)
             {
-                _currentSegment = 0;
                 return;
             }
 
-            Segments[_currentSegment].FinishSegment(_currentTimeSecs);
+            if (_currentSegment != ClearTimerIndex)
+            {
+                Segments[_currentSegment].FinishSegment(_currentTimeSecs);
+            }
+
             _currentSegment++;
+
+            if (_currentSegment < Segments.Length)
+            {
+                Segments[_currentSegment].BeginSegment(_currentTimeSecs);
+            }
+
+            _history.ClearHistory();
         }
 
         private void Undo()
         {
             if (_currentSegment > 0)
             {
-                Console.WriteLine("A");
                 _currentSegment--;
-                _historyManager.RegisterUndo(_currentTimeSecs);
+                _history.RegisterUndo(Segments[_currentSegment].CompletedTimeAbs);
+                Segments[_currentSegment].UndoSplit();
             }
         }
     }
