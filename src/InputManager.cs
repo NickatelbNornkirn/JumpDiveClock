@@ -22,12 +22,14 @@ using System.Diagnostics;
 
 namespace JumpDiveClock
 {
-    // REFACTOR: better implementation?
+    // TODO: Wayland.
+    // TODO: less scuffed implementation?
     public class InputManager
     {
         private Keybindings _keybindings;
         private int _keyboardId;
         private Dictionary<int, DateTime> _lastKeyPressTimes = new Dictionary<int, DateTime>();
+        private DateTime _lastResetPressTime = DateTime.MinValue;
         private List<int> _pressedKeys = new List<int>();
 
         public InputManager(Config config)
@@ -62,15 +64,27 @@ namespace JumpDiveClock
             }
         }
 
-        public bool IsKeyPressed(int keyCode)
+        public bool AskingForReset(int keyCode)
         {
-            if (_pressedKeys.Count > 0)
+            const double MinPressInterval = 0.1;
+            DateTime now = DateTime.Now;
+            bool resetPressed = IsKeyPressed(keyCode, MinPressInterval, now);
+            
+            bool result = resetPressed && now <= _lastResetPressTime.AddSeconds(0.5) &&
+                now > _lastResetPressTime.AddSeconds(MinPressInterval);
+
+            if (resetPressed)
             {
-                Console.WriteLine(_pressedKeys);
+                _lastResetPressTime = now;
             }
 
+            return result;
+        }
+
+        public bool IsKeyPressed(int keyCode, double minimumDelay = 1.0, DateTime? now = null)
+        {
             bool keyDown = _pressedKeys.Contains(keyCode);
-            bool result = keyDown && !JustPressedKey(keyCode, keyDown);
+            bool result = keyDown && !JustPressedKey(keyCode, minimumDelay, now ?? DateTime.Now);
 
             return result;
         }
@@ -102,12 +116,11 @@ namespace JumpDiveClock
             p.Close();
         }
 
-        private bool JustPressedKey(int keyCode, bool keyDown)
+        private bool JustPressedKey(int keyCode, double secondsToCompare, DateTime now)
         {
-            DateTime now = DateTime.Now;
             bool result = _lastKeyPressTimes.ContainsKey(keyCode)
-                            ? now <= _lastKeyPressTimes[keyCode].AddSeconds(1) : false;
-
+                            && now <= _lastKeyPressTimes[keyCode].AddSeconds(secondsToCompare);
+            
             if (!result)
             {
                 _lastKeyPressTimes[keyCode] = now;

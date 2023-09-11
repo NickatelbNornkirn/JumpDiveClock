@@ -2,31 +2,100 @@ game_name: "Super Cool Example"
 category: "Any% Glitchless"
 reset_count: 150
 
+segments_per_screen: 10
+
 segments:
 - name: "Beggining"
-  pb_time_rel: 2.0
+  pb_time_rel: 6.0
   best_segment_time_rel: 2.0
   reset_count: 100
 - name: "Middle"
-  pb_time_rel: 2.0
+  pb_time_rel: 6.0
   best_segment_time_rel: 1.0
   reset_count: 40
-- name: "End"
-  pb_time_rel: 2.0 
+- name: "Near the end"
+  pb_time_rel: 6.0 
+  best_segment_time_rel: 2.0
+  reset_count: 10
+- name: "End 1"
+  pb_time_rel: 6.0 
+  best_segment_time_rel: 2.0
+  reset_count: 10
+- name: "End 2"
+  pb_time_rel: 6.0 
+  best_segment_time_rel: 2.0
+  reset_count: 10
+- name: "End 3"
+  pb_time_rel: 6.0 
+  best_segment_time_rel: 2.0
+  reset_count: 10
+- name: "End 4"
+  pb_time_rel: 6.0 
+  best_segment_time_rel: 2.0
+  reset_count: 10
+- name: "End 5"
+  pb_time_rel: 6.0 
+  best_segment_time_rel: 2.0
+  reset_count: 10
+- name: "End 6"
+  pb_time_rel: 6.0 
+  best_segment_time_rel: 2.0
+  reset_count: 10
+- name: "End 7"
+  pb_time_rel: 6.0 
+  best_segment_time_rel: 2.0
+  reset_count: 10
+- name: "End 8"
+  pb_time_rel: 6.0 
+  best_segment_time_rel: 2.0
+  reset_count: 10
+- name: "End 9"
+  pb_time_rel: 6.0 
+  best_segment_time_rel: 2.0
+  reset_count: 10
+- name: "End 10"
+  pb_time_rel: 6.0 
+  best_segment_time_rel: 2.0
+  reset_count: 10
+- name: "End 11"
+  pb_time_rel: 6.0 
+  best_segment_time_rel: 2.0
+  reset_count: 10
+- name: "End 12"
+  pb_time_rel: 6.0 
+  best_segment_time_rel: 2.0
+  reset_count: 10
+- name: "End 13"
+  pb_time_rel: 6.0 
+  best_segment_time_rel: 2.0
+  reset_count: 10
+- name: "End 14"
+  pb_time_rel: 6.0 
+  best_segment_time_rel: 2.0
+  reset_count: 10
+- name: "End 15"
+  pb_time_rel: 6.0 
+  best_segment_time_rel: 2.0
+  reset_count: 10
+- name: "End 16"
+  pb_time_rel: 6.0 
+  best_segment_time_rel: 2.0
+  reset_count: 10
+- name: "End 17"
+  pb_time_rel: 6.0 
   best_segment_time_rel: 2.0
   reset_count: 10
 
 segment_margin: 3 # Pixels.
 
-# The default colors aren't supposed to be beautiful, change them to match your tastes.
 hex_colors:
-  background: "#000000"
-  text_base: "#ffffff"
-  pace_ahead_gaining: "#00aa00"
-  pace_ahead_losing: "#00ff00"
-  pace_behind_gaining: "#aa0000"
-  pace_behind_losing: "#ff0000"
-  pace_best: "#fdff00"
+  background: "#252525"
+  text_base: "#f2f2f2"
+  pace_ahead_gaining: "#1dbd48"
+  pace_ahead_losing: "#6cbd82"
+  pace_behind_gaining: "#da7c7c"
+  pace_behind_losing: "#da2121"
+  pace_best: "#fff63e"
   separator: "#555555"
 
 header_height: 10.0 # Percentage.

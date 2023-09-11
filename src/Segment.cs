@@ -16,6 +16,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+using System.Diagnostics;
 using System.Numerics;
 using Raylib_cs;
 
@@ -72,12 +73,16 @@ namespace JumpDiveClock
             );
 
             var segmentNamePos = new Vector2(
-                marginSize, segmentStartY + ((segmentHeight - segmentNameSize.Y) / 2.0f)
+                marginSize,
+                segmentStartY + ((segmentHeight - segmentNameSize.Y) / 2.0f)
+                    - separatorHeight * (drawIndex + 1)
+
             );
 
             var pbTimePos = new Vector2(
                 Raylib.GetScreenWidth() - pbTimeSize.X - marginSize,
                 segmentStartY + ((segmentHeight - pbTimeSize.Y) / 2.0f)
+                    - separatorHeight * (drawIndex + 1)
             );
 
             if (CompletedTimeAbs != 0)
@@ -124,6 +129,12 @@ namespace JumpDiveClock
         public void UndoSplit()
         {
             CompletedTimeAbs = 0;
+        }
+
+        public bool WasAhead()
+        {
+            Debug.Assert(CompletedTimeAbs != 0);
+            return CompletedTimeAbs < _pbCompletedTimeAbs;
         }
 
         private double GetRelTime()

@@ -17,22 +17,12 @@
 */
 
 using Raylib_cs;
+using System.Data;
 using System.Numerics;
-
-/*
-    TODO:
-
-    Condition for saving golds
-
-    Advanced to the next split, 5 seconds after end of run or reset.
-
-    Make reset jump to final segment and then reset for real
-*/
 
 namespace JumpDiveClock
 {
-    // TODO: max number of segments per line.
-    // TODO: don't stop counting after a reset, so you can undo a reset.
+    // TODO: add some confirmation step to resets.
     public class Timer
     {
         private const string BestPossibleTime = "bpt";
@@ -48,7 +38,7 @@ namespace JumpDiveClock
             { BestPossibleTime, "Best possible time:" },
         };
 
-        private ColorManager _colorManager = null!;
+        private ColorManager _colors = null!;
         private Config _config = null!;
         private int _currentSegment;
 
@@ -81,6 +71,7 @@ namespace JumpDiveClock
 
         // TODO: error check.
         public Segment[] Segments { get; private set; } = null!;
+        public int SegmentsPerScreen { get; private set; }
 
         public int SeparatorSize { get; private set; }
 
@@ -98,7 +89,7 @@ namespace JumpDiveClock
         {
             _config = config;
             _inputManager = new InputManager(_config);
-            _colorManager = new ColorManager(
+            _colors = new ColorManager(
                 HexColors.Background, HexColors.TextBase, HexColors.PaceAheadGaining,
                 HexColors.PaceAheadLosing, HexColors.PaceBehindGaining, HexColors.PaceBehindLosing,
                 HexColors.PaceBest, HexColors.Separator
@@ -109,7 +100,9 @@ namespace JumpDiveClock
 
         public void Draw(Font font)
         {
-            int effectiveHeight = Raylib.GetScreenHeight() - SeparatorSize * (Segments.Length - 1);
+            int segmentsToDraw = Math.Min(Segments.Length, SegmentsPerScreen);
+
+            int effectiveHeight = Raylib.GetScreenHeight() - SeparatorSize * (segmentsToDraw - 1);
 
             var headerHeight = (int)(effectiveHeight * (HeaderHeight / 100.0f));
             var timerHeight = (int)(effectiveHeight * (TimerSize / 100.0f));
@@ -117,14 +110,14 @@ namespace JumpDiveClock
             effectiveHeight -= headerHeight + timerHeight;
 
             var segmentHeight =
-                (int)Math.Min(effectiveHeight / (Segments.Length + ExtraStats.Length),
+                (int)Math.Min(effectiveHeight / (segmentsToDraw + ExtraStats.Length),
                     MaxSegmentSize / 100 * effectiveHeight);
 
-            Raylib.ClearBackground(_colorManager.Background);
+            Raylib.ClearBackground(_colors.Background);
 
-            DrawSeparators(headerHeight, segmentHeight, timerHeight);
+            DrawSeparators(headerHeight, segmentHeight, timerHeight, segmentsToDraw);
             DrawHeader(font, headerHeight);
-            DrawSegments(font, headerHeight, segmentHeight);
+            DrawSegments(font, headerHeight, segmentHeight, segmentsToDraw);
             DrawTimer(font, timerHeight, segmentHeight, headerHeight);
             DrawExtraStats(font, segmentHeight);
         }
@@ -145,7 +138,7 @@ namespace JumpDiveClock
                 Split();
             }
 
-            if (_inputManager.IsKeyPressed(_config.Keybindings.Reset))
+            if (_inputManager.AskingForReset(_config.Keybindings.Reset))
             {
                 Reset();
             }
@@ -177,7 +170,7 @@ namespace JumpDiveClock
                 );
 
                 Raylib.DrawTextEx(font, statName, leftTextDrawPos, SegmentFontSize,
-                    SegmentFontSpacing, _colorManager.Base
+                    SegmentFontSpacing, _colors.Base
                 );
             },
                 true
@@ -202,35 +195,42 @@ namespace JumpDiveClock
                 textLayoutStartY + TitleCategoryTitlesGap + gameTitleSize.Y
             );
             Raylib.DrawTextEx(font, GameName, gameTitlePos, GameTitleFontSize, GameTitleFontSpacing,
-                _colorManager.Base
+                _colors.Base
             );
             Raylib.DrawTextEx(
                 font, Category, categoryTitlePos, CategoryTitleFontSize, CategoryTitleFontSpacing,
-                _colorManager.Base
+                _colors.Base
             );
         }
 
-        private void DrawSegments(Font font, float headerHeight, float segmentHeight)
+        private void DrawSegments(Font font, float headerHeight, float segmentHeight,
+            int segmentsToDraw)
         {
-            for (int i = 0; i < Segments.Length; i++)
+            int offset = Math.Min(
+                Math.Max(_currentSegment - (segmentsToDraw - 1), 0),
+                Segments.Length - segmentsToDraw
+            );
+
+            for (int i = offset; i < Segments.Length && i < offset + segmentsToDraw; i++)
             {
-                Segments[i].Draw(headerHeight, i, segmentHeight, font, SegmentFontSpacing,
-                    _colorManager, SeparatorSize, SegmentFontSize, SegmentMargin
+                Segments[i].Draw(headerHeight, i - offset, segmentHeight, font, SegmentFontSpacing,
+                    _colors, SeparatorSize, SegmentFontSize, SegmentMargin
                 );
             }
         }
 
-        private void DrawSeparators(int headerHeight, int segmentSize, int timerHeight)
+        private void DrawSeparators(
+            int headerHeight, int segmentSize, int timerHeight, int segmentsToDraw)
         {
             Raylib.DrawRectangle(0, headerHeight, Raylib.GetRenderWidth(), SeparatorSize,
-                _colorManager.Separator
+                _colors.Separator
             );
 
-            for (int i = 1; i < Segments.Length + 1; i++)
+            for (int i = 1; i < segmentsToDraw + 1; i++)
             {
                 Raylib.DrawRectangle(
                     0, headerHeight + i * segmentSize, Raylib.GetRenderWidth(), SeparatorSize,
-                    _colorManager.Separator
+                    _colors.Separator
                 );
             }
 
@@ -238,17 +238,17 @@ namespace JumpDiveClock
                 (ExtraStats.Length - 1) * SeparatorSize;
             int timerY = Raylib.GetRenderHeight() - timerHeight - SeparatorSize - timerOffset;
             Raylib.DrawRectangle(
-                0, timerY, Raylib.GetRenderWidth(), SeparatorSize, _colorManager.Separator
+                0, timerY, Raylib.GetRenderWidth(), SeparatorSize, _colors.Separator
             );
             Raylib.DrawRectangle(0, timerY + timerHeight, Raylib.GetRenderWidth(), SeparatorSize,
-                _colorManager.Separator
+                _colors.Separator
             );
 
             for (int i = 1; i < ExtraStats.Length; i++)
             {
                 Raylib.DrawRectangle(0,
                     timerY + timerHeight + i * segmentSize + SeparatorSize * (i - 1),
-                    Raylib.GetRenderWidth(), SeparatorSize, _colorManager.Separator
+                    Raylib.GetRenderWidth(), SeparatorSize, _colors.Separator
                 );
             }
         }
@@ -267,9 +267,32 @@ namespace JumpDiveClock
                     * (ExtraStats.Length - 1) - (timerHeight + textSize.Y) / 2.0f
             );
 
-            // TODO: color
+            Color? drawColor = null;
+            if (_currentTimeSecs == 0.0)
+            {
+                drawColor = _colors.Base;
+            }
+            else
+            {
+                var i = Math.Min(_currentSegment, Segments.Length - 1);
+                bool ahead = Segments[i].IsAhead(_currentTimeSecs);
+                if (_currentSegment > 0)
+                {
+                    ahead &= Segments[_currentSegment - 1].WasAhead();
+                }
+
+                if (!Segments.Last().IsAhead(_currentTimeSecs))
+                {
+                    drawColor = _colors.BehindLosing;
+                }
+
+                drawColor ??= ahead ? _colors.AheadGaining
+                    : (_currentSegment >= Segments.Length - 1
+                        ? _colors.BehindLosing : _colors.BehindGaining);
+            }
+
             Raylib.DrawTextEx(
-                font, timerText, textPos, TimerFontSize, TimerFontSpacing, _colorManager.Base
+                font, timerText, textPos, TimerFontSize, TimerFontSpacing, (Color)drawColor
             );
         }
 
@@ -299,6 +322,10 @@ namespace JumpDiveClock
             Segments[_currentSegment].FinishSegment(originalTime);
             _currentSegment++;
 
+            /*
+                If we're redoing the last segment, the timer needs to be rolled back because the
+                run already ended.
+            */
             if (_currentSegment == Segments.Length)
             {
                 _currentTimeSecs = originalTime;
@@ -310,6 +337,7 @@ namespace JumpDiveClock
             _currentTimeSecs = 0;
             _currentSegment = ClearTimerIndex;
             _history.ClearHistory();
+            Segments.ToList().ForEach(s => s.Reset());
         }
 
         private void Split()
