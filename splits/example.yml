@@ -1,3 +1,8 @@
+attempt_size_text_pos_x: 0.98
+attempt_size_text_pos_y: 0.9
+attempt_count: 25568
+attempt_count_font_size: 8
+attempt_size_font_spacing: 1
 category: Any% Glitchless
 category_title_font_size: 16
 category_title_font_spacing: 2
@@ -20,38 +25,39 @@ hex_colors:
   separator: '#555555'
   text_base: '#f2f2f2'
 max_segment_size: 8
-reset_count: 150
 segment_font_size: 12
 segment_font_spacing: 2
 segment_margin: 3
 segments:
-- best_segment_time_rel: 0
+- best_segment_time_rel: -1
   name: Tutorial
-  pb_time_rel: 1.0000254586338997
-  reset_count: 100
-- best_segment_time_rel: 0
+  pb_time_rel: 1.0667236596345901
+  reset_count: 114
+- best_segment_time_rel: -1
   name: Level 1
-  pb_time_rel: 1.0666944608092308
-  reset_count: 40
-- best_segment_time_rel: 0
+  pb_time_rel: 10.033355999737978
+  reset_count: 50
+- best_segment_time_rel: 1.0000367388129234
   name: Level 5
-  pb_time_rel: 1.0666930377483368
-  reset_count: 10
+  pb_time_rel: 1.0667541697621346
+  reset_count: 11
 - best_segment_time_rel: 0
   name: Mid boss
-  pb_time_rel: 1.0000286437571049
-  reset_count: 10
+  pb_time_rel: 1.0666952580213547
+  reset_count: 11
 - best_segment_time_rel: 0
   name: Last level
-  pb_time_rel: 1.0333679802715778
+  pb_time_rel: 1.1000308692455292
   reset_count: 10
 - best_segment_time_rel: 0
   name: Final boss
-  pb_time_rel: 1.1000333279371262
-  reset_count: 10
+  pb_time_rel: 1.0333587899804115
+  reset_count: 11
 segments_per_screen: 10
 separator_size: 2
 timer_font_size: 36
 timer_font_spacing: 2
 timer_size: 15
 title_category_titles_gap: 3
+
+uwu: a

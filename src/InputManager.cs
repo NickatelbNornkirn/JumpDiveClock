@@ -22,7 +22,7 @@ using System.Diagnostics;
 
 namespace JumpDiveClock
 {
-    // TODO: Wayland.
+    // TODO: Wayland?
     // TODO: less scuffed implementation?
     public class InputManager
     {
@@ -69,7 +69,7 @@ namespace JumpDiveClock
             const double MinPressInterval = 0.1;
             DateTime now = DateTime.Now;
             bool resetPressed = IsKeyPressed(keyCode, MinPressInterval, now);
-            
+
             bool result = resetPressed && now <= _lastResetPressTime.AddSeconds(0.5) &&
                 now > _lastResetPressTime.AddSeconds(MinPressInterval);
 
@@ -120,7 +120,7 @@ namespace JumpDiveClock
         {
             bool result = _lastKeyPressTimes.ContainsKey(keyCode)
                             && now <= _lastKeyPressTimes[keyCode].AddSeconds(secondsToCompare);
-            
+
             if (!result)
             {
                 _lastKeyPressTimes[keyCode] = now;

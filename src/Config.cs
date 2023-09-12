@@ -22,7 +22,7 @@ namespace JumpDiveClock
     {
         public int DefaultHeight { get; private set; }
         public int DefaultWidth { get; private set; }
-        public string FontPath {get; private set; } = null!;
+        public string FontPath { get; private set; } = null!;
         public Keybindings Keybindings { get; private set; }
         public int KeyboardId { get; private set; }
         public int MaximumFramerate { get; private set; }

@@ -48,7 +48,7 @@ namespace JumpDiveClock
             {
                 _appConfig = config;
             }
-            
+
             Timer? loadedTimer = _storage.LoadTimer(splitPath, _appConfig, ref result);
             if (loadedTimer is null)
             {
@@ -61,7 +61,6 @@ namespace JumpDiveClock
 
             SetupWindow();
 
-            // TODO: custom fonts.
             _font = Raylib.LoadFont(_appConfig.FontPath);
 
             result.Success = true;

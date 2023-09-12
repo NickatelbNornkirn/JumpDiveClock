@@ -21,11 +21,11 @@ using System.Numerics;
 
 namespace JumpDiveClock
 {
-    // TODO: test golds.
-    // TODO: reset count (per split & global).
     // TODO: stats.
     public class Timer
     {
+        public float AttemptSizeTextPosX;
+        public float AttemptSizeTextPosY;
         private const string BestPossibleTime = "bpt";
         private const int ClearTimerIndex = -1;
         private const string CurrentPace = "cp";
@@ -48,10 +48,13 @@ namespace JumpDiveClock
         private InputManager _inputManager = null!;
         private double _pbTimeSecs;
         private StorageManager _storage = null!;
+
+        public int AttemptCount { get; private set; }
+        public int AttemptCountFontSize { get; private set; }
+        public int AttemptSizeFontSpacing { get; private set; }
         public string Category { get; private set; } = null!;
         public int CategoryTitleFontSize { get; private set; }
         public int CategoryTitleFontSpacing { get; private set; }
-
         public string[] ExtraStats { get; private set; } = null!;
 
         // TODO: check if all these values are really set by the configuration file.
@@ -64,8 +67,6 @@ namespace JumpDiveClock
 
         public HexColors HexColors { get; private set; } = null!;
         public float MaxSegmentSize { get; private set; }
-
-        public int ResetCount { get; private set; }
         public int SegmentFontSize { get; private set; }
         public int SegmentFontSpacing { get; private set; }
 
@@ -189,8 +190,13 @@ namespace JumpDiveClock
             Vector2 categoryTitleSize = Raylib.MeasureTextEx(
                 font, Category, CategoryTitleFontSize, CategoryTitleFontSpacing
             );
+            Vector2 attemptCountSize = Raylib.MeasureTextEx(
+                font, $"{AttemptCount}", AttemptCountFontSize, AttemptSizeFontSpacing
+            );
+
             float textLayoutHeight = gameTitleSize.Y + categoryTitleSize.Y + TitleCategoryTitlesGap;
             float textLayoutStartY = (headerHeight - textLayoutHeight) / 2.0f;
+
             var gameTitlePos = new Vector2((Raylib.GetScreenWidth() - gameTitleSize.X) / 2.0f,
                 textLayoutStartY
             );
@@ -198,12 +204,21 @@ namespace JumpDiveClock
                 (Raylib.GetScreenWidth() - categoryTitleSize.X) / 2.0f,
                 textLayoutStartY + TitleCategoryTitlesGap + gameTitleSize.Y
             );
+            var attemptCountPos = new Vector2(
+                (Raylib.GetScreenWidth() * AttemptSizeTextPosX) - attemptCountSize.X,
+                (headerHeight * AttemptSizeTextPosY) - attemptCountSize.Y
+            );
+
             Raylib.DrawTextEx(font, GameName, gameTitlePos, GameTitleFontSize, GameTitleFontSpacing,
                 _colors.Base
             );
             Raylib.DrawTextEx(
                 font, Category, categoryTitlePos, CategoryTitleFontSize, CategoryTitleFontSpacing,
                 _colors.Base
+            );
+            Raylib.DrawTextEx(
+                font, $"{AttemptCount}", attemptCountPos, AttemptCountFontSize,
+                AttemptSizeFontSpacing, _colors.Base
             );
         }
 
@@ -344,9 +359,21 @@ namespace JumpDiveClock
 
         private void Reset(bool initialReset = false)
         {
+            if (_currentSegment == ClearTimerIndex)
+            {
+                return;
+            }
+
             if (!initialReset)
             {
-                SaveAchievementsToDisk();
+                AttemptCount++;
+
+                if (!IsRunFinished())
+                {
+                    Segments[_currentSegment].ResetCount++;
+                }
+
+                SaveToDisk();
             }
 
             _pbTimeSecs = _currentTimeSecs;
@@ -356,7 +383,7 @@ namespace JumpDiveClock
             InitializeSegments();
         }
 
-        private void SaveAchievementsToDisk()
+        private void SaveToDisk()
         {
             Segments.ToList().ForEach(s =>
             {

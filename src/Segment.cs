@@ -30,7 +30,7 @@ namespace JumpDiveClock
         public double BestSegmentTimeRel { get; private set; }
         public string Name { get; private set; } = null!;
         public double PbTimeRel { get; private set; }
-        public int ResetCount { get; private set; }
+        public int ResetCount { get; set; }
 
         public void BeginSegment(double time)
         {
