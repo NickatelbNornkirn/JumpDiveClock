@@ -16,7 +16,6 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-using System.Diagnostics;
 using System.Numerics;
 using Raylib_cs;
 
@@ -25,15 +24,14 @@ namespace JumpDiveClock
     public class Segment
     {
 
+        private double _completedTimeAbs;
         private double _pbCompletedTimeAbs;
         private double _startedSegmentTimeAbs;
         public double BestSegmentTimeRel { get; private set; }
-        public double CompletedTimeAbs { get; private set; }
         public string Name { get; private set; } = null!;
         public double PbTimeRel { get; private set; }
         public int ResetCount { get; private set; }
 
-        // TODO: FIXME: use
         public void BeginSegment(double time)
         {
             _startedSegmentTimeAbs = time;
@@ -50,7 +48,6 @@ namespace JumpDiveClock
             Reset();
         }
 
-        // TODO: FIXME: pace not showing correctly.
         /// <summary>
         /// Draw segment.
         /// </summary>
@@ -85,10 +82,10 @@ namespace JumpDiveClock
                     - separatorHeight * (drawIndex + 1)
             );
 
-            if (CompletedTimeAbs != 0)
+            if (_completedTimeAbs != 0)
             {
-                string completedTimeTxt = (IsAhead(CompletedTimeAbs) ? "-" : "+") +
-                    Formatter.SecondsToTime(Math.Abs(CompletedTimeAbs - _pbCompletedTimeAbs));
+                string completedTimeTxt = (IsAhead(_completedTimeAbs) ? "-" : "+") +
+                    Formatter.SecondsToTime(Math.Abs(_completedTimeAbs - _pbCompletedTimeAbs));
 
                 Vector2 completedTimeSize = Raylib.MeasureTextEx(
                     font, completedTimeTxt, fontSize, marginSize
@@ -114,38 +111,54 @@ namespace JumpDiveClock
 
         public void FinishSegment(double time)
         {
-            CompletedTimeAbs = time;
+            _completedTimeAbs = time;
         }
+
+        public double GetAbsoluteCompletionTime()
+            => _completedTimeAbs;
+
+        public double GetRelTime()
+            => _completedTimeAbs - _startedSegmentTimeAbs;
 
         public bool IsAhead(double timeAbs)
             => timeAbs < _pbCompletedTimeAbs;
 
+        public bool IsBest()
+            => GetRelTime() < BestSegmentTimeRel;
+
         public void Reset()
         {
-            CompletedTimeAbs = 0;
+            _completedTimeAbs = 0;
             _startedSegmentTimeAbs = 0;
+        }
+
+        public void SetPersonalBest()
+        {
+            PbTimeRel = GetRelTime();
         }
 
         public void UndoSplit()
         {
-            CompletedTimeAbs = 0;
+            _completedTimeAbs = 0;
         }
 
-        public bool WasAhead()
+        public void UpdateBestSegment()
         {
-            Debug.Assert(CompletedTimeAbs != 0);
-            return CompletedTimeAbs < _pbCompletedTimeAbs;
+            if (_completedTimeAbs != 0 && IsBest())
+            {
+                BestSegmentTimeRel = GetRelTime();
+            }
         }
 
-        private double GetRelTime()
-            => CompletedTimeAbs - _startedSegmentTimeAbs;
+        public bool WasAheadOnFinish()
+            => _completedTimeAbs < _pbCompletedTimeAbs;
 
         /// <summary>
         /// Picks a color based on how long the segment took to be completed.
         /// </summary>
         private Color PickColor(ColorManager cm)
-            => GetRelTime() < BestSegmentTimeRel ? cm.Best :
-                (CompletedTimeAbs < _pbCompletedTimeAbs
+            => IsBest() ? cm.Best :
+                (_completedTimeAbs < _pbCompletedTimeAbs
                     ? (GetRelTime() < PbTimeRel ? cm.AheadGaining : cm.AheadLosing)
                     : (GetRelTime() < PbTimeRel ? cm.BehindGaining : cm.BehindLosing));
     }

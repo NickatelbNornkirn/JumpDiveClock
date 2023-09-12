@@ -17,18 +17,18 @@
 */
 
 using Raylib_cs;
-using System.Data;
 using System.Numerics;
 
 namespace JumpDiveClock
 {
-    // TODO: add some confirmation step to resets.
+    // TODO: test golds.
+    // TODO: reset count (per split & global).
+    // TODO: stats.
     public class Timer
     {
         private const string BestPossibleTime = "bpt";
         private const int ClearTimerIndex = -1;
         private const string CurrentPace = "cp";
-        private const bool ReverseAction = true;
         private const string RunsThatReachHere = "rtrr";
         private const string SumOfBest = "sob";
         private readonly Dictionary<string, string> _statNames = new Dictionary<string, string>() {
@@ -46,6 +46,8 @@ namespace JumpDiveClock
         private HistoryManager _history = new HistoryManager();
 
         private InputManager _inputManager = null!;
+        private double _pbTimeSecs;
+        private StorageManager _storage = null!;
         public string Category { get; private set; } = null!;
         public int CategoryTitleFontSize { get; private set; }
         public int CategoryTitleFontSpacing { get; private set; }
@@ -85,16 +87,18 @@ namespace JumpDiveClock
             YamlDotNet's deserializing function requires this class to have a parameterless
             constructor.
         */
-        public void Construct(Config config)
+        public void Construct(Config config, StorageManager storage)
         {
             _config = config;
+            _storage = storage;
             _inputManager = new InputManager(_config);
             _colors = new ColorManager(
                 HexColors.Background, HexColors.TextBase, HexColors.PaceAheadGaining,
                 HexColors.PaceAheadLosing, HexColors.PaceBehindGaining, HexColors.PaceBehindLosing,
                 HexColors.PaceBest, HexColors.Separator
             );
-            Reset();
+
+            Reset(true);
             InitializeSegments();
         }
 
@@ -278,7 +282,7 @@ namespace JumpDiveClock
                 bool ahead = Segments[i].IsAhead(_currentTimeSecs);
                 if (_currentSegment > 0)
                 {
-                    ahead &= Segments[_currentSegment - 1].WasAhead();
+                    ahead &= Segments[_currentSegment - 1].WasAheadOnFinish();
                 }
 
                 if (!Segments.Last().IsAhead(_currentTimeSecs))
@@ -298,9 +302,10 @@ namespace JumpDiveClock
 
         private void InitializeSegments()
         {
+            double absPbTime = 0;
             for (int i = 0; i < Segments.Length; i++)
             {
-                double absPbTime = 0;
+                absPbTime = 0;
                 for (int j = i; j >= 0; j--)
                 {
                     absPbTime += Segments[j].PbTimeRel;
@@ -308,7 +313,12 @@ namespace JumpDiveClock
 
                 Segments[i].Construct(absPbTime);
             }
+
+            _pbTimeSecs = absPbTime;
         }
+
+        private bool IsRunFinished()
+            => _currentSegment >= Segments.Length;
 
         private void Redo()
         {
@@ -332,12 +342,36 @@ namespace JumpDiveClock
             }
         }
 
-        private void Reset()
+        private void Reset(bool initialReset = false)
         {
+            if (!initialReset)
+            {
+                SaveAchievementsToDisk();
+            }
+
+            _pbTimeSecs = _currentTimeSecs;
             _currentTimeSecs = 0;
             _currentSegment = ClearTimerIndex;
             _history.ClearHistory();
-            Segments.ToList().ForEach(s => s.Reset());
+            InitializeSegments();
+        }
+
+        private void SaveAchievementsToDisk()
+        {
+            Segments.ToList().ForEach(s =>
+            {
+                s.UpdateBestSegment();
+            });
+
+            if (IsRunFinished() && _currentTimeSecs < _pbTimeSecs)
+            {
+                Segments.ToList().ForEach(s =>
+                {
+                    s.SetPersonalBest();
+                });
+            }
+
+            _storage.SaveTimer(this, _config.SplitsStoragePath);
         }
 
         private void Split()
@@ -367,7 +401,7 @@ namespace JumpDiveClock
             if (_currentSegment > 0)
             {
                 _currentSegment--;
-                _history.RegisterUndo(Segments[_currentSegment].CompletedTimeAbs);
+                _history.RegisterUndo(Segments[_currentSegment].GetAbsoluteCompletionTime());
                 Segments[_currentSegment].UndoSplit();
             }
         }

@@ -1,123 +1,57 @@
-game_name: "Super Cool Example"
-category: "Any% Glitchless"
-reset_count: 150
-
-segments_per_screen: 10
-
-segments:
-- name: "Beggining"
-  pb_time_rel: 6.0
-  best_segment_time_rel: 2.0
-  reset_count: 100
-- name: "Middle"
-  pb_time_rel: 6.0
-  best_segment_time_rel: 1.0
-  reset_count: 40
-- name: "Near the end"
-  pb_time_rel: 6.0 
-  best_segment_time_rel: 2.0
-  reset_count: 10
-- name: "End 1"
-  pb_time_rel: 6.0 
-  best_segment_time_rel: 2.0
-  reset_count: 10
-- name: "End 2"
-  pb_time_rel: 6.0 
-  best_segment_time_rel: 2.0
-  reset_count: 10
-- name: "End 3"
-  pb_time_rel: 6.0 
-  best_segment_time_rel: 2.0
-  reset_count: 10
-- name: "End 4"
-  pb_time_rel: 6.0 
-  best_segment_time_rel: 2.0
-  reset_count: 10
-- name: "End 5"
-  pb_time_rel: 6.0 
-  best_segment_time_rel: 2.0
-  reset_count: 10
-- name: "End 6"
-  pb_time_rel: 6.0 
-  best_segment_time_rel: 2.0
-  reset_count: 10
-- name: "End 7"
-  pb_time_rel: 6.0 
-  best_segment_time_rel: 2.0
-  reset_count: 10
-- name: "End 8"
-  pb_time_rel: 6.0 
-  best_segment_time_rel: 2.0
-  reset_count: 10
-- name: "End 9"
-  pb_time_rel: 6.0 
-  best_segment_time_rel: 2.0
-  reset_count: 10
-- name: "End 10"
-  pb_time_rel: 6.0 
-  best_segment_time_rel: 2.0
-  reset_count: 10
-- name: "End 11"
-  pb_time_rel: 6.0 
-  best_segment_time_rel: 2.0
-  reset_count: 10
-- name: "End 12"
-  pb_time_rel: 6.0 
-  best_segment_time_rel: 2.0
-  reset_count: 10
-- name: "End 13"
-  pb_time_rel: 6.0 
-  best_segment_time_rel: 2.0
-  reset_count: 10
-- name: "End 14"
-  pb_time_rel: 6.0 
-  best_segment_time_rel: 2.0
-  reset_count: 10
-- name: "End 15"
-  pb_time_rel: 6.0 
-  best_segment_time_rel: 2.0
-  reset_count: 10
-- name: "End 16"
-  pb_time_rel: 6.0 
-  best_segment_time_rel: 2.0
-  reset_count: 10
-- name: "End 17"
-  pb_time_rel: 6.0 
-  best_segment_time_rel: 2.0
-  reset_count: 10
-
-segment_margin: 3 # Pixels.
-
-hex_colors:
-  background: "#252525"
-  text_base: "#f2f2f2"
-  pace_ahead_gaining: "#1dbd48"
-  pace_ahead_losing: "#6cbd82"
-  pace_behind_gaining: "#da7c7c"
-  pace_behind_losing: "#da2121"
-  pace_best: "#fff63e"
-  separator: "#555555"
-
-header_height: 10.0 # Percentage.
-timer_size: 15.0 # Percentage.
-max_segment_size: 8.0 # Percentage.
-separator_size: 2 # Pixels.
-
-game_title_font_size: 18
-game_title_font_spacing: 4
+category: Any% Glitchless
 category_title_font_size: 16
 category_title_font_spacing: 2
-title_category_titles_gap: 3 # Pixels.
+extra_stats:
+- cp
+- bpt
+- sob
+- rtrr
+game_name: Super Cool Example
+game_title_font_size: 18
+game_title_font_spacing: 4
+header_height: 10
+hex_colors:
+  background: '#252525'
+  pace_ahead_gaining: '#1dbd48'
+  pace_ahead_losing: '#6cbd82'
+  pace_behind_gaining: '#da7c7c'
+  pace_behind_losing: '#da2121'
+  pace_best: '#fff63e'
+  separator: '#555555'
+  text_base: '#f2f2f2'
+max_segment_size: 8
+reset_count: 150
 segment_font_size: 12
 segment_font_spacing: 2
-
+segment_margin: 3
+segments:
+- best_segment_time_rel: 0
+  name: Tutorial
+  pb_time_rel: 1.0000254586338997
+  reset_count: 100
+- best_segment_time_rel: 0
+  name: Level 1
+  pb_time_rel: 1.0666944608092308
+  reset_count: 40
+- best_segment_time_rel: 0
+  name: Level 5
+  pb_time_rel: 1.0666930377483368
+  reset_count: 10
+- best_segment_time_rel: 0
+  name: Mid boss
+  pb_time_rel: 1.0000286437571049
+  reset_count: 10
+- best_segment_time_rel: 0
+  name: Last level
+  pb_time_rel: 1.0333679802715778
+  reset_count: 10
+- best_segment_time_rel: 0
+  name: Final boss
+  pb_time_rel: 1.1000333279371262
+  reset_count: 10
+segments_per_screen: 10
+separator_size: 2
 timer_font_size: 36
 timer_font_spacing: 2
-
-# Extra stats at the bottom.
-# Allowed values:
-# - "cp" (current pace);
-# - "sob" (sum of best segments);
-# - "bpt" (best possible time);
-# - "rtrr" (runs that reach here).
-extra_stats: ["cp", "bpt", "sob", "rtrr"]
+timer_size: 15
+title_category_titles_gap: 3

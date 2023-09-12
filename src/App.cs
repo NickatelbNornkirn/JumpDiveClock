@@ -17,19 +17,14 @@
 */
 
 using Raylib_cs;
-using YamlDotNet.Core;
-using YamlDotNet.Serialization;
-using YamlDotNet.Serialization.NamingConventions;
 
 namespace JumpDiveClock
 {
     public class App
     {
         private Config _appConfig = null!;
-        private IDeserializer _deserializer = new DeserializerBuilder()
-                .WithNamingConvention(UnderscoredNamingConvention.Instance)
-                .Build();
         private Font _font;
+        private StorageManager _storage = new StorageManager();
         private Timer _timer = null!;
 
         public void Exit()
@@ -40,37 +35,36 @@ namespace JumpDiveClock
         public Result Init(string configPath = "config.yaml",
             string splitPath = "splits/example.yml")
         {
-            var result = new Result() { Success = true };
+            var result = new Result();
 
             Console.WriteLine("Initializing app...");
 
-            if (LoadConfig(configPath) is Config loadedConfig)
+            Config? config = _storage.LoadConfig(configPath, splitPath, ref result);
+            if (config is null)
             {
-                _appConfig = loadedConfig;
+                return result;
             }
             else
             {
-                result.Success = false;
-                result.Error = "Failed to read string.";
+                _appConfig = config;
+            }
+            
+            Timer? loadedTimer = _storage.LoadTimer(splitPath, _appConfig, ref result);
+            if (loadedTimer is null)
+            {
                 return result;
             }
-
-            if (LoadTimer(splitPath, _appConfig) is Timer loadedTimer)
+            else
             {
                 _timer = loadedTimer;
-            }
-            else
-            {
-                result.Success = false;
-                result.Error = "Failed to read split.";
-                return result;
             }
 
             SetupWindow();
 
             // TODO: custom fonts.
-            _font = Raylib.LoadFont("fonts/PublicPixel-z84yD.ttf");
+            _font = Raylib.LoadFont(_appConfig.FontPath);
 
+            result.Success = true;
             return result;
         }
 
@@ -97,72 +91,9 @@ namespace JumpDiveClock
             Raylib.EndDrawing();
         }
 
-        private Config? LoadConfig(string configPath)
-        {
-            if (!File.Exists(configPath))
-            {
-                Console.WriteLine($"Config file \"{configPath}\" could not be found.");
-                return null;
-            }
-
-            if (LoadText(configPath) is string configText)
-            {
-                try
-                {
-                    return _deserializer.Deserialize<Config>(configText);
-                }
-                catch (YamlException)
-                {
-                    return null;
-                }
-            }
-            else
-            {
-                return null;
-            }
-        }
-
-        private string? LoadText(string path)
-        {
-            string? text = null;
-            try
-            {
-                text = File.ReadAllText(path);
-            }
-            catch (IOException)
-            {
-                Console.WriteLine($"Config file \"{path}\" could not be read.");
-            }
-
-            return text;
-        }
-
-        private Timer? LoadTimer(string path, Config config)
-        {
-            if (LoadText(path) is string splitsYml)
-            {
-                try
-                {
-                    // TODO: better errors.
-                    Timer timer = _deserializer.Deserialize<Timer>(splitsYml);
-                    timer.Construct(config);
-                    return timer;
-                }
-                catch (YamlException ex)
-                {
-                    Console.WriteLine(ex.Message);
-                    return null;
-                }
-            }
-            else
-            {
-                return null;
-            }
-        }
-
         private void SetupWindow()
         {
-            const string Title = "Deinapar";
+            const string Title = "Jump Dive Clock";
             Raylib.InitWindow(_appConfig.DefaultWidth, _appConfig.DefaultHeight, Title);
             Raylib.SetWindowState(ConfigFlags.FLAG_WINDOW_RESIZABLE);
             Raylib.SetTargetFPS(_appConfig.MaximumFramerate);

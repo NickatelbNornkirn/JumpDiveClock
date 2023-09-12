@@ -20,11 +20,17 @@ namespace JumpDiveClock
 {
     public static class Extensions
     {
-        public static void ForeachI<T>(this IEnumerable<T> enumerable, Action<T, int> action, bool reverse = false)
+        /// <summary>
+        ///     Like a foreach, but the index is also known.
+        /// </summary>
+        /// <param name="reverse">
+        ///     If the enumerable should be iterated from the last element.</param>
+        public static void ForeachI<T>(this IEnumerable<T> enumerable, Action<T, int> action,
+            bool reverse = false)
         {
             List<T> list = enumerable.ToList();
-            int c = reverse ? list.Count : 0;
-            list.ForEach(x => action(x, reverse ? --c : c++));
+            int i = reverse ? list.Count : 0;
+            list.ForEach(x => action(x, reverse ? --i : i++));
         }
     }
 }
