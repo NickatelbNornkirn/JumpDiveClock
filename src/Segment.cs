@@ -58,7 +58,7 @@ namespace JumpDiveClock
             int fontSpacing, ColorManager colorManager, int separatorHeight, int fontSize,
             int marginSize)
         {
-            string pbTimeText = Formatter.SecondsToTime(_pbCompletedTimeAbs);
+            string pbTimeText = Formatter.SecondsToTime(_pbCompletedTimeAbs, false);
             float segmentStartY = headerHeight + segmentHeight * drawIndex + separatorHeight *
                 (drawIndex + 1);
             Vector2 segmentNameSize = Raylib.MeasureTextEx(font, Name, fontSize,
@@ -85,7 +85,7 @@ namespace JumpDiveClock
             if (_completedTimeAbs != 0)
             {
                 string completedTimeTxt = (IsAhead(_completedTimeAbs) ? "-" : "+") +
-                    Formatter.SecondsToTime(Math.Abs(_completedTimeAbs - _pbCompletedTimeAbs));
+                    Formatter.SecondsToTime(Math.Abs(_completedTimeAbs - _pbCompletedTimeAbs), true);
 
                 Vector2 completedTimeSize = Raylib.MeasureTextEx(
                     font, completedTimeTxt, fontSize, marginSize
@@ -114,17 +114,15 @@ namespace JumpDiveClock
             _completedTimeAbs = time;
         }
 
-        public double GetAbsoluteCompletionTime()
-            => _completedTimeAbs;
+        public double GetAbsoluteCompletionTime() => _completedTimeAbs;
 
-        public double GetRelTime()
-            => _completedTimeAbs - _startedSegmentTimeAbs;
+        public double GetRelTime() => _completedTimeAbs - _startedSegmentTimeAbs;
 
-        public bool IsAhead(double timeAbs)
-            => timeAbs < _pbCompletedTimeAbs;
+        public bool IsAhead(double timeAbs) => timeAbs < _pbCompletedTimeAbs;
 
-        public bool IsBest()
-            => GetRelTime() < BestSegmentTimeRel;
+        public bool IsBest() => GetRelTime() < BestSegmentTimeRel;
+
+        public bool IsCompleted() => _completedTimeAbs > 0;
 
         public void Reset()
         {
@@ -150,8 +148,7 @@ namespace JumpDiveClock
             }
         }
 
-        public bool WasAheadOnFinish()
-            => _completedTimeAbs < _pbCompletedTimeAbs;
+        public bool WasAheadOnFinish() => _completedTimeAbs < _pbCompletedTimeAbs;
 
         /// <summary>
         /// Picks a color based on how long the segment took to be completed.

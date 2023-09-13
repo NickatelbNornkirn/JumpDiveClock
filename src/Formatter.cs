@@ -20,13 +20,13 @@ namespace JumpDiveClock
 {
     public static class Formatter
     {
-        public static string SecondsToTime(double seconds)
+        public static string SecondsToTime(double seconds, bool detailed)
         {
             const int MinuteInSecs = 60;
             const int HourInSecs = MinuteInSecs * 60;
             const char Separator = ':';
 
-            var ss = (int)Math.Round(seconds < MinuteInSecs ? seconds : seconds % MinuteInSecs);
+            var ss = seconds < MinuteInSecs ? seconds : seconds % MinuteInSecs;
             var hh = (int)(seconds >= HourInSecs ? seconds / HourInSecs : 0);
             var mm = (int)(seconds < HourInSecs ?
                             seconds / MinuteInSecs : (seconds - hh * HourInSecs) / MinuteInSecs);
@@ -38,7 +38,8 @@ namespace JumpDiveClock
                 result += $"{hh}{Separator}";
             }
 
-            result += $"{mm.ToString("D2")}{Separator}{ss.ToString("D2")}";
+            result += $"{mm.ToString("D2")}{Separator}";
+            result += $"{(detailed ? ss : Math.Round(ss)).ToString("00" + (detailed ? ".0" : ""))}";
 
             return result;
         }

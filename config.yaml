@@ -1,5 +1,5 @@
 # Reccomended value: the same as the framerate of your video/stream.
-maximum_framerate: 30
+maximum_framerate: 9000
 
 default_width: 400
 default_height: 800

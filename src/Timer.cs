@@ -22,21 +22,13 @@ using System.Numerics;
 namespace JumpDiveClock
 {
     // TODO: stats.
+    // TODO: update WR.
+    // TODO: autosave on quit.
     public class Timer
     {
         public float AttemptSizeTextPosX;
         public float AttemptSizeTextPosY;
-        private const string BestPossibleTime = "bpt";
         private const int ClearTimerIndex = -1;
-        private const string CurrentPace = "cp";
-        private const string RunsThatReachHere = "rtrr";
-        private const string SumOfBest = "sob";
-        private readonly Dictionary<string, string> _statNames = new Dictionary<string, string>() {
-            { CurrentPace, "Current pace:" },
-            { SumOfBest, "Sum of best segments:" },
-            { RunsThatReachHere, "Runs that reach here:" },
-            { BestPossibleTime, "Best possible time:" },
-        };
 
         private ColorManager _colors = null!;
         private Config _config = null!;
@@ -47,6 +39,7 @@ namespace JumpDiveClock
 
         private InputManager _inputManager = null!;
         private double _pbTimeSecs;
+        private Stats _stats = null!;
         private StorageManager _storage = null!;
 
         public int AttemptCount { get; private set; }
@@ -55,7 +48,7 @@ namespace JumpDiveClock
         public string Category { get; private set; } = null!;
         public int CategoryTitleFontSize { get; private set; }
         public int CategoryTitleFontSpacing { get; private set; }
-        public string[] ExtraStats { get; private set; } = null!;
+        public StatType[] ExtraStats { get; private set; } = null!;
 
         // TODO: check if all these values are really set by the configuration file.
         public string GameName { get; private set; } = null!;
@@ -82,6 +75,7 @@ namespace JumpDiveClock
         public int TimerFontSpacing { get; private set; }
         public float TimerSize { get; private set; }
         public int TitleCategoryTitlesGap { get; private set; }
+        public double WorldRecordSeconds { get; private set; }
 
         /*
             This is being used instead of a normal constructor as a workaround. That is because
@@ -98,6 +92,7 @@ namespace JumpDiveClock
                 HexColors.PaceAheadLosing, HexColors.PaceBehindGaining, HexColors.PaceBehindLosing,
                 HexColors.PaceBest, HexColors.Separator
             );
+            _stats = new Stats(this);
 
             Reset(true);
             InitializeSegments();
@@ -119,7 +114,6 @@ namespace JumpDiveClock
                     MaxSegmentSize / 100 * effectiveHeight);
 
             Raylib.ClearBackground(_colors.Background);
-
             DrawSeparators(headerHeight, segmentHeight, timerHeight, segmentsToDraw);
             DrawHeader(font, headerHeight);
             DrawSegments(font, headerHeight, segmentHeight, segmentsToDraw);
@@ -127,9 +121,18 @@ namespace JumpDiveClock
             DrawExtraStats(font, segmentHeight);
         }
 
+        public int GetCurrentSegment() => _currentSegment;
+
+        public double GetCurrentTimeSecs() => _currentTimeSecs;
+
+        public double GetPbTime()
+            => _pbTimeSecs;
+
+        public bool HasStarted() => _currentSegment > -1;
+
         public void Update()
         {
-            _inputManager.UpdateKeyboardState(_config);
+            _inputManager.UpdateKeyboardState();
 
             float deltaTime = Raylib.GetFrameTime();
 
@@ -162,9 +165,9 @@ namespace JumpDiveClock
 
         private void DrawExtraStats(Font font, float segmentHeight)
         {
-            ExtraStats.ForeachI((statCode, i) =>
+            ExtraStats.ForeachI((stat, i) =>
             {
-                string statName = _statNames[statCode];
+                string statName = _stats.GetStatName(stat);
                 Vector2 statNameSize = Raylib.MeasureTextEx(
                     font, statName, SegmentFontSize, SegmentFontSpacing
                 );
@@ -174,8 +177,20 @@ namespace JumpDiveClock
                         + (segmentHeight - statNameSize.Y) / 2.0f
                 );
 
+                string statTxt = _stats.GetStatText(stat);
+                Vector2 statTimeSize = Raylib.MeasureTextEx(
+                    font, statTxt, SegmentFontSize, SegmentFontSpacing
+                );
+                var statTxtPos = new Vector2(
+                    Raylib.GetScreenWidth() - SegmentMargin - statTimeSize.X,
+                    leftTextDrawPos.Y
+                );
+
                 Raylib.DrawTextEx(font, statName, leftTextDrawPos, SegmentFontSize,
                     SegmentFontSpacing, _colors.Base
+                );
+                Raylib.DrawTextEx(font, statTxt, statTxtPos, SegmentFontSize, SegmentFontSpacing,
+                    _colors.Base
                 );
             },
                 true
@@ -256,9 +271,9 @@ namespace JumpDiveClock
             int timerOffset = ExtraStats.Length * segmentSize +
                 (ExtraStats.Length - 1) * SeparatorSize;
             int timerY = Raylib.GetRenderHeight() - timerHeight - SeparatorSize - timerOffset;
-            Raylib.DrawRectangle(
-                0, timerY, Raylib.GetRenderWidth(), SeparatorSize, _colors.Separator
-            );
+            //Raylib.DrawRectangle(
+            //    0, timerY, Raylib.GetRenderWidth(), SeparatorSize, _colors.Separator
+            //);
             Raylib.DrawRectangle(0, timerY + timerHeight, Raylib.GetRenderWidth(), SeparatorSize,
                 _colors.Separator
             );
@@ -275,7 +290,7 @@ namespace JumpDiveClock
         private void DrawTimer(Font font, float timerHeight, float segmentHeight,
                 float headerHeight)
         {
-            string timerText = Formatter.SecondsToTime(_currentTimeSecs);
+            string timerText = Formatter.SecondsToTime(_currentTimeSecs, true);
             Vector2 textSize = Raylib.MeasureTextEx(
                 font, timerText, TimerFontSize, TimerFontSpacing
             );
@@ -337,7 +352,7 @@ namespace JumpDiveClock
 
         private void Redo()
         {
-            if (_currentSegment <= ClearTimerIndex || _currentSegment >= Segments.Length)
+            if (!HasStarted() || _currentSegment >= Segments.Length)
             {
                 return;
             }
@@ -359,7 +374,7 @@ namespace JumpDiveClock
 
         private void Reset(bool initialReset = false)
         {
-            if (_currentSegment == ClearTimerIndex)
+            if (!HasStarted())
             {
                 return;
             }
@@ -408,7 +423,7 @@ namespace JumpDiveClock
                 return;
             }
 
-            if (_currentSegment != ClearTimerIndex)
+            if (HasStarted())
             {
                 Segments[_currentSegment].FinishSegment(_currentTimeSecs);
             }

@@ -27,15 +27,26 @@ namespace JumpDiveClock
     public class InputManager
     {
         private Keybindings _keybindings;
-        private int _keyboardId;
         private Dictionary<int, DateTime> _lastKeyPressTimes = new Dictionary<int, DateTime>();
         private DateTime _lastResetPressTime = DateTime.MinValue;
         private List<int> _pressedKeys = new List<int>();
+        private Process _xinput;
 
         public InputManager(Config config)
         {
             _keybindings = config.Keybindings;
-            _keyboardId = config.KeyboardId;
+
+            _xinput = new Process
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = "xinput",
+                    Arguments = $"query-state {config.KeyboardId}",
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    CreateNoWindow = true
+                }
+            };
         }
 
         public static bool IsXInputAvailable()
@@ -47,8 +58,8 @@ namespace JumpDiveClock
                     StartInfo = new ProcessStartInfo
                     {
                         FileName = "xinput",
-                        UseShellExecute = false,
-                        RedirectStandardOutput = true,
+                        UseShellExecute = true,
+                        RedirectStandardOutput = false,
                         CreateNoWindow = true
                     }
                 };
@@ -90,30 +101,23 @@ namespace JumpDiveClock
         }
 
         // Call once per frame.
-        public void UpdateKeyboardState(Config appConfig)
+        public void UpdateKeyboardState()
         {
-
-            var p = new Process
-            {
-                StartInfo = new ProcessStartInfo
-                {
-                    FileName = "xinput",
-                    Arguments = $"query-state {appConfig.KeyboardId}",
-                    UseShellExecute = false,
-                    RedirectStandardOutput = true,
-                    CreateNoWindow = true
-                }
-            };
-
-            p.Start();
-            string[] lines = p.StandardOutput.ReadToEnd().Split('\n');
+            _xinput.Start();
+            string[] lines = _xinput.StandardOutput.ReadToEnd().Split('\n');
 
             _pressedKeys.Clear();
+
+            /*
+                The command output many lines like "key[xx]=up" or "key[yy]" = down.
+
+                So we look for the ones that are down and grab their ID.
+            */
             lines
                 .Where(line => line.Contains("=down")).ToList()
                 .ForEach(line => _pressedKeys.Add(Int32.Parse(line.Split('[')[1].Split(']')[0])));
 
-            p.Close();
+            _xinput.Close();
         }
 
         private bool JustPressedKey(int keyCode, double secondsToCompare, DateTime now)
