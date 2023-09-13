@@ -16,11 +16,6 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-
-using System.Data.SqlTypes;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
-
 namespace JumpDiveClock
 {
     public class Stats
@@ -73,11 +68,31 @@ namespace JumpDiveClock
             return result;
         }
 
-        private string GetSumOfBest()
+        private string GetBestPossibleTime()
         {
-            double r = 0;
-            _timer.Segments.ToList().ForEach(s => r += s.BestSegmentTimeRel);
-            return Formatter.SecondsToTime(r, false);
+            double tt = 0;
+            _timer.Segments.ToList().ForEach(
+                s => tt += s.IsCompleted() ? s.GetRelTime() : s.BestSegmentTimeRel
+            );
+
+            return Formatter.SecondsToTime(tt, false);
+        }
+
+        private string GetCurrentPace()
+        {
+            double resultT = 0;
+            double tm = 0;
+            _timer.Segments.ForeachI((s, i) =>
+            {
+                if (s.IsCompleted())
+                {
+                    tm += s.GetRelTime() - s.PbTimeRel;
+                }
+            });
+
+            resultT = _timer.GetPbTime() + tm;
+
+            return Formatter.SecondsToTime(resultT, false);
         }
 
         private string GetPersonalBest()
@@ -100,41 +115,21 @@ namespace JumpDiveClock
             }
             else
             {
-                result = "100.00%";
+                result = "******";
             }
 
             return result;
         }
 
-        private string GetBestPossibleTime()
+        private string GetSumOfBest()
         {
-            double tt = 0;
-            _timer.Segments.ToList().ForEach(
-                s => tt += s.IsCompleted() ? s.GetRelTime() : s.BestSegmentTimeRel
-            );
-
-            return Formatter.SecondsToTime(tt, false);
-        }
-
-        private string GetCurrentPace()
-        {
-            double resultT = 0;
-            double tm = 0;
-            _timer.Segments.ForeachI((s, i) => {
-                if (s.IsCompleted())
-                {
-                    tm += s.GetRelTime() - s.PbTimeRel;
-                }
-            });
-
-            resultT = _timer.GetPbTime() + tm;
-
-            return Formatter.SecondsToTime(resultT, false);
+            double r = 0;
+            _timer.Segments.ToList().ForEach(s => r += s.BestSegmentTimeRel);
+            return Formatter.SecondsToTime(r, false);
         }
 
         private string GetWorldRecord()
             => Formatter.SecondsToTime(_timer.WorldRecordSeconds, false);
-        
-        
+
     }
 }

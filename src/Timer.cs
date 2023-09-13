@@ -21,9 +21,7 @@ using System.Numerics;
 
 namespace JumpDiveClock
 {
-    // TODO: stats.
-    // TODO: update WR.
-    // TODO: autosave on quit.
+    // TODO: FIXME: undoing final split doesn't work because the timer gets paused.
     public class Timer
     {
         public float AttemptSizeTextPosX;
@@ -76,6 +74,14 @@ namespace JumpDiveClock
         public float TimerSize { get; private set; }
         public int TitleCategoryTitlesGap { get; private set; }
         public double WorldRecordSeconds { get; private set; }
+
+        public void AutoSave()
+        {
+            if (HasStarted())
+            {
+                SaveTimes();
+            }
+        }
 
         /*
             This is being used instead of a normal constructor as a workaround. That is because
@@ -388,7 +394,7 @@ namespace JumpDiveClock
                     Segments[_currentSegment].ResetCount++;
                 }
 
-                SaveToDisk();
+                SaveTimes();
             }
 
             _pbTimeSecs = _currentTimeSecs;
@@ -398,19 +404,27 @@ namespace JumpDiveClock
             InitializeSegments();
         }
 
-        private void SaveToDisk()
+        private void SaveTimes()
         {
             Segments.ToList().ForEach(s =>
             {
                 s.UpdateBestSegment();
             });
 
-            if (IsRunFinished() && _currentTimeSecs < _pbTimeSecs)
+            if (IsRunFinished())
             {
-                Segments.ToList().ForEach(s =>
+                if (_currentTimeSecs < _pbTimeSecs)
                 {
-                    s.SetPersonalBest();
-                });
+                    Segments.ToList().ForEach(s =>
+                    {
+                        s.SetPersonalBest();
+                    });
+                }
+
+                if (_currentTimeSecs < WorldRecordSeconds)
+                {
+                    WorldRecordSeconds = _currentTimeSecs;
+                }
             }
 
             _storage.SaveTimer(this, _config.SplitsStoragePath);

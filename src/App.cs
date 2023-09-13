@@ -79,6 +79,7 @@ namespace JumpDiveClock
                 if (Raylib.WindowShouldClose())
                 {
                     running = false;
+                    _timer.AutoSave();
                 }
             }
         }

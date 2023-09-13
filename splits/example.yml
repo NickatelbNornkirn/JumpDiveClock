@@ -1,6 +1,6 @@
 attempt_size_text_pos_x: 0.98
 attempt_size_text_pos_y: 0.9
-attempt_count: 1
+attempt_count: 28
 attempt_count_font_size: 8
 attempt_size_font_spacing: 1
 category: Any% Glitchless
@@ -31,22 +31,22 @@ segment_font_size: 12
 segment_font_spacing: 2
 segment_margin: 3
 segments:
-- best_segment_time_rel: -1
+- best_segment_time_rel: 1.0008224409539253
   name: First boss
-  pb_time_rel: 1.0606716349720955
-  reset_count: 16
-- best_segment_time_rel: -1
+  pb_time_rel: 1.0008224409539253
+  reset_count: 10
+- best_segment_time_rel: 1.0001295369584113
   name: Mid boss
-  pb_time_rel: 1.2078946911497042
-  reset_count: 23
-- best_segment_time_rel: -3.2685663261217996
+  pb_time_rel: 1.000779179041274
+  reset_count: 5
+- best_segment_time_rel: 1.0002121205907315
   name: Final boss
-  pb_time_rel: -3.2685663261217996
-  reset_count: 32
+  pb_time_rel: 1.0002121205907315
+  reset_count: 5
 segments_per_screen: 10
 separator_size: 2
 timer_font_size: 36
 timer_font_spacing: 2
 timer_size: 15
 title_category_titles_gap: 3
-world_record_seconds: 77.5
+world_record_seconds: 3.0018137405859306
