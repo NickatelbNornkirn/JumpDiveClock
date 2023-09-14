@@ -32,10 +32,31 @@ namespace JumpDiveClock
             Raylib.UnloadFont(_font);
         }
 
-        public Result Init(string configPath = "config.yaml",
-            string splitPath = "splits/example.yml")
+        // TODO: default font.
+        public Result Init(string splitName, string? configFolder)
         {
-            var result = new Result();
+            var result = new Result() { Success = false };
+
+            string homeFolder = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+            configFolder ??= $"{homeFolder}/.config/jump-dive-clock";
+            Directory.CreateDirectory(configFolder);
+
+            string configPath = $"{configFolder}/config.yml";
+            if (!File.Exists(configPath))
+            {
+                File.WriteAllText(configPath, File.ReadAllText("config.yml"));
+            }
+
+            string splitFolder = $"{configFolder}/splits";
+            Directory.CreateDirectory(splitFolder);
+
+
+            string splitPath = $"{splitFolder}/{splitName}.yml";
+            if (!File.Exists(splitPath))
+            {
+                result.Error = $"{splitPath} can't be found.";
+                return result;
+            }
 
             Console.WriteLine("Initializing app...");
 

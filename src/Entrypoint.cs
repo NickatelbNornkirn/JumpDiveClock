@@ -30,7 +30,18 @@ namespace JumpDiveClock
 
             var app = new App();
 
-            Result r = app.Init();
+            (ParsedArgs pa, Result paR) = CliArgsParser.ParseCliArgs(args);
+            if (!paR.Success)
+            {
+                Console.WriteLine("Failed to parse command line arguments.");
+                Console.WriteLine(paR.Error);
+                Console.WriteLine(
+                    @"Usage: JumpDiveClock [config_folder:<folder>] split:<split name>
+                    Check DOCS.md for more details.");
+                return;
+            }
+
+            Result r = app.Init(pa.SplitName, pa.ConfigFolder);
 
             if (!r.Success)
             {

@@ -24,7 +24,7 @@ namespace JumpDiveClock
             new Dictionary<StatType, string>()
         {
             { StatType.CurrentPace, "Current pace:" },
-            { StatType.SumOfBest, "Sum of best segments:" },
+            { StatType.SumOfBest, "Sum of best:" },
             { StatType.RunsThatReachHere, "Runs that reach here:" },
             { StatType.BestPossibleTime, "Best possible time:" },
             { StatType.PersonalBest, "Personal best: "},

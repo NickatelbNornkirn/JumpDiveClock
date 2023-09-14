@@ -4,7 +4,7 @@ maximum_framerate: 9000
 default_width: 400
 default_height: 800
 
-font_path: "fonts/PublicPixel-z84yD.ttf"
+font_file: "default_font.ttf"
 
 # Use "xinput list" to find the ID of your keyboard.
 keyboard_id: 10

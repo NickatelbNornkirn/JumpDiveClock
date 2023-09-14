@@ -42,7 +42,7 @@ namespace JumpDiveClock
 
         public int AttemptCount { get; private set; }
         public int AttemptCountFontSize { get; private set; }
-        public int AttemptSizeFontSpacing { get; private set; }
+        public int AttemptCountFontSpacing { get; private set; }
         public string Category { get; private set; } = null!;
         public int CategoryTitleFontSize { get; private set; }
         public int CategoryTitleFontSpacing { get; private set; }
@@ -212,7 +212,7 @@ namespace JumpDiveClock
                 font, Category, CategoryTitleFontSize, CategoryTitleFontSpacing
             );
             Vector2 attemptCountSize = Raylib.MeasureTextEx(
-                font, $"{AttemptCount}", AttemptCountFontSize, AttemptSizeFontSpacing
+                font, $"{AttemptCount}", AttemptCountFontSize, AttemptCountFontSpacing
             );
 
             float textLayoutHeight = gameTitleSize.Y + categoryTitleSize.Y + TitleCategoryTitlesGap;
@@ -239,7 +239,7 @@ namespace JumpDiveClock
             );
             Raylib.DrawTextEx(
                 font, $"{AttemptCount}", attemptCountPos, AttemptCountFontSize,
-                AttemptSizeFontSpacing, _colors.Base
+                AttemptCountFontSpacing, _colors.Base
             );
         }
 
