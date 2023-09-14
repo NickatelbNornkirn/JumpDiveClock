@@ -49,9 +49,9 @@ namespace JumpDiveClock
                     result.Success = true;
                     return config;
                 }
-                catch (YamlException)
+                catch (YamlException ex)
                 {
-                    result.Error = "Failed to deserialize config.";
+                    result.Error = "Failed to deserialize config.\n" + ex.Message;
                     result.Success = false;
                     return null;
                 }

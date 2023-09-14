@@ -1,10 +1,10 @@
 attempt_size_text_pos_x: 0.98
 attempt_size_text_pos_y: 0.9
-attempt_count: 28
-attempt_count_font_size: 8
+attempt_count: 0
+attempt_count_font_size: 16
 attempt_count_font_spacing: 1
 category: Any% Glitchless
-category_title_font_size: 16
+category_title_font_size: 20
 category_title_font_spacing: 2
 extra_stats:
 - CurrentPace
@@ -14,7 +14,7 @@ extra_stats:
 - WorldRecord
 - RunsThatReachHere
 game_name: Super Cool Example
-game_title_font_size: 18
+game_title_font_size: 38
 game_title_font_spacing: 4
 header_height: 10
 hex_colors:
@@ -27,26 +27,30 @@ hex_colors:
   separator: '#555555'
   text_base: '#f2f2f2'
 max_segment_size: 8
-segment_font_size: 12
+segment_font_size: 24
 segment_font_spacing: 2
 segment_margin: 3
 segments:
-- best_segment_time_rel: 1.0008224409539253
-  name: First boss
-  pb_time_rel: 1.0008224409539253
-  reset_count: 10
-- best_segment_time_rel: 1.0001295369584113
-  name: Mid boss
-  pb_time_rel: 1.000779179041274
-  reset_count: 5
-- best_segment_time_rel: 1.0002121205907315
+- best_segment_time_rel: 7
+  name: First level
+  pb_time_rel: 10
+  reset_count: 0
+- best_segment_time_rel: 7
+  name: Second level
+  pb_time_rel: 10
+  reset_count: 0
+- best_segment_time_rel: 7
+  name: Third level
+  pb_time_rel: 10
+  reset_count: 0
+- best_segment_time_rel: 7
   name: Final boss
-  pb_time_rel: 1.0002121205907315
-  reset_count: 5
+  pb_time_rel: 10
+  reset_count: 0
 segments_per_screen: 10
 separator_size: 2
-timer_font_size: 36
+timer_font_size: 48
 timer_font_spacing: 2
 timer_size: 15
 title_category_titles_gap: 3
-world_record_seconds: 3.0018137405859306
+world_record_seconds: 9.5

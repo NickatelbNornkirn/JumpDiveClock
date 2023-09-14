@@ -20,25 +20,35 @@ namespace JumpDiveClock
 {
     public static class CliArgsParser
     {
-        public static (ParsedArgs, Result) ParseCliArgs(string[] args) 
+        public static (ParsedArgs, Result) ParseCliArgs(string[] args)
         {
             Result r = new Result() { Success = true };
             ParsedArgs pa = new ParsedArgs();
             foreach (string arg in args)
             {
                 string? a;
-                
+                bool validKey = false;
+
                 if ((a = ParseArg(arg, "config_folder")) is not null)
                 {
                     pa.ConfigFolder = a;
+                    validKey = true;
                 }
 
                 if ((a = ParseArg(arg, "split")) is not null)
                 {
                     pa.SplitName = a;
+                    validKey = true;
+                }
+
+                if (!validKey)
+                {
+                    r.Error = $"Can't parse '{arg}'.";
+                    r.Success = false;
+                    break;
                 }
             }
-            
+
             if (pa.SplitName is null)
             {
                 r.Success = false;

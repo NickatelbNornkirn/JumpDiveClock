@@ -32,7 +32,6 @@ namespace JumpDiveClock
             Raylib.UnloadFont(_font);
         }
 
-        // TODO: default font.
         public Result Init(string splitName, string? configFolder)
         {
             var result = new Result() { Success = false };
@@ -50,13 +49,15 @@ namespace JumpDiveClock
             string splitFolder = $"{configFolder}/splits";
             Directory.CreateDirectory(splitFolder);
 
-
             string splitPath = $"{splitFolder}/{splitName}.yml";
             if (!File.Exists(splitPath))
             {
                 result.Error = $"{splitPath} can't be found.";
                 return result;
             }
+
+            string fontFolder = $"{configFolder}/fonts";
+            Directory.CreateDirectory(fontFolder);
 
             Console.WriteLine("Initializing app...");
 
@@ -82,7 +83,16 @@ namespace JumpDiveClock
 
             SetupWindow();
 
-            _font = Raylib.LoadFont(_appConfig.FontPath);
+            string fontPath = $"{fontFolder}/{_appConfig.FontFile}";
+            if (_appConfig.FontFile != "default" && !File.Exists(fontPath))
+            {
+                result.Error = $"Could not find font '{fontPath}'.";
+                result.Success = false;
+                return result;
+            }
+
+            // If the font is not found, Raylib automatically loads the default one.
+            _font = Raylib.LoadFont(fontPath);
 
             result.Success = true;
             return result;
