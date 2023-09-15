@@ -95,7 +95,6 @@ namespace JumpDiveClock
         {
             string yamlText = _serializer.Serialize(timer);
             File.WriteAllText(storagePath, yamlText);
-            Console.WriteLine("saved");
         }
 
         private string? LoadText(string path)

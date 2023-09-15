@@ -116,6 +116,8 @@ namespace JumpDiveClock
 
         public double GetAbsoluteCompletionTime() => _completedTimeAbs;
 
+        public double GetAbsolutePbCompletionTime() => _pbCompletedTimeAbs;
+
         public double GetRelTime() => _completedTimeAbs - _startedSegmentTimeAbs;
 
         public bool IsAhead(double timeAbs) => timeAbs < _pbCompletedTimeAbs;
