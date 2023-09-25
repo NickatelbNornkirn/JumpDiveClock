@@ -156,9 +156,14 @@ namespace JumpDiveClock
         /// Picks a color based on how long the segment took to be completed.
         /// </summary>
         private Color PickColor(ColorManager cm)
-            => IsBest() ? cm.Best :
-                (_completedTimeAbs < _pbCompletedTimeAbs
-                    ? (GetRelTime() < PbTimeRel ? cm.AheadGaining : cm.AheadLosing)
-                    : (GetRelTime() < PbTimeRel ? cm.BehindGaining : cm.BehindLosing));
+            => IsBest()
+                ? cm.Best
+                : (_completedTimeAbs < _pbCompletedTimeAbs
+                    ? (GetRelTime() < PbTimeRel
+                        ? cm.AheadGaining
+                        : cm.AheadLosing)
+                    : (GetRelTime() < PbTimeRel
+                        ? cm.BehindGaining
+                        : cm.BehindLosing));
     }
 }

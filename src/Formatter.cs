@@ -28,8 +28,9 @@ namespace JumpDiveClock
 
             var ss = seconds < MinuteInSecs ? seconds : seconds % MinuteInSecs;
             var hh = (int)(seconds >= HourInSecs ? seconds / HourInSecs : 0);
-            var mm = (int)(seconds < HourInSecs ?
-                            seconds / MinuteInSecs : (seconds - hh * HourInSecs) / MinuteInSecs);
+            var mm = (int)(seconds < HourInSecs
+                            ? seconds / MinuteInSecs
+                            : (seconds - hh * HourInSecs) / MinuteInSecs);
 
             string result = "";
 
@@ -39,9 +40,11 @@ namespace JumpDiveClock
             }
 
             result += $"{mm.ToString("D2")}{Separator}";
-            result += $"{(detailed ? ss : Math.Round(ss)).ToString("00" + (detailed ? ".0" : ""))}";
+            result += $"{(detailed ? ss : RoundSecs(ss)).ToString("00" + (detailed ? ".0" : ""))}";
 
             return result;
         }
+
+        private static double RoundSecs(double ss) => Math.Min(Math.Round(ss), 59);
     }
 }
