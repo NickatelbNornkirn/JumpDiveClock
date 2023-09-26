@@ -152,18 +152,29 @@ namespace JumpDiveClock
 
         public bool WasAheadOnFinish() => _completedTimeAbs < _pbCompletedTimeAbs;
 
+        private bool GainingTimeRel() => GetRelTime() < PbTimeRel;
+
         /// <summary>
         /// Picks a color based on how long the segment took to be completed.
         /// </summary>
         private Color PickColor(ColorManager cm)
-            => IsBest()
-                ? cm.Best
-                : (_completedTimeAbs < _pbCompletedTimeAbs
-                    ? (GetRelTime() < PbTimeRel
-                        ? cm.AheadGaining
-                        : cm.AheadLosing)
-                    : (GetRelTime() < PbTimeRel
-                        ? cm.BehindGaining
-                        : cm.BehindLosing));
+        {
+            if (IsBest())
+            {
+                return cm.Best;
+            }
+
+            Color result;
+            if (_completedTimeAbs < _pbCompletedTimeAbs)
+            {
+                result = GainingTimeRel() ? cm.AheadGaining : cm.AheadLosing;
+            }
+            else
+            {
+                result = GainingTimeRel() ? cm.BehindGaining : cm.BehindLosing;
+            }
+
+            return result;
+        }
     }
 }

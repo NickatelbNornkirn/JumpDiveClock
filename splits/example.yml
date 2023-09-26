@@ -35,7 +35,7 @@ segments:
   name: First level
   pb_time_rel: 10
   reset_count: 0
-- best_segment_time_rel: 7
+- best_segment_time_rel: 3.4159488873556256
   name: Second level
   pb_time_rel: 10
   reset_count: 0

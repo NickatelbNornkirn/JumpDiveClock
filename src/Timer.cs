@@ -328,11 +328,19 @@ namespace JumpDiveClock
                     drawColor = _colors.BehindLosing;
                 }
 
-                drawColor ??= ahead
-                            ? _colors.AheadGaining
-                            : (_currentSegment >= Segments.Length - 1
-                                ? _colors.BehindLosing
-                                : _colors.BehindGaining);
+                if (drawColor is null)
+                {
+                    if (ahead)
+                    {
+                        drawColor = _colors.AheadGaining;
+                    }
+                    else
+                    {
+                        drawColor = _currentSegment >= Segments.Length - 1
+                                    ? _colors.BehindLosing
+                                    : _colors.BehindGaining;
+                    }
+                }
             }
 
             Raylib.DrawTextEx(
