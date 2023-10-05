@@ -23,7 +23,7 @@ namespace JumpDiveClock
 {
     public class Segment
     {
-
+        private const double NoPbTime = -1;
         private double _completedTimeAbs;
         private double _pbCompletedTimeAbs;
         private double _startedSegmentTimeAbs;
@@ -84,8 +84,17 @@ namespace JumpDiveClock
 
             if (_completedTimeAbs != 0)
             {
-                string completedTimeTxt = (IsAhead(_completedTimeAbs) ? "-" : "+") +
-                    Formatter.SecondsToTime(Math.Abs(_completedTimeAbs - _pbCompletedTimeAbs), true);
+                string completedTimeTxt;
+                if (RanSegmentBefore())
+                {
+                    completedTimeTxt = (IsAhead(_completedTimeAbs) ? "-" : "+") +
+                        Formatter.SecondsToTime(
+                            Math.Abs(_completedTimeAbs - _pbCompletedTimeAbs), true);
+                }
+                else
+                {
+                    completedTimeTxt = "* ";
+                }
 
                 Vector2 completedTimeSize = Raylib.MeasureTextEx(
                     font, completedTimeTxt, fontSize, marginSize
@@ -126,7 +135,7 @@ namespace JumpDiveClock
 
         public bool IsCompleted() => _completedTimeAbs > 0;
 
-        public bool RanSegmentBefore() => BestSegmentTimeRel != -1;
+        public bool RanSegmentBefore() => BestSegmentTimeRel != NoPbTime;
 
         public void Reset()
         {
@@ -164,7 +173,7 @@ namespace JumpDiveClock
         /// </summary>
         private Color PickColor(ColorManager cm)
         {
-            if (IsBest())
+            if (!RanSegmentBefore() || IsBest())
             {
                 return cm.Best;
             }

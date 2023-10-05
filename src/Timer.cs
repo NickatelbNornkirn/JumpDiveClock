@@ -297,6 +297,8 @@ namespace JumpDiveClock
             }
         }
 
+        private bool RanAllSegmentsBefore() => Segments.ToList().All(sgm => sgm.RanSegmentBefore());
+
         private void DrawTimer(Font font, float timerHeight, float segmentHeight,
                 float headerHeight)
         {
@@ -312,14 +314,14 @@ namespace JumpDiveClock
             );
 
             Color? drawColor = null;
-            if (_currentTimeSecs == 0.0)
+            if (_currentTimeSecs == 0.0 || !RanAllSegmentsBefore())
             {
                 drawColor = _colors.Base;
             }
             else
             {
-                var i = Math.Min(_currentSegment, Segments.Length - 1);
-                bool ahead = _currentTimeSecs < Segments[i].GetAbsolutePbCompletionTime();
+                int segI = Math.Min(_currentSegment, Segments.Length - 1);
+                bool ahead = _currentTimeSecs < Segments[segI].GetAbsolutePbCompletionTime();
 
                 if (ahead && _currentSegment > 0 &&
                     !Segments[_currentSegment - 1].WasAheadOnFinish())
