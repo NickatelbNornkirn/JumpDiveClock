@@ -71,32 +71,49 @@ namespace JumpDiveClock
         private string GetBestPossibleTime()
         {
             double tt = 0;
-            _timer.Segments.ToList().ForEach(
-                s => tt += s.IsCompleted() ? s.GetRelTime() : s.BestSegmentTimeRel
-            );
+            foreach (Segment sgm in _timer.Segments)
+            {
+                if (!sgm.RanSegmentBefore())
+                {
+                    return "**:**";
+                }
+
+                tt += sgm.IsCompleted() ? sgm.GetRelTime() : sgm.BestSegmentTimeRel;
+            }
 
             return Formatter.SecondsToTime(tt, false);
         }
 
         private string GetCurrentPace()
         {
-            double resultT = 0;
             double tm = 0;
-            _timer.Segments.ForeachI((s, i) =>
+            for (int i = 0; i < _timer.Segments.Length; i++)
             {
-                if (s.IsCompleted())
-                {
-                    tm += s.GetRelTime() - s.PbTimeRel;
-                }
-            });
+                Segment sgm = _timer.Segments[i];
 
-            resultT = _timer.GetPbTime() + tm;
+                if (!sgm.RanSegmentBefore())
+                {
+                    return "**:**";
+                }
+
+                if (sgm.IsCompleted())
+                {
+                    tm += sgm.GetRelTime() - sgm.PbTimeRel;
+                }
+            }
+
+            double resultT = _timer.GetPbTime() + tm;
 
             return Formatter.SecondsToTime(resultT, false);
         }
 
         private string GetPersonalBest()
         {
+            if (!_timer.HasPb())
+            {
+                return "**:**";
+            }
+
             return Formatter.SecondsToTime(_timer.GetPbTime(), false);
         }
 
@@ -115,7 +132,7 @@ namespace JumpDiveClock
             }
             else
             {
-                result = "******";
+                result = "***";
             }
 
             return result;
@@ -124,7 +141,16 @@ namespace JumpDiveClock
         private string GetSumOfBest()
         {
             double r = 0;
-            _timer.Segments.ToList().ForEach(s => r += s.BestSegmentTimeRel);
+            foreach (Segment sgm in _timer.Segments)
+            {
+                if (!sgm.RanSegmentBefore())
+                {
+                    return "**:**";
+                }
+
+                r += sgm.BestSegmentTimeRel;
+            }
+
             return Formatter.SecondsToTime(r, false);
         }
 

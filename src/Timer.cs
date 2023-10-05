@@ -27,6 +27,7 @@ namespace JumpDiveClock
         public float AttemptSizeTextPosX;
         public float AttemptSizeTextPosY;
         private const int ClearTimerIndex = -1;
+        private const double NoPbTime = -1;
 
         private ColorManager _colors = null!;
         private Config _config = null!;
@@ -133,6 +134,8 @@ namespace JumpDiveClock
 
         public double GetPbTime()
             => _pbTimeSecs;
+
+        public bool HasPb() => _pbTimeSecs != NoPbTime;
 
         public bool HasStarted() => _currentSegment > -1;
 
@@ -351,11 +354,17 @@ namespace JumpDiveClock
         private void InitializeSegments()
         {
             double absPbTime = 0;
-            for (int i = 0; i < Segments.Length; i++)
+            for (int i = 0; i < Segments.Length && absPbTime > NoPbTime; i++)
             {
                 absPbTime = 0;
                 for (int j = i; j >= 0; j--)
                 {
+                    if (!Segments[j].RanSegmentBefore())
+                    {
+                        absPbTime = NoPbTime;
+                        break;
+                    }
+
                     absPbTime += Segments[j].PbTimeRel;
                 }
 

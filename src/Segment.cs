@@ -58,7 +58,7 @@ namespace JumpDiveClock
             int fontSpacing, ColorManager colorManager, int separatorHeight, int fontSize,
             int marginSize)
         {
-            string pbTimeText = Formatter.SecondsToTime(_pbCompletedTimeAbs, false);
+            string pbTimeText = GetPbText();
             float segmentStartY = headerHeight + segmentHeight * drawIndex + separatorHeight *
                 (drawIndex + 1);
             Vector2 segmentNameSize = Raylib.MeasureTextEx(font, Name, fontSize,
@@ -126,6 +126,8 @@ namespace JumpDiveClock
 
         public bool IsCompleted() => _completedTimeAbs > 0;
 
+        public bool RanSegmentBefore() => BestSegmentTimeRel != -1;
+
         public void Reset()
         {
             _completedTimeAbs = 0;
@@ -154,6 +156,9 @@ namespace JumpDiveClock
 
         private bool GainingTimeRel() => GetRelTime() < PbTimeRel;
 
+        private string GetPbText() => RanSegmentBefore()
+                                        ? Formatter.SecondsToTime(_pbCompletedTimeAbs, false)
+                                        : "**:**";
         /// <summary>
         /// Picks a color based on how long the segment took to be completed.
         /// </summary>
