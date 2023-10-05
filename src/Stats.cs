@@ -155,7 +155,7 @@ namespace JumpDiveClock
         }
 
         private string GetWorldRecord()
-            => Formatter.SecondsToTime(_timer.WorldRecordSeconds, false);
-
+            => Formatter.SecondsToTime(_timer.WorldRecordSeconds, false)
+                + $" by {_timer.WorldRecordOwner}";
     }
 }

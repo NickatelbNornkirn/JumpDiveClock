@@ -54,3 +54,4 @@ timer_font_spacing: 2
 timer_size: 15
 title_category_titles_gap: 3
 world_record_seconds: 9.5
+world_record_owner: "John Doe"

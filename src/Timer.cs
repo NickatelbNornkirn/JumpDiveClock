@@ -74,6 +74,7 @@ namespace JumpDiveClock
         public int TimerFontSpacing { get; private set; }
         public float TimerSize { get; private set; }
         public int TitleCategoryTitlesGap { get; private set; }
+        public string WorldRecordOwner { get; private set; } = null!;
         public double WorldRecordSeconds { get; private set; }
 
         public void AutoSave()
@@ -445,6 +446,7 @@ namespace JumpDiveClock
                 if (_currentTimeSecs < WorldRecordSeconds)
                 {
                     WorldRecordSeconds = _currentTimeSecs;
+                    WorldRecordOwner = "me";
                 }
             }
 
