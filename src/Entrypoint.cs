@@ -22,12 +22,6 @@ namespace JumpDiveClock
     {
         public static void Main(string[] args)
         {
-            if (!InputManager.IsXInputAvailable())
-            {
-                Console.WriteLine("XInput is required for running this program.");
-                return;
-            }
-
             var app = new App();
 
             (ParsedArgs pa, Result paR) = CliArgsParser.ParseCliArgs(args);
@@ -41,7 +35,15 @@ namespace JumpDiveClock
                 return;
             }
 
-            Result r = app.Init(pa.SplitName, pa.ConfigFolder);
+            Result r;
+            try
+            {
+                r = app.Init(pa.SplitName, pa.ConfigFolder);
+            }
+            catch (NotSupportedException e)
+            {
+                r = new Result() { Success = false, Error = e.Message };
+            }
 
             if (!r.Success)
             {

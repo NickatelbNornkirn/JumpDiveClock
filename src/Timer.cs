@@ -21,7 +21,6 @@ using System.Numerics;
 
 namespace JumpDiveClock
 {
-    // TODO: FIXME: undoing final split doesn't work because the timer gets paused.
     public class Timer
     {
         public float AttemptSizeTextPosX;
@@ -49,7 +48,6 @@ namespace JumpDiveClock
         public int CategoryTitleFontSpacing { get; private set; }
         public StatType[] ExtraStats { get; private set; } = null!;
 
-        // TODO: check if all these values are really set by the configuration file.
         public string GameName { get; private set; } = null!;
 
         public int GameTitleFontSize { get; private set; }
@@ -64,7 +62,6 @@ namespace JumpDiveClock
 
         public int SegmentMargin { get; private set; }
 
-        // TODO: error check.
         public Segment[] Segments { get; private set; } = null!;
         public int SegmentsPerScreen { get; private set; }
 
@@ -142,7 +139,7 @@ namespace JumpDiveClock
 
         public void Update()
         {
-            _inputManager.UpdateKeyboardState();
+            _inputManager.InputReader.UpdateKeyboardState();
 
             float deltaTime = Raylib.GetFrameTime();
 
@@ -151,22 +148,22 @@ namespace JumpDiveClock
                 _currentTimeSecs += deltaTime;
             }
 
-            if (_inputManager.IsKeyPressed(_config.Keybindings.Split))
+            if (_inputManager.InputReader.IsKeyPressed(_config.Keybindings.Split))
             {
                 Split();
             }
 
-            if (_inputManager.AskingForReset(_config.Keybindings.Reset))
+            if (_inputManager.InputReader.AskingForReset(_config.Keybindings.Reset))
             {
                 Reset();
             }
 
-            if (_inputManager.IsKeyPressed(_config.Keybindings.Undo))
+            if (_inputManager.InputReader.IsKeyPressed(_config.Keybindings.Undo))
             {
                 Undo();
             }
 
-            if (_inputManager.IsKeyPressed(_config.Keybindings.Redo))
+            if (_inputManager.InputReader.IsKeyPressed(_config.Keybindings.Redo))
             {
                 Redo();
             }
