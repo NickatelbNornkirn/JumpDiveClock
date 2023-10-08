@@ -24,6 +24,7 @@ namespace JumpDiveClock
     public class Segment
     {
         private const double NoPbTime = -1;
+        private bool _completedRunBefore;
         private double _completedTimeAbs;
         private double _pbCompletedTimeAbs;
         private double _startedSegmentTimeAbs;
@@ -42,12 +43,14 @@ namespace JumpDiveClock
             YamlDotNet's deserializing function requires this class to have a parameterless
             constructor.
         */
-        public void Construct(double pbCompletedTimeAbs)
+        public void Construct(double pbCompletedTimeAbs, bool completedRunBefore)
         {
+            _completedRunBefore = completedRunBefore;
             _pbCompletedTimeAbs = pbCompletedTimeAbs;
             Reset();
         }
 
+        // TODO: REFACTOR: make these parameters properties and pass them through Construct().
         /// <summary>
         /// Draw segment.
         /// </summary>
@@ -85,7 +88,7 @@ namespace JumpDiveClock
             if (_completedTimeAbs != 0)
             {
                 string completedTimeTxt;
-                if (RanSegmentBefore())
+                if (_completedRunBefore)
                 {
                     completedTimeTxt = (IsAhead(_completedTimeAbs) ? "-" : "+") +
                         Formatter.SecondsToTime(
@@ -131,7 +134,7 @@ namespace JumpDiveClock
 
         public bool IsAhead(double timeAbs) => timeAbs < _pbCompletedTimeAbs;
 
-        public bool IsBest() => GetRelTime() < BestSegmentTimeRel;
+        public bool IsBest() => GetRelTime() < BestSegmentTimeRel || BestSegmentTimeRel == NoPbTime;
 
         public bool IsCompleted() => _completedTimeAbs > 0;
 
@@ -165,7 +168,7 @@ namespace JumpDiveClock
 
         private bool GainingTimeRel() => GetRelTime() < PbTimeRel;
 
-        private string GetPbText() => RanSegmentBefore()
+        private string GetPbText() => _completedRunBefore
                                         ? Formatter.SecondsToTime(_pbCompletedTimeAbs, false)
                                         : "**:**";
         /// <summary>
@@ -173,7 +176,12 @@ namespace JumpDiveClock
         /// </summary>
         private Color PickColor(ColorManager cm)
         {
-            if (!RanSegmentBefore() || IsBest())
+            if (!_completedRunBefore)
+            {
+                return cm.AheadGaining;
+            }
+
+            if (IsBest())
             {
                 return cm.Best;
             }

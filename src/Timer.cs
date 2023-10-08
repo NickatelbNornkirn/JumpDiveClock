@@ -46,6 +46,7 @@ namespace JumpDiveClock
         public string Category { get; private set; } = null!;
         public int CategoryTitleFontSize { get; private set; }
         public int CategoryTitleFontSpacing { get; private set; }
+        public bool CompletedRunBefore { get; private set; }
         public StatType[] ExtraStats { get; private set; } = null!;
 
         public string GameName { get; private set; } = null!;
@@ -366,7 +367,7 @@ namespace JumpDiveClock
                     absPbTime += Segments[j].PbTimeRel;
                 }
 
-                Segments[i].Construct(absPbTime);
+                Segments[i].Construct(absPbTime, CompletedRunBefore);
             }
 
             _pbTimeSecs = absPbTime;
@@ -434,7 +435,7 @@ namespace JumpDiveClock
 
             if (IsRunFinished())
             {
-                if (_currentTimeSecs < _pbTimeSecs)
+                if (_currentTimeSecs < _pbTimeSecs || _pbTimeSecs == NoPbTime)
                 {
                     Segments.ToList().ForEach(s =>
                     {
@@ -447,6 +448,8 @@ namespace JumpDiveClock
                     WorldRecordSeconds = _currentTimeSecs;
                     WorldRecordOwner = "me";
                 }
+
+                CompletedRunBefore = true;
             }
 
             _storage.SaveTimer(this, _config.SplitsStoragePath);

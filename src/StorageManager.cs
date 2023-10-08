@@ -78,6 +78,7 @@ namespace JumpDiveClock
                 }
                 catch (YamlException ex)
                 {
+                    Console.WriteLine(ex.InnerException);
                     result.Error = "Failed to deserialize splits.\n" + ex.Message;
                     result.Success = false;
                     return null;

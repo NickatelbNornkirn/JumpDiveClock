@@ -116,13 +116,15 @@ namespace JumpDiveClock
             _pressedKeys.Clear();
 
             /*
-                The command output many lines like "key[xx]=up" or "key[yy]" = down.
+                The command outputs many lines like "key[xx]=up" or "key[yy]" = down.
 
                 So we look for the ones that are down and grab their ID.
             */
             lines
                 .Where(line => line.Contains("=down")).ToList()
-                .ForEach(line => _pressedKeys.Add(Int32.Parse(line.Split('[')[1].Split(']')[0])));
+                .ForEach(line => _pressedKeys.Add(
+                    Int32.Parse(line.Split('[')[1].Split(']')[0])
+            ));
 
             _xinput.Close();
         }
