@@ -101,7 +101,6 @@ namespace JumpDiveClock
             _stats = new Stats(this);
 
             Reset(true);
-            InitializeSegments();
         }
 
         public void Draw(Font font)
@@ -279,9 +278,7 @@ namespace JumpDiveClock
             int timerOffset = ExtraStats.Length * segmentSize +
                 (ExtraStats.Length - 1) * SeparatorSize;
             int timerY = Raylib.GetRenderHeight() - timerHeight - SeparatorSize - timerOffset;
-            //Raylib.DrawRectangle(
-            //    0, timerY, Raylib.GetRenderWidth(), SeparatorSize, _colors.Separator
-            //);
+
             Raylib.DrawRectangle(0, timerY + timerHeight, Raylib.GetRenderWidth(), SeparatorSize,
                 _colors.Separator
             );
@@ -353,11 +350,16 @@ namespace JumpDiveClock
         private void InitializeSegments()
         {
             double absPbTime = 0;
-            for (int i = 0; i < Segments.Length && absPbTime > NoPbTime; i++)
+            for (int i = 0; i < Segments.Length; i++)
             {
                 absPbTime = 0;
                 for (int j = i; j >= 0; j--)
                 {
+                    if (absPbTime <= NoPbTime)
+                    {
+                        break;
+                    }
+
                     if (!Segments[j].RanSegmentBefore())
                     {
                         absPbTime = NoPbTime;
