@@ -21,11 +21,9 @@ namespace JumpDiveClock
     public class InputManager
     {
         public readonly IInputReader InputReader;
-        private Keybindings _keybindings;
 
         public InputManager(Config config)
         {
-            _keybindings = config.Keybindings;
             InputReader = ChooseInputReader(config);
         }
 

@@ -24,12 +24,19 @@ namespace JumpDiveClock
 {
     public class StorageManager
     {
+        private string _configFolder;
         private IDeserializer _deserializer = new DeserializerBuilder()
                 .WithNamingConvention(UnderscoredNamingConvention.Instance)
                 .Build();
         private ISerializer _serializer = new SerializerBuilder()
             .WithNamingConvention(UnderscoredNamingConvention.Instance)
             .Build();
+
+        public StorageManager(string configFolder)
+        {
+            _configFolder = configFolder;
+        }
+        public int MaxBackups { get; set; }
 
         public Config? LoadConfig(string configPath, string splitsPath, ref Result result)
         {
@@ -72,6 +79,7 @@ namespace JumpDiveClock
                 {
                     Timer timer = _deserializer.Deserialize<Timer>(splitsYml);
                     timer.Construct(config, this);
+                    SaveBackup(splitsYml, GetFileName(path));
 
                     result.Success = true;
                     return timer;
@@ -96,6 +104,45 @@ namespace JumpDiveClock
         {
             string yamlText = _serializer.Serialize(timer);
             File.WriteAllText(storagePath, yamlText);
+            SaveBackup(yamlText, GetFileName(storagePath));
+        }
+
+        private ulong GetDiff(ulong x, ulong y)
+            => x > y ? x - y : y - x;
+
+        private string GetFileName(string filePath)
+        {
+            string file = filePath.Split("/").Last();
+
+            // We need to remove the extension.
+            List<string> dotTokens = file.Split(".").ToList();
+            string fileName = String.Join('.', dotTokens.Take(dotTokens.Count - 1));
+
+            return fileName;
+        }
+
+        private ulong? GetLatestBackupNumber(string backupFolder)
+        {
+            string[] fileList = Directory.GetFiles(backupFolder)
+                                .Where(f => f.EndsWith(".yml"))
+                                .ToArray();
+            ulong? fileN = null;
+            foreach (string file in fileList)
+            {
+                try
+                {
+                    ulong n = ParseFileNumber(GetFileName(file));
+                    if (fileN is null || n > fileN)
+                    {
+                        fileN = n;
+                    }
+                }
+                catch (FormatException)
+                {
+                }
+            }
+
+            return fileN;
         }
 
         private string? LoadText(string path)
@@ -111,6 +158,50 @@ namespace JumpDiveClock
             }
 
             return text;
+        }
+
+        private ulong ParseFileNumber(string fileName)
+            => UInt64.Parse(fileName.Split("_").Last());
+
+        private void PurgeOldBackups(ulong newestBackupN, string backupFolder)
+        {
+            string[] backupFiles = Directory.GetFiles(backupFolder)
+                                    .Where(f => f.EndsWith(".yml"))
+                                    .ToArray();
+
+            foreach (string file in backupFiles)
+            {
+                ulong diff = GetDiff(newestBackupN, ParseFileNumber(GetFileName(file)));
+
+                if (diff >= (uint)MaxBackups)
+                {
+                    File.Delete(file);
+                }
+
+            }
+        }
+
+        private void SaveBackup(string yamlText, string splitFileName)
+        {
+            string backupFolder = $"{_configFolder}/backups/{splitFileName}/";
+            Directory.CreateDirectory(backupFolder);
+
+            ulong? lastBackupN = GetLatestBackupNumber(backupFolder);
+            string lastBackup = lastBackupN is null
+                                ? ""
+                                : File.ReadAllText(
+                                    $"{backupFolder}/{splitFileName}_{lastBackupN}.yml");
+
+            ulong newBackupN = lastBackupN + 1 ?? 0;
+            if (lastBackup != yamlText)
+            {
+                File.WriteAllText(
+                    $"{backupFolder}/{splitFileName}_{newBackupN}.yml",
+                    yamlText
+                );
+            }
+
+            PurgeOldBackups(newBackupN, backupFolder);
         }
     }
 }

@@ -24,7 +24,7 @@ namespace JumpDiveClock
     {
         private Config _appConfig = null!;
         private Font _font;
-        private StorageManager _storage = new StorageManager();
+        private StorageManager _storage = null!;
         private Timer _timer = null!;
 
         public void Exit()
@@ -39,6 +39,8 @@ namespace JumpDiveClock
             string homeFolder = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
             configFolder ??= $"{homeFolder}/.config/jump-dive-clock";
             Directory.CreateDirectory(configFolder);
+
+            _storage = new StorageManager(configFolder);
 
             string configPath = $"{configFolder}/config.yml";
             if (!File.Exists(configPath))
@@ -70,6 +72,8 @@ namespace JumpDiveClock
             {
                 _appConfig = config;
             }
+
+            _storage.MaxBackups = _appConfig.MaxBackups;
 
             Timer? loadedTimer = _storage.LoadTimer(splitPath, _appConfig, ref result);
             if (loadedTimer is null)
@@ -125,8 +129,13 @@ namespace JumpDiveClock
         private void SetupWindow()
         {
             const string Title = "Jump Dive Clock";
+
+            if (_appConfig.WindowResizable)
+            {
+                Raylib.SetConfigFlags(ConfigFlags.FLAG_WINDOW_RESIZABLE);
+            }
+
             Raylib.InitWindow(_appConfig.DefaultWidth, _appConfig.DefaultHeight, Title);
-            Raylib.SetWindowState(ConfigFlags.FLAG_WINDOW_RESIZABLE);
             Raylib.SetTargetFPS(_appConfig.MaximumFramerate);
         }
 
