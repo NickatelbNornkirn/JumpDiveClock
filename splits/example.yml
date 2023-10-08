@@ -6,6 +6,7 @@ attempt_count_font_spacing: 1
 category: Any% Glitchless
 category_title_font_size: 20
 category_title_font_spacing: 2
+completed_run_before: true
 extra_stats:
 - CurrentPace
 - PersonalBest
