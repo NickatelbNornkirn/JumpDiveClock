@@ -18,30 +18,12 @@
 
 namespace JumpDiveClock
 {
-    public class InputManager
+    public interface IGlobalInputReader
     {
-        public readonly IInputReader InputReader;
-
-        public InputManager(Config config)
-        {
-            InputReader = ChooseInputReader(config);
-        }
-
-        /// <summary>
-        /// Chooses input reader.
-        /// Crashes if no available implementation is found.
-        /// </summary>
-        private IInputReader ChooseInputReader(Config config)
-        {
-            if (XReader.IsBackendAvailable())
-            {
-                return new XReader(config.KeyboardId);
-            }
-            else
-            {
-                throw new
-                    NotSupportedException("Can't read global input. Your device isn't supported.");
-            }
-        }
+        public static abstract bool IsBackendAvailable();
+        public bool AskingForReset(Keybinding key);
+        public bool IsKeyPressed(Keybinding key, double minimumDelay = 1.0, DateTime? now = null);
+        public bool JustPressedKey(Keybinding key, double secondsToCompare, DateTime now);
+        public void UpdateKeyboardState(); // Call once per frame.
     }
 }

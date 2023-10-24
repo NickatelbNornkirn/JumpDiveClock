@@ -102,7 +102,7 @@ namespace JumpDiveClock
             return result;
         }
 
-        public void Loop()
+        public void MainLoop()
         {
             var running = true;
 

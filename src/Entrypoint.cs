@@ -52,7 +52,7 @@ namespace JumpDiveClock
                 return;
             }
 
-            app.Loop();
+            app.MainLoop();
             app.Exit();
         }
     }

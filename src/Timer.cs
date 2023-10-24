@@ -33,9 +33,9 @@ namespace JumpDiveClock
         private int _currentSegment;
 
         private double _currentTimeSecs;
-        private HistoryManager _history = new HistoryManager();
 
-        private InputManager _inputManager = null!;
+        private GlobalInputManager _globalInputManager = null!;
+        private HistoryManager _history = new HistoryManager();
         private double _pbTimeSecs;
         private Stats _stats = null!;
         private StorageManager _storage = null!;
@@ -92,7 +92,7 @@ namespace JumpDiveClock
         {
             _config = config;
             _storage = storage;
-            _inputManager = new InputManager(_config);
+            _globalInputManager = new GlobalInputManager(_config);
             _colors = new ColorManager(
                 HexColors.Background, HexColors.TextBase, HexColors.PaceAheadGaining,
                 HexColors.PaceAheadLosing, HexColors.PaceBehindGaining, HexColors.PaceBehindLosing,
@@ -139,7 +139,7 @@ namespace JumpDiveClock
 
         public void Update()
         {
-            _inputManager.InputReader.UpdateKeyboardState();
+            _globalInputManager.InputReader.UpdateKeyboardState();
 
             float deltaTime = Raylib.GetFrameTime();
 
@@ -148,26 +148,7 @@ namespace JumpDiveClock
                 _currentTimeSecs += deltaTime;
             }
 
-            if (_inputManager.InputReader.IsKeyPressed(_config.GlobalKeybindings.Split))
-            {
-                Split();
-            }
-
-            if (_inputManager.InputReader.AskingForReset(_config.GlobalKeybindings.Reset))
-            {
-                Reset();
-            }
-
-            if (_inputManager.InputReader.IsKeyPressed(_config.GlobalKeybindings.Undo))
-            {
-                Undo();
-            }
-
-            if (_inputManager.InputReader.IsKeyPressed(_config.GlobalKeybindings.Redo))
-            {
-                Redo();
-            }
-
+            HandleGlobalInput();
         }
 
         private void DrawExtraStats(Font font, float segmentHeight)
@@ -339,6 +320,29 @@ namespace JumpDiveClock
             Raylib.DrawTextEx(
                 font, timerText, textPos, TimerFontSize, TimerFontSpacing, (Color)drawColor
             );
+        }
+
+        private void HandleGlobalInput()
+        {
+            if (_globalInputManager.InputReader.IsKeyPressed(_config.GlobalKeybindings.Split))
+            {
+                Split();
+            }
+
+            if (_globalInputManager.InputReader.AskingForReset(_config.GlobalKeybindings.Reset))
+            {
+                Reset();
+            }
+
+            if (_globalInputManager.InputReader.IsKeyPressed(_config.GlobalKeybindings.Undo))
+            {
+                Undo();
+            }
+
+            if (_globalInputManager.InputReader.IsKeyPressed(_config.GlobalKeybindings.Redo))
+            {
+                Redo();
+            }
         }
 
         private void InitializeSegments()

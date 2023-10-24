@@ -22,14 +22,14 @@ using System.Diagnostics;
 
 namespace JumpDiveClock
 {
-    public class XReader : IInputReader
+    public class XReader : IGlobalInputReader
     {
+        private const int LShiftKeyCode = 50;
+        private const int RShiftKeyCode = 62;
         private Dictionary<int, DateTime> _lastKeyPressTimes = new Dictionary<int, DateTime>();
         private DateTime _lastResetPressTime = DateTime.MinValue;
         private List<int> _pressedKeys = new List<int>();
         private Process _xinput;
-        private const int LShiftKeyCode = 50;
-        private const int RShiftKeyCode = 62;
 
         public XReader(int keyboardId)
         {
@@ -128,12 +128,12 @@ namespace JumpDiveClock
             _xinput.Close();
         }
 
+        private int GetKeyCode(Keybinding k) => Int32.Parse(k.KeyId);
+
         private bool KeystrokeDown(Keybinding key)
             => _pressedKeys.Contains(GetKeyCode(key)) && (!key.RequiresShift || ShiftPressed());
 
         private bool ShiftPressed()
             => _pressedKeys.Contains(RShiftKeyCode) || _pressedKeys.Contains(LShiftKeyCode);
-
-        private int GetKeyCode(Keybinding k) => Int32.Parse(k.KeyId);
     }
 }
