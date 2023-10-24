@@ -20,9 +20,10 @@ namespace JumpDiveClock
 {
     public interface IInputReader
     {
-        public bool AskingForReset(int keyCode);
-        public bool IsKeyPressed(int keyCode, double minimumDelay = 1.0, DateTime? now = null);
-        public bool JustPressedKey(int keyCode, double secondsToCompare, DateTime now);
+        public static abstract bool IsBackendAvailable();
+        public bool AskingForReset(Keybinding key);
+        public bool IsKeyPressed(Keybinding key, double minimumDelay = 1.0, DateTime? now = null);
+        public bool JustPressedKey(Keybinding key, double secondsToCompare, DateTime now);
         public void UpdateKeyboardState(); // Call once per frame.
     }
 }

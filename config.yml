@@ -1,3 +1,5 @@
+config_version: 1.0
+
 # Reccomended value: the same as the framerate of your video/stream.
 maximum_framerate: 35
 window_resizable: false
@@ -12,8 +14,17 @@ font_file: "default"
 keyboard_id: 10
 
 # Use "xev" to find the IDs. Look for "keycode".
-keybindings:
-  split: 41 # "F".
-  reset: 22 # "Backspace".
-  undo: 30 # "U".
-  redo: 27 # "R".
+global_keybindings:
+  key_id_type: "x11"
+  split:
+    key_id: 41 # "F".
+    shift: false
+  reset:
+    key_id: 22 # "Backspace".
+    shift: false
+  undo:
+    key_id: 30 # "U"
+    shift: false
+  redo:
+    key_id: 27 # "R"
+    shift: false

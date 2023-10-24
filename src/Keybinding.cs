@@ -18,17 +18,9 @@
 
 namespace JumpDiveClock
 {
-    public class Config
+    public class Keybinding
     {
-        public double ConfigVersion { get; private set; }
-        public int DefaultHeight { get; private set; }
-        public int DefaultWidth { get; private set; }
-        public string FontFile { get; private set; } = null!;
-        public Keybindings GlobalKeybindings { get; private set; }
-        public int KeyboardId { get; private set; }
-        public int MaxBackups { get; private set; }
-        public int MaximumFramerate { get; private set; }
-        public string SplitsStoragePath { get; set; } = null!;
-        public bool WindowResizable { get; private set; }
+        public string KeyId { get; private set; } = null!;
+        public bool Shift { get; private set; }
     }
 }

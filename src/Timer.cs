@@ -148,22 +148,22 @@ namespace JumpDiveClock
                 _currentTimeSecs += deltaTime;
             }
 
-            if (_inputManager.InputReader.IsKeyPressed(_config.Keybindings.Split))
+            if (_inputManager.InputReader.IsKeyPressed(_config.GlobalKeybindings.Split))
             {
                 Split();
             }
 
-            if (_inputManager.InputReader.AskingForReset(_config.Keybindings.Reset))
+            if (_inputManager.InputReader.AskingForReset(_config.GlobalKeybindings.Reset))
             {
                 Reset();
             }
 
-            if (_inputManager.InputReader.IsKeyPressed(_config.Keybindings.Undo))
+            if (_inputManager.InputReader.IsKeyPressed(_config.GlobalKeybindings.Undo))
             {
                 Undo();
             }
 
-            if (_inputManager.InputReader.IsKeyPressed(_config.Keybindings.Redo))
+            if (_inputManager.InputReader.IsKeyPressed(_config.GlobalKeybindings.Redo))
             {
                 Redo();
             }

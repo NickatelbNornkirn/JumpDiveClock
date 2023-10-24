@@ -28,11 +28,12 @@ namespace JumpDiveClock
         }
 
         /// <summary>
+        /// Chooses input reader.
         /// Crashes if no available implementation is found.
         /// </summary>
         private IInputReader ChooseInputReader(Config config)
         {
-            if (XReader.IsXInputAvailable())
+            if (XReader.IsBackendAvailable())
             {
                 return new XReader(config.KeyboardId);
             }

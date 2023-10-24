@@ -44,7 +44,7 @@ namespace JumpDiveClock
             };
         }
 
-        public static bool IsXInputAvailable()
+        public static bool IsBackendAvailable()
         {
             try
             {
@@ -70,11 +70,11 @@ namespace JumpDiveClock
             }
         }
 
-        public bool AskingForReset(int keyCode)
+        public bool AskingForReset(Keybinding key)
         {
             const double MinPressInterval = 0.1;
             DateTime now = DateTime.Now;
-            bool resetPressed = IsKeyPressed(keyCode, MinPressInterval, now);
+            bool resetPressed = IsKeyPressed(key, MinPressInterval, now);
 
             bool result = resetPressed && now <= _lastResetPressTime.AddSeconds(0.5) &&
                 now > _lastResetPressTime.AddSeconds(MinPressInterval);
@@ -87,16 +87,15 @@ namespace JumpDiveClock
             return result;
         }
 
-        public bool IsKeyPressed(int keyCode, double minimumDelay = 1.0, DateTime? now = null)
+        public bool IsKeyPressed(Keybinding key, double minimumDelay = 1.0, DateTime? now = null)
         {
-            bool keyDown = _pressedKeys.Contains(keyCode);
-            bool result = keyDown && !JustPressedKey(keyCode, minimumDelay, now ?? DateTime.Now);
-
-            return result;
+            bool keyDown = _pressedKeys.Contains(GetKeyCode(key));
+            return keyDown && !JustPressedKey(key, minimumDelay, now ?? DateTime.Now);
         }
 
-        public bool JustPressedKey(int keyCode, double secondsToCompare, DateTime now)
+        public bool JustPressedKey(Keybinding key, double secondsToCompare, DateTime now)
         {
+            int keyCode = GetKeyCode(key);
             bool result = _lastKeyPressTimes.ContainsKey(keyCode)
                             && now <= _lastKeyPressTimes[keyCode].AddSeconds(secondsToCompare);
 
@@ -128,5 +127,7 @@ namespace JumpDiveClock
 
             _xinput.Close();
         }
+
+        private int GetKeyCode(Keybinding k) => Int32.Parse(k.KeyId);
     }
 }
