@@ -2,6 +2,7 @@ config_version: 1.0
 
 # Reccomended value: the same as the framerate of your video/stream.
 maximum_framerate: 35
+
 window_resizable: false
 max_backups: 500
 
@@ -18,13 +19,13 @@ global_keybindings:
   key_id_type: "x11"
   split:
     key_id: 41 # "F".
-    shift: false
+    requires_shift: false
   reset:
     key_id: 22 # "Backspace".
-    shift: false
+    requires_shift: false
   undo:
     key_id: 30 # "U"
-    shift: false
+    requires_shift: false
   redo:
     key_id: 27 # "R"
-    shift: false
+    requires_shift: false

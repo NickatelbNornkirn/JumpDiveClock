@@ -18,9 +18,9 @@
 
 namespace JumpDiveClock
 {
-    public class Keybinding
+    public struct Keybinding
     {
-        public string KeyId { get; private set; } = null!;
-        public bool Shift { get; private set; }
+        public string KeyId { get; private set; }
+        public bool RequiresShift { get; private set; }
     }
 }

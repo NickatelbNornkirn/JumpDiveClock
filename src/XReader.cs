@@ -28,6 +28,8 @@ namespace JumpDiveClock
         private DateTime _lastResetPressTime = DateTime.MinValue;
         private List<int> _pressedKeys = new List<int>();
         private Process _xinput;
+        private const int LShiftKeyCode = 50;
+        private const int RShiftKeyCode = 62;
 
         public XReader(int keyboardId)
         {
@@ -88,15 +90,13 @@ namespace JumpDiveClock
         }
 
         public bool IsKeyPressed(Keybinding key, double minimumDelay = 1.0, DateTime? now = null)
-        {
-            bool keyDown = _pressedKeys.Contains(GetKeyCode(key));
-            return keyDown && !JustPressedKey(key, minimumDelay, now ?? DateTime.Now);
-        }
+            => KeystrokeDown(key) && !JustPressedKey(key, minimumDelay, now ?? DateTime.Now);
 
         public bool JustPressedKey(Keybinding key, double secondsToCompare, DateTime now)
         {
             int keyCode = GetKeyCode(key);
-            bool result = _lastKeyPressTimes.ContainsKey(keyCode)
+            bool result = KeystrokeDown(key)
+                            && _lastKeyPressTimes.ContainsKey(keyCode)
                             && now <= _lastKeyPressTimes[keyCode].AddSeconds(secondsToCompare);
 
             if (!result)
@@ -127,6 +127,12 @@ namespace JumpDiveClock
 
             _xinput.Close();
         }
+
+        private bool KeystrokeDown(Keybinding key)
+            => _pressedKeys.Contains(GetKeyCode(key)) && (!key.RequiresShift || ShiftPressed());
+
+        private bool ShiftPressed()
+            => _pressedKeys.Contains(RShiftKeyCode) || _pressedKeys.Contains(LShiftKeyCode);
 
         private int GetKeyCode(Keybinding k) => Int32.Parse(k.KeyId);
     }
