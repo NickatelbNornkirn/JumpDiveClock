@@ -316,12 +316,6 @@ namespace JumpDiveClock
                 int segI = Math.Min(_currentSegment, Segments.Length - 1);
                 bool ahead = _currentTimeSecs < Segments[segI].GetAbsolutePbCompletionTime();
 
-                if (ahead && _currentSegment > 0 &&
-                    !Segments[_currentSegment - 1].WasAheadOnFinish())
-                {
-                    drawColor = _colors.AheadLosing;
-                }
-
                 if (!Segments.Last().IsAhead(_currentTimeSecs))
                 {
                     drawColor = _colors.BehindLosing;
