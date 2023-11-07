@@ -55,8 +55,8 @@ namespace JumpDiveClock
                     StartInfo = new ProcessStartInfo
                     {
                         FileName = "xinput",
-                        UseShellExecute = true,
-                        RedirectStandardOutput = false,
+                        UseShellExecute = false,
+                        RedirectStandardOutput = true,
                         CreateNoWindow = true
                     }
                 };
