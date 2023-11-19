@@ -229,7 +229,7 @@ namespace JumpDiveClock
             int segmentsToDraw)
         {
             int offset = Math.Min(
-                Math.Max(_currentSegment - (segmentsToDraw - 1), 0),
+                Math.Max(_currentSegment - (segmentsToDraw - _config.MinSegmentsAheadToShow), 0),
                 Segments.Length - segmentsToDraw
             );
 

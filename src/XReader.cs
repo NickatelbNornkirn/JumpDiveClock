@@ -22,6 +22,7 @@ using System.Diagnostics;
 
 namespace JumpDiveClock
 {
+    // Used for reading global input on Xorg.
     public class XReader : IGlobalInputReader
     {
         private const int LShiftKeyCode = 50;
