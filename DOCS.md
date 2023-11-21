@@ -17,19 +17,52 @@ JumpDiveClock split:cool_game
 JumpDiveClock config_folder:$HOME/speedruns/ split:example
 ```
 
-## Configuration
+## Split configuration
 
 WIP. Just look at the example config and figure stuff out. GLHF.
 
+### Positions
+
+Positions are always relative to whatever contains the object in question.
+X begins (i.e. is 0) at the leftmost part of the container.
+Y begins at the top of the container.
+
+Example:
+
+```none
+
+(x: 0.4, y: 0.6)
+00000
+00000
+0#000
+00000
+00000
+
+```
+
 ### attempt_size_text_pos_x
+
+Type: fractional number (e.g. 7.5).
+
+Relative horizontal position.
 
 ### attempt_size_text_pos_y
 
+Type: fractional number (e.g. 7.5).
+
 ### attempt_count
+
+Type: integer (e.g. 7).
+
+How many attempts were completed in this split.
 
 ### attempt_count_font_size
 
+How big is the font for the attempt count.
+
 ### attempt_count_font_spacing
+
+How large is the font font for the attempt count.
 
 ### category
 

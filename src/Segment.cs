@@ -168,9 +168,17 @@ namespace JumpDiveClock
 
         private bool GainingTimeRel() => GetRelTime() < PbTimeRel;
 
-        private string GetPbText() => _completedRunBefore
-                                        ? Formatter.SecondsToTime(_pbCompletedTimeAbs, false)
-                                        : "**:**";
+        private string GetPbText()
+        {
+            if (IsCompleted())
+            {
+                return Formatter.SecondsToTime(_completedTimeAbs, false);
+            }
+
+            return _completedRunBefore
+                ? Formatter.SecondsToTime(_pbCompletedTimeAbs, false) : "**:**";
+        }
+
         /// <summary>
         /// Picks a color based on how long the segment took to be completed.
         /// </summary>
