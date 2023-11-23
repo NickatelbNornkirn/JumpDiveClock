@@ -40,7 +40,7 @@ namespace JumpDiveClock.Settings
         }
         public int MaxBackups { get; set; }
 
-        public Config? LoadConfig(string configPath, string splitsPath, ref Result result)
+        public AppConfig? LoadConfig(string configPath, string splitsPath, ref Result result)
         {
             if (!File.Exists(configPath))
             {
@@ -53,7 +53,7 @@ namespace JumpDiveClock.Settings
             {
                 try
                 {
-                    Config config = _deserializer.Deserialize<Config>(configText);
+                    AppConfig config = _deserializer.Deserialize<AppConfig>(configText);
                     config.SplitsStoragePath = splitsPath;
                     result.Success = true;
                     return config;
@@ -73,14 +73,14 @@ namespace JumpDiveClock.Settings
             }
         }
 
-        public SpeedrunTimer? LoadTimer(string path, Config config, ref Result result)
+        public SpeedrunTimer? LoadTimer(string path, AppConfig config, ref Result result)
         {
             if (LoadText(path) is string splitsYml)
             {
                 try
                 {
-                    SpeedrunTimer timer = _deserializer.Deserialize<SpeedrunTimer>(splitsYml);
-                    timer.Construct(config, this);
+                    SpeedrunTimer timer = new SpeedrunTimer(config,
+                        _deserializer.Deserialize<SpeedgameData>(splitsYml), this);
                     SaveBackup(splitsYml, GetFileName(path));
 
                     result.Success = true;
@@ -102,9 +102,9 @@ namespace JumpDiveClock.Settings
             }
         }
 
-        public void SaveTimer(SpeedrunTimer timer, string storagePath)
+        public void SaveTimerLayout(SpeedrunTimer timer, string storagePath)
         {
-            string yamlText = _serializer.Serialize(timer);
+            string yamlText = _serializer.Serialize(timer.SpeedgameData);
             File.WriteAllText(storagePath, yamlText);
             SaveBackup(yamlText, GetFileName(storagePath));
         }

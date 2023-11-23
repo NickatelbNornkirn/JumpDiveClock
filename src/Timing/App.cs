@@ -24,7 +24,7 @@ namespace JumpDiveClock.Timing
 {
     public class App
     {
-        private Config _appConfig = null!;
+        private AppConfig _appConfig = null!;
         private Font _font;
         private StorageManager _storage = null!;
         private SpeedrunTimer _timer = null!;
@@ -65,7 +65,7 @@ namespace JumpDiveClock.Timing
 
             Console.WriteLine("Initializing app...");
 
-            Config? config = _storage.LoadConfig(configPath, splitPath, ref result);
+            AppConfig? config = _storage.LoadConfig(configPath, splitPath, ref result);
             if (config is null)
             {
                 return result;

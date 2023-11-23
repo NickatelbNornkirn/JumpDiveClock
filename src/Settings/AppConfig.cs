@@ -20,7 +20,7 @@ using JumpDiveClock.Input;
 
 namespace JumpDiveClock.Settings
 {
-    public class Config
+    public class AppConfig
     {
         public double ConfigVersion { get; private set; }
         public int DefaultHeight { get; private set; }

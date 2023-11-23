@@ -71,7 +71,7 @@ namespace JumpDiveClock.Timing
         private string GetBestPossibleTime()
         {
             double tt = 0;
-            foreach (Segment sgm in _timer.Segments)
+            foreach (Segment sgm in _timer.SpeedgameData.Segments)
             {
                 if (!sgm.RanSegmentBefore())
                 {
@@ -87,9 +87,9 @@ namespace JumpDiveClock.Timing
         private string GetCurrentPace()
         {
             double tm = 0;
-            for (int i = 0; i < _timer.Segments.Length; i++)
+            for (int i = 0; i < _timer.SpeedgameData.Segments.Length; i++)
             {
-                Segment sgm = _timer.Segments[i];
+                Segment sgm = _timer.SpeedgameData.Segments[i];
 
                 if (!sgm.RanSegmentBefore())
                 {
@@ -127,9 +127,10 @@ namespace JumpDiveClock.Timing
                     double rc = 0;
                     for (int i = 0; i < _timer.GetCurrentSegment(); i++)
                     {
-                        rc += _timer.Segments[i].ResetCount;
+                        rc += _timer.SpeedgameData.Segments[i].ResetCount;
                     }
-                    double p = (_timer.AttemptCount - rc) / Math.Max(_timer.AttemptCount, 1) * 100.0;
+                    double p = (_timer.SpeedgameData.AttemptCount - rc)
+                                / Math.Max(_timer.SpeedgameData.AttemptCount, 1) * 100.0;
                     result = p.ToString("00.00") + "%";
                 }
                 else
@@ -148,7 +149,7 @@ namespace JumpDiveClock.Timing
         private string GetSumOfBest()
         {
             double r = 0;
-            foreach (Segment sgm in _timer.Segments)
+            foreach (Segment sgm in _timer.SpeedgameData.Segments)
             {
                 if (!sgm.RanSegmentBefore())
                 {
@@ -162,7 +163,7 @@ namespace JumpDiveClock.Timing
         }
 
         private string GetWorldRecord()
-            => Formatter.SecondsToTime(_timer.WorldRecordSeconds, false)
-                + $" by {_timer.WorldRecordOwner}";
+            => Formatter.SecondsToTime(_timer.SpeedgameData.WorldRecordSeconds, false)
+                + $" by {_timer.SpeedgameData.WorldRecordOwner}";
     }
 }

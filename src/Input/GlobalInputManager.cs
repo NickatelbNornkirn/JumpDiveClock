@@ -24,7 +24,7 @@ namespace JumpDiveClock.Input
     {
         public readonly IGlobalInputReader InputReader;
 
-        public GlobalInputManager(Config config)
+        public GlobalInputManager(AppConfig config)
         {
             InputReader = ChooseInputReader(config);
         }
@@ -33,7 +33,7 @@ namespace JumpDiveClock.Input
         /// Chooses input reader.
         /// Crashes if no available implementation is found.
         /// </summary>
-        private IGlobalInputReader ChooseInputReader(Config config)
+        private IGlobalInputReader ChooseInputReader(AppConfig config)
         {
             if (XReader.IsBackendAvailable())
             {
