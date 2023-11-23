@@ -19,11 +19,12 @@ own. And made this to share to other people that may find it useful.
 
 * marking time (duh);
 * comparing the current time with your personal best;
-* stats (best possible time, current pace, % of runs that reach each segment, personal best,
+* having stats (best possible time, current pace, % of runs that reach each segment, personal best,
     world record, sum of best);
-* a backup system that creates copies of the speedgame's data whenever a change is made to it;
-* almost completely customizable via a config file;
-* runs on Linux (and probably on *BSD, haven't tested it).
+* having a backup system that creates copies of the speedgame's data whenever a change is made to
+    it;
+* being almost completely customizable via a config file;
+* running on Linux (and probably on *BSD, haven't tested it).
 
 ### Where did this name come from?
 
