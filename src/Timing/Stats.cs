@@ -16,7 +16,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-namespace JumpDiveClock
+namespace JumpDiveClock.Timing
 {
     public class Stats
     {
@@ -30,9 +30,9 @@ namespace JumpDiveClock
             { StatType.PersonalBest, "Personal best: "},
             { StatType.WorldRecord, "World record: "}
         };
-        private readonly Timer _timer;
+        private readonly SpeedrunTimer _timer;
 
-        public Stats(Timer timer)
+        public Stats(SpeedrunTimer timer)
         {
             _timer = timer;
         }

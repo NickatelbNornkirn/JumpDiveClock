@@ -16,6 +16,10 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+using JumpDiveClock.Timing;
+using JumpDiveClock.Misc;
+using JumpDiveClock.Settings;
+
 namespace JumpDiveClock
 {
     public class Entrypoint

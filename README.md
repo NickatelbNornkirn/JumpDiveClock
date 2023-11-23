@@ -1,6 +1,6 @@
 # JumpDiveClock
 
-A simple speedrun timer for X11. Intended for my personal use.
+A speedrun timer for X11. Intended for my personal use. I add features that seem useful to me.
 
 ## Installation
 
@@ -12,7 +12,14 @@ A simple speedrun timer for X11. Intended for my personal use.
 
 ### Why?
 
-I tried some timers for Linux and didn't like them, so I decided to write my own.
+I tried some timers for Linux and I either disliked them or they didn't work at all. So I made my
+own. And made this to share to other people that may find it useful.
+
+### What features do you have?
+
+* marking time (duh);
+* comparing the current time with your personal best;
+
 
 ### Where did this name come from?
 

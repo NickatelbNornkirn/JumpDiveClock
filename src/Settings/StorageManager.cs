@@ -16,11 +16,14 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+using JumpDiveClock.Misc;
+using JumpDiveClock.Settings;
+using JumpDiveClock.Timing;
 using YamlDotNet.Core;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
-namespace JumpDiveClock
+namespace JumpDiveClock.Settings
 {
     public class StorageManager
     {
@@ -71,13 +74,13 @@ namespace JumpDiveClock
             }
         }
 
-        public Timer? LoadTimer(string path, Config config, ref Result result)
+        public SpeedrunTimer? LoadTimer(string path, Config config, ref Result result)
         {
             if (LoadText(path) is string splitsYml)
             {
                 try
                 {
-                    Timer timer = _deserializer.Deserialize<Timer>(splitsYml);
+                    SpeedrunTimer timer = _deserializer.Deserialize<SpeedrunTimer>(splitsYml);
                     timer.Construct(config, this);
                     SaveBackup(splitsYml, GetFileName(path));
 
@@ -100,7 +103,7 @@ namespace JumpDiveClock
             }
         }
 
-        public void SaveTimer(Timer timer, string storagePath)
+        public void SaveTimer(SpeedrunTimer timer, string storagePath)
         {
             string yamlText = _serializer.Serialize(timer);
             File.WriteAllText(storagePath, yamlText);

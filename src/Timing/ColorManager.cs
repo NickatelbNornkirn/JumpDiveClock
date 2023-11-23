@@ -18,7 +18,7 @@
 
 using Raylib_cs;
 
-namespace JumpDiveClock
+namespace JumpDiveClock.Timing
 {
     public class ColorManager
     {

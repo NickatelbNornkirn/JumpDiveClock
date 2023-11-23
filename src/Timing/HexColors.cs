@@ -16,11 +16,17 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-namespace JumpDiveClock
+namespace JumpDiveClock.Timing
 {
-    public struct ParsedArgs
+    public class HexColors
     {
-        public string ConfigFolder;
-        public string SplitName;
+        public string Background { get; set; } = null!;
+        public string PaceAheadGaining { get; set; } = null!;
+        public string PaceAheadLosing { get; set; } = null!;
+        public string PaceBehindGaining { get; set; } = null!;
+        public string PaceBehindLosing { get; set; } = null!;
+        public string PaceBest { get; set; } = null!;
+        public string Separator { get; set; } = null!;
+        public string TextBase { get; set; } = null!;
     }
 }

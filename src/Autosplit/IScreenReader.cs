@@ -16,21 +16,13 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-namespace JumpDiveClock
+using System.Drawing;
+
+namespace JumpDiveClock.Autosplit
 {
-    public static class Extensions
+    public interface IAutoSplitter
     {
-        /// <summary>
-        ///     Like a foreach, but the index is also known.
-        /// </summary>
-        /// <param name="reverse">
-        ///     If the enumerable should be iterated from the last element.</param>
-        public static void ForeachI<T>(this IEnumerable<T> enumerable, Action<T, int> action,
-            bool reverse = false)
-        {
-            List<T> list = enumerable.ToList();
-            int i = reverse ? list.Count : 0;
-            list.ForEach(x => action(x, reverse ? --i : i++));
-        }
+        public static abstract bool IsBackendAvailable();
+
     }
 }

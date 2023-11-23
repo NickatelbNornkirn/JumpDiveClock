@@ -20,7 +20,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 
-namespace JumpDiveClock
+namespace JumpDiveClock.Input
 {
     // Used for reading global input on Xorg.
     public class XReader : IGlobalInputReader

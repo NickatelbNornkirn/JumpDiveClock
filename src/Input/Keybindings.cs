@@ -16,17 +16,14 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-namespace JumpDiveClock
+namespace JumpDiveClock.Input
 {
-    public class HexColors
+    public struct Keybindings
     {
-        public string Background { get; set; } = null!;
-        public string PaceAheadGaining { get; set; } = null!;
-        public string PaceAheadLosing { get; set; } = null!;
-        public string PaceBehindGaining { get; set; } = null!;
-        public string PaceBehindLosing { get; set; } = null!;
-        public string PaceBest { get; set; } = null!;
-        public string Separator { get; set; } = null!;
-        public string TextBase { get; set; } = null!;
+        public string KeyIdType { get; private set; }
+        public Keybinding Redo { get; set; }
+        public Keybinding Reset { get; set; }
+        public Keybinding Split { get; set; }
+        public Keybinding Undo { get; set; }
     }
 }

@@ -16,14 +16,22 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-namespace JumpDiveClock
+using JumpDiveClock.Input;
+
+namespace JumpDiveClock.Settings
 {
-    public interface IGlobalInputReader
+    public class Config
     {
-        public static abstract bool IsBackendAvailable();
-        public bool AskingForReset(Keybinding key);
-        public bool IsKeyPressed(Keybinding key, double minimumDelay = 1.0, DateTime? now = null);
-        public bool JustPressedKey(Keybinding key, double secondsToCompare, DateTime now);
-        public void UpdateKeyboardState(); // Call once per frame.
+        public double ConfigVersion { get; private set; }
+        public int DefaultHeight { get; private set; }
+        public int DefaultWidth { get; private set; }
+        public string FontFile { get; private set; } = null!;
+        public Keybindings GlobalKeybindings { get; private set; }
+        public int MinSegmentsAheadToShow { get; private set; }
+        public int KeyboardId { get; private set; }
+        public int MaxBackups { get; private set; }
+        public int MaximumFramerate { get; private set; }
+        public string SplitsStoragePath { get; set; } = null!;
+        public bool WindowResizable { get; private set; }
     }
 }

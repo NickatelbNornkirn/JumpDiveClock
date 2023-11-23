@@ -19,7 +19,7 @@
 using System.Numerics;
 using Raylib_cs;
 
-namespace JumpDiveClock
+namespace JumpDiveClock.Timing
 {
     public class Segment
     {

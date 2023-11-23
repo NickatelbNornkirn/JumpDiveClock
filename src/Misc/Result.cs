@@ -1,4 +1,3 @@
-
 /*
     JumpDiveClock -  Simple-ish speedrun timer for X11.
     Copyright (C) 2023  Nickatelb Nornkirn
@@ -17,38 +16,12 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-namespace JumpDiveClock
+namespace JumpDiveClock.Misc
 {
-    public class HistoryManager
+    public struct Result
     {
-        private Stack<double> _undoSplitTimes = new Stack<double>();
-
-        public bool CanRedo()
-        {
-            return _undoSplitTimes.Count > 0;
-        }
-
-        public void ClearHistory()
-        {
-            _undoSplitTimes.Clear();
-        }
-
-        public double RegisterRedo()
-        {
-            double result = -1;
-
-            if (_undoSplitTimes.Count > 0)
-            {
-                result = _undoSplitTimes.Pop();
-            }
-
-            return result;
-        }
-
-        public void RegisterUndo(double actionTime)
-        {
-            _undoSplitTimes.Push(actionTime);
-        }
-
+        // Null unless Sucess == false.
+        public string? Error { get; set; }
+        public bool Success { get; set; }
     }
 }

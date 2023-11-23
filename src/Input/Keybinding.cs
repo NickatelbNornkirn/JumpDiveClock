@@ -16,14 +16,11 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-namespace JumpDiveClock
+namespace JumpDiveClock.Input
 {
-    public struct Keybindings
+    public struct Keybinding
     {
-        public string KeyIdType { get; private set; }
-        public Keybinding Redo { get; set; }
-        public Keybinding Reset { get; set; }
-        public Keybinding Split { get; set; }
-        public Keybinding Undo { get; set; }
+        public string KeyId { get; private set; }
+        public bool RequiresShift { get; private set; }
     }
 }

@@ -16,16 +16,18 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+using JumpDiveClock.Misc;
+using JumpDiveClock.Settings;
 using Raylib_cs;
 
-namespace JumpDiveClock
+namespace JumpDiveClock.Timing
 {
     public class App
     {
         private Config _appConfig = null!;
         private Font _font;
         private StorageManager _storage = null!;
-        private Timer _timer = null!;
+        private SpeedrunTimer _timer = null!;
 
         public void Exit()
         {
@@ -75,7 +77,7 @@ namespace JumpDiveClock
 
             _storage.MaxBackups = _appConfig.MaxBackups;
 
-            Timer? loadedTimer = _storage.LoadTimer(splitPath, _appConfig, ref result);
+            SpeedrunTimer? loadedTimer = _storage.LoadTimer(splitPath, _appConfig, ref result);
             if (loadedTimer is null)
             {
                 return result;

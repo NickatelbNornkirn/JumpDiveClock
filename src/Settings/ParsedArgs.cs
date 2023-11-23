@@ -16,20 +16,11 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-namespace JumpDiveClock
+namespace JumpDiveClock.Settings
 {
-    public class Config
+    public struct ParsedArgs
     {
-        public double ConfigVersion { get; private set; }
-        public int DefaultHeight { get; private set; }
-        public int DefaultWidth { get; private set; }
-        public string FontFile { get; private set; } = null!;
-        public Keybindings GlobalKeybindings { get; private set; }
-        public int MinSegmentsAheadToShow { get; private set; }
-        public int KeyboardId { get; private set; }
-        public int MaxBackups { get; private set; }
-        public int MaximumFramerate { get; private set; }
-        public string SplitsStoragePath { get; set; } = null!;
-        public bool WindowResizable { get; private set; }
+        public string ConfigFolder;
+        public string SplitName;
     }
 }

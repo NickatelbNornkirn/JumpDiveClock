@@ -16,12 +16,15 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+using JumpDiveClock.Settings;
+using JumpDiveClock.Input;
+using JumpDiveClock.Misc;
 using Raylib_cs;
 using System.Numerics;
 
-namespace JumpDiveClock
+namespace JumpDiveClock.Timing
 {
-    public class Timer
+    public class SpeedrunTimer
     {
         public float AttemptSizeTextPosX;
         public float AttemptSizeTextPosY;

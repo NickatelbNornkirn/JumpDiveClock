@@ -16,12 +16,15 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-namespace JumpDiveClock
+namespace JumpDiveClock.Timing
 {
-    public struct Result
+    public enum StatType
     {
-        // Null unless Sucess == false.
-        public string? Error { get; set; }
-        public bool Success { get; set; }
+        BestPossibleTime,
+        CurrentPace,
+        RunsThatReachHere,
+        PersonalBest,
+        WorldRecord,
+        SumOfBest
     }
 }
