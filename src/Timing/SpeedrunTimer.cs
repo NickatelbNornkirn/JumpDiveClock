@@ -16,9 +16,9 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-using JumpDiveClock.Settings;
 using JumpDiveClock.Input;
 using JumpDiveClock.Misc;
+using JumpDiveClock.Settings;
 using Raylib_cs;
 using System.Numerics;
 

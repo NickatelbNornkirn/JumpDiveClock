@@ -16,9 +16,9 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-using JumpDiveClock.Timing;
 using JumpDiveClock.Misc;
 using JumpDiveClock.Settings;
+using JumpDiveClock.Timing;
 
 namespace JumpDiveClock
 {

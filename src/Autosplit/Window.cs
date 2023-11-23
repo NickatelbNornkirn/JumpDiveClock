@@ -22,10 +22,9 @@ namespace JumpDiveClock.Autosplit
 {
     public class Window
     {
-        public Color[] Pixels {get; private set;}
-        public int Width { get; private set; }
         public int Height { get; private set; }
+        public Color[] Pixels { get; private set; }
+        public int Width { get; private set; }
     }
 }
-
 

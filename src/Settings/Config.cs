@@ -27,10 +27,10 @@ namespace JumpDiveClock.Settings
         public int DefaultWidth { get; private set; }
         public string FontFile { get; private set; } = null!;
         public Keybindings GlobalKeybindings { get; private set; }
-        public int MinSegmentsAheadToShow { get; private set; }
         public int KeyboardId { get; private set; }
         public int MaxBackups { get; private set; }
         public int MaximumFramerate { get; private set; }
+        public int MinSegmentsAheadToShow { get; private set; }
         public string SplitsStoragePath { get; set; } = null!;
         public bool WindowResizable { get; private set; }
     }

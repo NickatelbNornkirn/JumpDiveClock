@@ -17,7 +17,6 @@
 */
 
 using JumpDiveClock.Misc;
-using JumpDiveClock.Settings;
 using JumpDiveClock.Timing;
 using YamlDotNet.Core;
 using YamlDotNet.Serialization;

@@ -120,15 +120,22 @@ namespace JumpDiveClock.Timing
         private string GetRunsThatReachHere()
         {
             string result;
-            if (_timer.HasStarted() && _timer.GetCurrentSegment() > 0)
+            if (_timer.HasStarted())
             {
-                double rc = 0;
-                for (int i = 0; i < _timer.GetCurrentSegment(); i++)
+                if (_timer.GetCurrentSegment() > 0)
                 {
-                    rc += _timer.Segments[i].ResetCount;
+                    double rc = 0;
+                    for (int i = 0; i < _timer.GetCurrentSegment(); i++)
+                    {
+                        rc += _timer.Segments[i].ResetCount;
+                    }
+                    double p = (_timer.AttemptCount - rc) / Math.Max(_timer.AttemptCount, 1) * 100.0;
+                    result = p.ToString("00.00") + "%";
                 }
-                double p = (_timer.AttemptCount - rc) / Math.Max(_timer.AttemptCount, 1) * 100.0;
-                result = p.ToString("00.00") + "%";
+                else
+                {
+                    result = "100%";
+                }
             }
             else
             {
