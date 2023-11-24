@@ -16,11 +16,14 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-// TODO: review.
+using System.Reflection;
 
+// TODO: add null checks to all sub-configurations (e.g. hex_colors.background).
 namespace JumpDiveClock.Timing
 {
-    public class SpeedgameData
+    // This class contains everything in the split.yml file, nothing more (except for a few methods)
+    // and nothing less
+    public class Splits
     {
         private int? _attemptCount;
         private int? _attemptCountFontSize;
@@ -219,15 +222,37 @@ namespace JumpDiveClock.Timing
             set => _worldRecordSeconds = value;
         }
 
-        private bool ValueExists<T>(T v, string vName)
+        public List<String> GetUninitializedFields()
         {
-            if (v is null)
+            FieldInfo[] fil = GetType().GetFields(BindingFlags.Instance | BindingFlags.NonPublic)
+                              .ToArray();
+            var unitializedFieldNames = new List<String>();
+            foreach (FieldInfo fi in fil)
             {
-                Console.WriteLine($"{vName} was not set in the yaml file.");
-                return false;
+                if (fi.GetValue(this) is null)
+                {
+                    unitializedFieldNames.Add(fi.Name);
+                }
             }
 
-            return true;
+            // YAML file uses snake case
+            unitializedFieldNames = unitializedFieldNames.Select(s => s = ToSnakeCase(s)).ToList();
+
+            return unitializedFieldNames;
+        }
+
+        private bool IsUpper(string s) => s.ToUpper() == s;
+
+        private string ToSnakeCase(string s)
+        {
+            string result = "";
+            // We start from 1 so we don't include the '_'.
+            foreach (char c in s[1..])
+            {
+                result += IsUpper(c.ToString()) ? "_" + c.ToString().ToLower() : c;
+            }
+
+            return result;
         }
     }
 }

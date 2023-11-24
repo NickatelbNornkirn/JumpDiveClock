@@ -51,48 +51,20 @@ namespace JumpDiveClock.Settings
 
             if (LoadText(configPath) is string configText)
             {
-                try
-                {
-                    AppConfig config = _deserializer.Deserialize<AppConfig>(configText);
-                    config.SplitsStoragePath = splitsPath;
-                    result.Success = true;
-                    return config;
-                }
-                catch (YamlException ex)
-                {
-                    result.Error = "Failed to deserialize config.\n" + ex.Message;
-                    result.Success = false;
-                    return null;
-                }
+                return TryLoadingConfig(configText, splitsPath, ref result);
             }
             else
             {
                 result.Error = "Failed to read config.";
-                result.Success = false;
                 return null;
             }
         }
 
-        public SpeedrunTimer? LoadTimer(string path, AppConfig config, ref Result result)
+        public SpeedrunTimer? LoadTimer(string splitPath, AppConfig config, ref Result result)
         {
-            if (LoadText(path) is string splitsYml)
+            if (LoadText(splitPath) is string splitsYml)
             {
-                try
-                {
-                    SpeedrunTimer timer = new SpeedrunTimer(config,
-                        _deserializer.Deserialize<SpeedgameData>(splitsYml), this);
-                    SaveBackup(splitsYml, GetFileName(path));
-
-                    result.Success = true;
-                    return timer;
-                }
-                catch (YamlException ex)
-                {
-                    Console.WriteLine(ex.InnerException);
-                    result.Error = "Failed to deserialize splits.\n" + ex.Message;
-                    result.Success = false;
-                    return null;
-                }
+                return TryLoadingTimerFromSplits(config, splitsYml, splitPath, ref result);
             }
             else
             {
@@ -104,7 +76,7 @@ namespace JumpDiveClock.Settings
 
         public void SaveTimerLayout(SpeedrunTimer timer, string storagePath)
         {
-            string yamlText = _serializer.Serialize(timer.SpeedgameData);
+            string yamlText = _serializer.Serialize(timer.Splits);
             File.WriteAllText(storagePath, yamlText);
             SaveBackup(yamlText, GetFileName(storagePath));
         }
@@ -204,6 +176,57 @@ namespace JumpDiveClock.Settings
             }
 
             PurgeOldBackups(newBackupN, backupFolder);
+        }
+
+        private AppConfig? TryLoadingConfig(string configText, string splitsPath, ref Result result)
+        {
+            try
+            {
+                AppConfig config = _deserializer.Deserialize<AppConfig>(configText);
+                config.SplitsStoragePath = splitsPath;
+                result.Success = true;
+                return config;
+            }
+            catch (YamlException ex)
+            {
+                result.Error = "Failed to deserialize config.\n" + ex.Message;
+                result.Success = false;
+                return null;
+            }
+        }
+
+        private SpeedrunTimer? TryLoadingTimerFromSplits(
+            AppConfig config, string splitsYml, string splitFilePath, ref Result result)
+        {
+            try
+            {
+                Splits splits = _deserializer.Deserialize<Splits>(splitsYml);
+                List<string> unitializedFields = splits.GetUninitializedFields();
+
+                if (unitializedFields.Count > 0)
+                {
+                    Console.WriteLine("File doesn't contain all necessary fields.");
+                    unitializedFields.ForEach(f => Console.WriteLine($"{f} is missing."));
+                    Console.WriteLine(
+                        "If unsure about what to do, read docs, open an issue or ask for help."
+                    );
+                    result.Success = false;
+                    return null;
+                }
+
+                SpeedrunTimer timer = new SpeedrunTimer(config, splits, this);
+                SaveBackup(splitsYml, GetFileName(splitFilePath));
+                result.Success = true;
+                return timer;
+            }
+            catch (YamlException ex)
+            {
+                Console.WriteLine(ex.InnerException);
+                result.Error = "Failed to deserialize splits.\n" + ex.Message;
+                result.Success = false;
+                return null;
+            }
+
         }
     }
 }

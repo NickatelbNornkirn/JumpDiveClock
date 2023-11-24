@@ -40,7 +40,25 @@ namespace JumpDiveClock.Timing
         private double _pbTimeSecs;
         private Stats _stats = null!;
         private StorageManager _storage = null!;
-        public SpeedgameData SpeedgameData { get; private set; } = null!;
+
+        public SpeedrunTimer(AppConfig AppConfig, Splits splits, StorageManager storage)
+        {
+            _config = AppConfig;
+            Splits = splits;
+            _storage = storage;
+            _globalInputManager = new GlobalInputManager(_config);
+            _colors = new ColorManager(
+                Splits.HexColors.Background, Splits.HexColors.TextBase,
+                Splits.HexColors.PaceAheadGaining, Splits.HexColors.PaceAheadLosing,
+                Splits.HexColors.PaceBehindGaining, Splits.HexColors.PaceBehindLosing,
+                Splits.HexColors.PaceBest, Splits.HexColors.Separator
+            );
+            _stats = new Stats(this);
+
+            Reset(true);
+        }
+
+        public Splits Splits { get; private set; } = null!;
 
         public void AutoSave()
         {
@@ -50,39 +68,22 @@ namespace JumpDiveClock.Timing
             }
         }
 
-        public SpeedrunTimer(AppConfig AppConfig, SpeedgameData layoutConfig, StorageManager storage)
-        {
-            _config = AppConfig;
-            SpeedgameData = layoutConfig;
-            _storage = storage;
-            _globalInputManager = new GlobalInputManager(_config);
-            _colors = new ColorManager(
-                SpeedgameData.HexColors.Background, SpeedgameData.HexColors.TextBase,
-                SpeedgameData.HexColors.PaceAheadGaining, SpeedgameData.HexColors.PaceAheadLosing,
-                SpeedgameData.HexColors.PaceBehindGaining, SpeedgameData.HexColors.PaceBehindLosing,
-                SpeedgameData.HexColors.PaceBest, SpeedgameData.HexColors.Separator
-            );
-            _stats = new Stats(this);
-
-            Reset(true);
-        }
-
         public void Draw(Font font)
         {
-            int segmentsToDraw = Math.Min(SpeedgameData.Segments.Length,
-                                          SpeedgameData.SegmentsPerScreen);
+            int segmentsToDraw = Math.Min(Splits.Segments.Length,
+                                          Splits.SegmentsPerScreen);
 
             int effectiveHeight = Raylib.GetScreenHeight()
-                                    - SpeedgameData.SeparatorSize * (segmentsToDraw - 1);
+                                    - Splits.SeparatorSize * (segmentsToDraw - 1);
 
-            var headerHeight = (int)(effectiveHeight * (SpeedgameData.HeaderHeight / 100.0f));
-            var timerHeight = (int)(effectiveHeight * (SpeedgameData.TimerSize / 100.0f));
+            var headerHeight = (int)(effectiveHeight * (Splits.HeaderHeight / 100.0f));
+            var timerHeight = (int)(effectiveHeight * (Splits.TimerSize / 100.0f));
 
             effectiveHeight -= headerHeight + timerHeight;
 
             var segmentHeight =
-                (int)Math.Min(effectiveHeight / (segmentsToDraw + SpeedgameData.ExtraStats.Length),
-                    SpeedgameData.MaxSegmentSize / 100 * effectiveHeight);
+                (int)Math.Min(effectiveHeight / (segmentsToDraw + Splits.ExtraStats.Length),
+                    Splits.MaxSegmentSize / 100 * effectiveHeight);
 
             Raylib.ClearBackground(_colors.Background);
             DrawSeparators(headerHeight, segmentHeight, timerHeight, segmentsToDraw);
@@ -109,7 +110,7 @@ namespace JumpDiveClock.Timing
 
             float deltaTime = Raylib.GetFrameTime();
 
-            if (_currentSegment >= 0 && _currentSegment < SpeedgameData.Segments.Length)
+            if (_currentSegment >= 0 && _currentSegment < Splits.Segments.Length)
             {
                 _currentTimeSecs += deltaTime;
             }
@@ -119,32 +120,32 @@ namespace JumpDiveClock.Timing
 
         private void DrawExtraStats(Font font, float segmentHeight)
         {
-            SpeedgameData.ExtraStats.ForeachI((stat, i) =>
+            Splits.ExtraStats.ForeachI((stat, i) =>
             {
                 string statName = _stats.GetStatName(stat);
                 Vector2 statNameSize = Raylib.MeasureTextEx(
-                    font, statName, SpeedgameData.SegmentFontSize, SpeedgameData.SegmentFontSpacing
+                    font, statName, Splits.SegmentFontSize, Splits.SegmentFontSpacing
                 );
-                var leftTextDrawPos = new Vector2(SpeedgameData.SegmentMargin,
+                var leftTextDrawPos = new Vector2(Splits.SegmentMargin,
                     Raylib.GetRenderHeight() -
-                        ((i + 1) * segmentHeight + (i + 1) * SpeedgameData.SeparatorSize)
+                        ((i + 1) * segmentHeight + (i + 1) * Splits.SeparatorSize)
                         + (segmentHeight - statNameSize.Y) / 2.0f
                 );
 
                 string statTxt = _stats.GetStatText(stat);
                 Vector2 statTimeSize = Raylib.MeasureTextEx(
-                    font, statTxt, SpeedgameData.SegmentFontSize, SpeedgameData.SegmentFontSpacing
+                    font, statTxt, Splits.SegmentFontSize, Splits.SegmentFontSpacing
                 );
                 var statTxtPos = new Vector2(
-                    Raylib.GetScreenWidth() - SpeedgameData.SegmentMargin - statTimeSize.X,
+                    Raylib.GetScreenWidth() - Splits.SegmentMargin - statTimeSize.X,
                     leftTextDrawPos.Y
                 );
 
-                Raylib.DrawTextEx(font, statName, leftTextDrawPos, SpeedgameData.SegmentFontSize,
-                    SpeedgameData.SegmentFontSpacing, _colors.Base
+                Raylib.DrawTextEx(font, statName, leftTextDrawPos, Splits.SegmentFontSize,
+                    Splits.SegmentFontSpacing, _colors.Base
                 );
-                Raylib.DrawTextEx(font, statTxt, statTxtPos, SpeedgameData.SegmentFontSize,
-                    SpeedgameData.SegmentFontSpacing, _colors.Base
+                Raylib.DrawTextEx(font, statTxt, statTxtPos, Splits.SegmentFontSize,
+                    Splits.SegmentFontSpacing, _colors.Base
                 );
             },
                 true
@@ -153,20 +154,20 @@ namespace JumpDiveClock.Timing
 
         private void DrawHeader(Font font, float headerHeight)
         {
-            Vector2 gameTitleSize = Raylib.MeasureTextEx(font, SpeedgameData.GameName,
-                SpeedgameData.GameTitleFontSize, SpeedgameData.GameTitleFontSpacing
+            Vector2 gameTitleSize = Raylib.MeasureTextEx(font, Splits.GameName,
+                Splits.GameTitleFontSize, Splits.GameTitleFontSpacing
             );
             Vector2 categoryTitleSize = Raylib.MeasureTextEx(
-                font, SpeedgameData.Category, SpeedgameData.CategoryTitleFontSize,
-                SpeedgameData.CategoryTitleFontSpacing
+                font, Splits.Category, Splits.CategoryTitleFontSize,
+                Splits.CategoryTitleFontSpacing
             );
             Vector2 attemptCountSize = Raylib.MeasureTextEx(
-                font, $"{SpeedgameData.AttemptCount}", SpeedgameData.AttemptCountFontSize,
-                SpeedgameData.AttemptCountFontSpacing
+                font, $"{Splits.AttemptCount}", Splits.AttemptCountFontSize,
+                Splits.AttemptCountFontSpacing
             );
 
             float textLayoutHeight = gameTitleSize.Y + categoryTitleSize.Y
-                                     + SpeedgameData.TitleCategoryTitlesGap;
+                                     + Splits.TitleCategoryTitlesGap;
             float textLayoutStartY = (headerHeight - textLayoutHeight) / 2.0f;
 
             var gameTitlePos = new Vector2((Raylib.GetScreenWidth() - gameTitleSize.X) / 2.0f,
@@ -174,23 +175,23 @@ namespace JumpDiveClock.Timing
             );
             var categoryTitlePos = new Vector2(
                 (Raylib.GetScreenWidth() - categoryTitleSize.X) / 2.0f,
-                textLayoutStartY + SpeedgameData.TitleCategoryTitlesGap + gameTitleSize.Y
+                textLayoutStartY + Splits.TitleCategoryTitlesGap + gameTitleSize.Y
             );
             var attemptCountPos = new Vector2(
-                (Raylib.GetScreenWidth() * SpeedgameData.AttemptSizeTextPosX) - attemptCountSize.X,
-                (headerHeight * SpeedgameData.AttemptSizeTextPosY) - attemptCountSize.Y
+                (Raylib.GetScreenWidth() * Splits.AttemptSizeTextPosX) - attemptCountSize.X,
+                (headerHeight * Splits.AttemptSizeTextPosY) - attemptCountSize.Y
             );
 
-            Raylib.DrawTextEx(font, SpeedgameData.GameName, gameTitlePos,
-                SpeedgameData.GameTitleFontSize, SpeedgameData.GameTitleFontSpacing, _colors.Base
+            Raylib.DrawTextEx(font, Splits.GameName, gameTitlePos,
+                Splits.GameTitleFontSize, Splits.GameTitleFontSpacing, _colors.Base
             );
             Raylib.DrawTextEx(
-                font, SpeedgameData.Category, categoryTitlePos, SpeedgameData.CategoryTitleFontSize,
-                SpeedgameData.CategoryTitleFontSpacing, _colors.Base
+                font, Splits.Category, categoryTitlePos, Splits.CategoryTitleFontSize,
+                Splits.CategoryTitleFontSpacing, _colors.Base
             );
             Raylib.DrawTextEx(
-                font, $"{SpeedgameData.AttemptCount}", attemptCountPos,
-                SpeedgameData.AttemptCountFontSize, SpeedgameData.AttemptCountFontSpacing,
+                font, $"{Splits.AttemptCount}", attemptCountPos,
+                Splits.AttemptCountFontSize, Splits.AttemptCountFontSpacing,
                 _colors.Base
             );
         }
@@ -200,14 +201,14 @@ namespace JumpDiveClock.Timing
         {
             int offset = Math.Min(
                 Math.Max(_currentSegment - (segmentsToDraw - _config.MinSegmentsAheadToShow), 0),
-                SpeedgameData.Segments.Length - segmentsToDraw
+                Splits.Segments.Length - segmentsToDraw
             );
 
-            for (int i = offset; i < SpeedgameData.Segments.Length && i < offset + segmentsToDraw; i++)
+            for (int i = offset; i < Splits.Segments.Length && i < offset + segmentsToDraw; i++)
             {
-                SpeedgameData.Segments[i].Draw(headerHeight, i - offset, segmentHeight, font,
-                    SpeedgameData.SegmentFontSpacing, _colors, SpeedgameData.SeparatorSize,
-                    SpeedgameData.SegmentFontSize, SpeedgameData.SegmentMargin
+                Splits.Segments[i].Draw(headerHeight, i - offset, segmentHeight, font,
+                    Splits.SegmentFontSpacing, _colors, Splits.SeparatorSize,
+                    Splits.SegmentFontSize, Splits.SegmentMargin
                 );
             }
         }
@@ -215,7 +216,7 @@ namespace JumpDiveClock.Timing
         private void DrawSeparators(
             int headerHeight, int segmentSize, int timerHeight, int segmentsToDraw)
         {
-            Raylib.DrawRectangle(0, headerHeight, Raylib.GetRenderWidth(), SpeedgameData.SeparatorSize,
+            Raylib.DrawRectangle(0, headerHeight, Raylib.GetRenderWidth(), Splits.SeparatorSize,
                 _colors.Separator
             );
 
@@ -223,24 +224,24 @@ namespace JumpDiveClock.Timing
             {
                 Raylib.DrawRectangle(
                     0, headerHeight + i * segmentSize, Raylib.GetRenderWidth(),
-                    SpeedgameData.SeparatorSize, _colors.Separator
+                    Splits.SeparatorSize, _colors.Separator
                 );
             }
 
-            int timerOffset = SpeedgameData.ExtraStats.Length * segmentSize +
-                (SpeedgameData.ExtraStats.Length - 1) * SpeedgameData.SeparatorSize;
-            int timerY = Raylib.GetRenderHeight() - timerHeight - SpeedgameData.SeparatorSize
+            int timerOffset = Splits.ExtraStats.Length * segmentSize +
+                (Splits.ExtraStats.Length - 1) * Splits.SeparatorSize;
+            int timerY = Raylib.GetRenderHeight() - timerHeight - Splits.SeparatorSize
                          - timerOffset;
 
             Raylib.DrawRectangle(0, timerY + timerHeight, Raylib.GetRenderWidth(),
-                SpeedgameData.SeparatorSize, _colors.Separator
+                Splits.SeparatorSize, _colors.Separator
             );
 
-            for (int i = 1; i < SpeedgameData.ExtraStats.Length; i++)
+            for (int i = 1; i < Splits.ExtraStats.Length; i++)
             {
                 Raylib.DrawRectangle(0,
-                    timerY + timerHeight + i * segmentSize + SpeedgameData.SeparatorSize * (i - 1),
-                    Raylib.GetRenderWidth(), SpeedgameData.SeparatorSize, _colors.Separator
+                    timerY + timerHeight + i * segmentSize + Splits.SeparatorSize * (i - 1),
+                    Raylib.GetRenderWidth(), Splits.SeparatorSize, _colors.Separator
                 );
             }
         }
@@ -250,13 +251,13 @@ namespace JumpDiveClock.Timing
         {
             string timerText = Formatter.SecondsToTime(_currentTimeSecs, true);
             Vector2 textSize = Raylib.MeasureTextEx(
-                font, timerText, SpeedgameData.TimerFontSize, SpeedgameData.TimerFontSpacing
+                font, timerText, Splits.TimerFontSize, Splits.TimerFontSpacing
             );
 
             var textPos = new Vector2(
                 (Raylib.GetRenderWidth() - textSize.X) / 2.0f,
-                Raylib.GetRenderHeight() - segmentHeight * SpeedgameData.ExtraStats.Length
-                    - SpeedgameData.SeparatorSize * (SpeedgameData.ExtraStats.Length - 1)
+                Raylib.GetRenderHeight() - segmentHeight * Splits.ExtraStats.Length
+                    - Splits.SeparatorSize * (Splits.ExtraStats.Length - 1)
                     - (timerHeight + textSize.Y) / 2.0f
             );
 
@@ -267,11 +268,11 @@ namespace JumpDiveClock.Timing
             }
             else
             {
-                int segI = Math.Min(_currentSegment, SpeedgameData.Segments.Length - 1);
+                int segI = Math.Min(_currentSegment, Splits.Segments.Length - 1);
                 bool ahead = _currentTimeSecs
-                                < SpeedgameData.Segments[segI].GetAbsolutePbCompletionTime();
+                                < Splits.Segments[segI].GetAbsolutePbCompletionTime();
 
-                if (!SpeedgameData.Segments.Last().IsAhead(_currentTimeSecs))
+                if (!Splits.Segments.Last().IsAhead(_currentTimeSecs))
                 {
                     drawColor = _colors.BehindLosing;
                 }
@@ -284,7 +285,7 @@ namespace JumpDiveClock.Timing
                     }
                     else
                     {
-                        drawColor = _currentSegment >= SpeedgameData.Segments.Length - 1
+                        drawColor = _currentSegment >= Splits.Segments.Length - 1
                                     ? _colors.BehindLosing
                                     : _colors.BehindGaining;
                     }
@@ -292,7 +293,7 @@ namespace JumpDiveClock.Timing
             }
 
             Raylib.DrawTextEx(
-                font, timerText, textPos, SpeedgameData.TimerFontSize, SpeedgameData.TimerFontSpacing,
+                font, timerText, textPos, Splits.TimerFontSize, Splits.TimerFontSpacing,
                 (Color)drawColor
             );
         }
@@ -323,7 +324,7 @@ namespace JumpDiveClock.Timing
         private void InitializeSegments()
         {
             double absPbTime = 0;
-            for (int i = 0; i < SpeedgameData.Segments.Length; i++)
+            for (int i = 0; i < Splits.Segments.Length; i++)
             {
                 absPbTime = 0;
                 for (int j = i; j >= 0; j--)
@@ -333,44 +334,44 @@ namespace JumpDiveClock.Timing
                         break;
                     }
 
-                    if (!SpeedgameData.Segments[j].RanSegmentBefore())
+                    if (!Splits.Segments[j].RanSegmentBefore())
                     {
                         absPbTime = NoPbTime;
                         break;
                     }
 
-                    absPbTime += SpeedgameData.Segments[j].PbTimeRel;
+                    absPbTime += Splits.Segments[j].PbTimeRel;
                 }
 
-                SpeedgameData.Segments[i].Construct(absPbTime, SpeedgameData.CompletedRunBefore);
+                Splits.Segments[i].Construct(absPbTime, Splits.CompletedRunBefore);
             }
 
             _pbTimeSecs = absPbTime;
         }
 
         private bool IsRunFinished()
-            => _currentSegment >= SpeedgameData.Segments.Length;
+            => _currentSegment >= Splits.Segments.Length;
 
         private bool RanAllSegmentsBefore() =>
-            SpeedgameData.Segments.ToList().All(sgm => sgm.RanSegmentBefore());
+            Splits.Segments.ToList().All(sgm => sgm.RanSegmentBefore());
 
         private void Redo()
         {
-            if (!HasStarted() || _currentSegment >= SpeedgameData.Segments.Length)
+            if (!HasStarted() || _currentSegment >= Splits.Segments.Length)
             {
                 return;
             }
 
             double originalTime = _history.RegisterRedo();
 
-            SpeedgameData.Segments[_currentSegment].FinishSegment(originalTime);
+            Splits.Segments[_currentSegment].FinishSegment(originalTime);
             _currentSegment++;
 
             /*
                 If we're redoing the last segment, the timer needs to be rolled back because the
                 run already ended.
             */
-            if (_currentSegment == SpeedgameData.Segments.Length)
+            if (_currentSegment == Splits.Segments.Length)
             {
                 _currentTimeSecs = originalTime;
             }
@@ -385,11 +386,11 @@ namespace JumpDiveClock.Timing
 
             if (!initialReset)
             {
-                SpeedgameData.AttemptCount++;
+                Splits.AttemptCount++;
 
                 if (!IsRunFinished())
                 {
-                    SpeedgameData.Segments[_currentSegment].ResetCount++;
+                    Splits.Segments[_currentSegment].ResetCount++;
                 }
 
                 SaveTimes();
@@ -404,7 +405,7 @@ namespace JumpDiveClock.Timing
 
         private void SaveTimes()
         {
-            SpeedgameData.Segments.ToList().ForEach(s =>
+            Splits.Segments.ToList().ForEach(s =>
             {
                 s.UpdateBestSegment();
             });
@@ -413,19 +414,19 @@ namespace JumpDiveClock.Timing
             {
                 if (_currentTimeSecs < _pbTimeSecs || _pbTimeSecs == NoPbTime)
                 {
-                    SpeedgameData.Segments.ToList().ForEach(s =>
+                    Splits.Segments.ToList().ForEach(s =>
                     {
                         s.SetPersonalBest();
                     });
                 }
 
-                if (_currentTimeSecs < SpeedgameData.WorldRecordSeconds)
+                if (_currentTimeSecs < Splits.WorldRecordSeconds)
                 {
-                    SpeedgameData.WorldRecordSeconds = _currentTimeSecs;
-                    SpeedgameData.WorldRecordOwner = "me";
+                    Splits.WorldRecordSeconds = _currentTimeSecs;
+                    Splits.WorldRecordOwner = "me";
                 }
 
-                SpeedgameData.CompletedRunBefore = true;
+                Splits.CompletedRunBefore = true;
             }
 
             _storage.SaveTimerLayout(this, _config.SplitsStoragePath);
@@ -433,21 +434,21 @@ namespace JumpDiveClock.Timing
 
         private void Split()
         {
-            if (_currentSegment >= SpeedgameData.Segments.Length)
+            if (_currentSegment >= Splits.Segments.Length)
             {
                 return;
             }
 
             if (HasStarted())
             {
-                SpeedgameData.Segments[_currentSegment].FinishSegment(_currentTimeSecs);
+                Splits.Segments[_currentSegment].FinishSegment(_currentTimeSecs);
             }
 
             _currentSegment++;
 
-            if (_currentSegment < SpeedgameData.Segments.Length)
+            if (_currentSegment < Splits.Segments.Length)
             {
-                SpeedgameData.Segments[_currentSegment].BeginSegment(_currentTimeSecs);
+                Splits.Segments[_currentSegment].BeginSegment(_currentTimeSecs);
             }
 
             _history.ClearHistory();
@@ -459,8 +460,8 @@ namespace JumpDiveClock.Timing
             {
                 _currentSegment--;
                 _history.RegisterUndo(
-                    SpeedgameData.Segments[_currentSegment].GetAbsoluteCompletionTime());
-                SpeedgameData.Segments[_currentSegment].UndoSplit();
+                    Splits.Segments[_currentSegment].GetAbsoluteCompletionTime());
+                Splits.Segments[_currentSegment].UndoSplit();
             }
         }
     }

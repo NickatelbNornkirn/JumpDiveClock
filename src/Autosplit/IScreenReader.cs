@@ -23,6 +23,5 @@ namespace JumpDiveClock.Autosplit
     public interface IAutoSplitter
     {
         public static abstract bool IsBackendAvailable();
-
     }
 }
