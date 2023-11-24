@@ -18,8 +18,6 @@
 
 namespace JumpDiveClock.Timing
 {
-    // This class contains everything in the split.yml file, nothing more (except for a few methods)
-    // and nothing less
     public class Splits
     {
         private int? _attemptCount;

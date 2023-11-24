@@ -38,46 +38,55 @@ namespace JumpDiveClock.Settings
             get => (double)_configVersion!;
             private set => _configVersion = value;
         }
+
         public int DefaultHeight
         {
             get => (int)_defaultHeight!;
             private set => _defaultHeight = value;
         }
+
         public int DefaultWidth
         {
             get => (int)_defaultWidth!;
             private set => _defaultWidth = value;
         }
+
         public string FontFile
         {
             get => _fontFile!;
             private set => _fontFile = value;
         }
+
         public Keybindings GlobalKeybindings
         {
             get => (Keybindings)_globalKeybindings!;
             private set => _globalKeybindings = value;
         }
+
         public int KeyboardId
         {
             get => (int)_keyboardId!;
             private set => _keyboardId = value;
         }
+
         public int MaxBackups
         {
             get => (int)_maxBackups!;
             private set => _maxBackups = value;
         }
+
         public int MaximumFramerate
         {
             get => (int)_maximumFramerate!;
             private set => _maximumFramerate = value;
         }
+
         public int MinSegmentsAheadToShow
         {
             get => (int)_minSegmentsAheadToShow!;
             private set => _minSegmentsAheadToShow = value;
         }
+
         public bool WindowResizable
         {
             get => (bool)_windowResizable!;
