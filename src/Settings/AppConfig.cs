@@ -22,16 +22,66 @@ namespace JumpDiveClock.Settings
 {
     public class AppConfig
     {
-        public double ConfigVersion { get; private set; }
-        public int DefaultHeight { get; private set; }
-        public int DefaultWidth { get; private set; }
-        public string FontFile { get; private set; } = null!;
-        public Keybindings GlobalKeybindings { get; private set; }
-        public int KeyboardId { get; private set; }
-        public int MaxBackups { get; private set; }
-        public int MaximumFramerate { get; private set; }
-        public int MinSegmentsAheadToShow { get; private set; }
-        public string SplitsStoragePath { get; set; } = null!;
-        public bool WindowResizable { get; private set; }
+        private double? _configVersion;
+        private int? _defaultHeight;
+        private int? _defaultWidth;
+        private string? _fontFile;
+        private Keybindings? _globalKeybindings;
+        private int? _keyboardId;
+        private int? _maxBackups;
+        private int? _maximumFramerate;
+        private int? _minSegmentsAheadToShow;
+        private bool? _windowResizable;
+
+        public double ConfigVersion
+        {
+            get => (double)_configVersion!;
+            private set => _configVersion = value;
+        }
+        public int DefaultHeight
+        {
+            get => (int)_defaultHeight!;
+            private set => _defaultHeight = value;
+        }
+        public int DefaultWidth
+        {
+            get => (int)_defaultWidth!;
+            private set => _defaultWidth = value;
+        }
+        public string FontFile
+        {
+            get => _fontFile!;
+            private set => _fontFile = value;
+        }
+        public Keybindings GlobalKeybindings
+        {
+            get => (Keybindings)_globalKeybindings!;
+            private set => _globalKeybindings = value;
+        }
+        public int KeyboardId
+        {
+            get => (int)_keyboardId!;
+            private set => _keyboardId = value;
+        }
+        public int MaxBackups
+        {
+            get => (int)_maxBackups!;
+            private set => _maxBackups = value;
+        }
+        public int MaximumFramerate
+        {
+            get => (int)_maximumFramerate!;
+            private set => _maximumFramerate = value;
+        }
+        public int MinSegmentsAheadToShow
+        {
+            get => (int)_minSegmentsAheadToShow!;
+            private set => _minSegmentsAheadToShow = value;
+        }
+        public bool WindowResizable
+        {
+            get => (bool)_windowResizable!;
+            private set => _windowResizable = value;
+        }
     }
 }

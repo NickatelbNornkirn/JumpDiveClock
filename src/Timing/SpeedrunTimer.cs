@@ -32,9 +32,7 @@ namespace JumpDiveClock.Timing
         private ColorManager _colors = null!;
         private AppConfig _config = null!;
         private int _currentSegment;
-
         private double _currentTimeSecs;
-
         private GlobalInputManager _globalInputManager = null!;
         private HistoryManager _history = new HistoryManager();
         private double _pbTimeSecs;
@@ -429,7 +427,7 @@ namespace JumpDiveClock.Timing
                 Splits.CompletedRunBefore = true;
             }
 
-            _storage.SaveTimerLayout(this, _config.SplitsStoragePath);
+            _storage.SaveTimerSplits(this);
         }
 
         private void Split()

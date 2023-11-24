@@ -16,9 +16,6 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-using System.Reflection;
-
-// TODO: add null checks to all sub-configurations (e.g. hex_colors.background).
 namespace JumpDiveClock.Timing
 {
     // This class contains everything in the split.yml file, nothing more (except for a few methods)
@@ -220,39 +217,6 @@ namespace JumpDiveClock.Timing
         {
             get => (double)_worldRecordSeconds!;
             set => _worldRecordSeconds = value;
-        }
-
-        public List<String> GetUninitializedFields()
-        {
-            FieldInfo[] fil = GetType().GetFields(BindingFlags.Instance | BindingFlags.NonPublic)
-                              .ToArray();
-            var unitializedFieldNames = new List<String>();
-            foreach (FieldInfo fi in fil)
-            {
-                if (fi.GetValue(this) is null)
-                {
-                    unitializedFieldNames.Add(fi.Name);
-                }
-            }
-
-            // YAML file uses snake case
-            unitializedFieldNames = unitializedFieldNames.Select(s => s = ToSnakeCase(s)).ToList();
-
-            return unitializedFieldNames;
-        }
-
-        private bool IsUpper(string s) => s.ToUpper() == s;
-
-        private string ToSnakeCase(string s)
-        {
-            string result = "";
-            // We start from 1 so we don't include the '_'.
-            foreach (char c in s[1..])
-            {
-                result += IsUpper(c.ToString()) ? "_" + c.ToString().ToLower() : c;
-            }
-
-            return result;
         }
     }
 }

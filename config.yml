@@ -16,6 +16,7 @@ keyboard_id: 10
 
 # When a segment is configured to show a given amount of segments per screen, this specifies the
 # minimum amount of incomplete segments that must be shown.
+# TODO: move this to splits.
 min_segments_ahead_to_show: 2
 
 # Use "xev" to find the IDs. Look for "keycode".

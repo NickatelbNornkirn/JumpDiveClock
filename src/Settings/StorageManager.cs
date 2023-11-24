@@ -33,6 +33,7 @@ namespace JumpDiveClock.Settings
         private ISerializer _serializer = new SerializerBuilder()
             .WithNamingConvention(UnderscoredNamingConvention.Instance)
             .Build();
+        private string _splitsStoragePath = null!;
 
         public StorageManager(string configFolder)
         {
@@ -74,11 +75,11 @@ namespace JumpDiveClock.Settings
             }
         }
 
-        public void SaveTimerLayout(SpeedrunTimer timer, string storagePath)
+        public void SaveTimerSplits(SpeedrunTimer timer)
         {
             string yamlText = _serializer.Serialize(timer.Splits);
-            File.WriteAllText(storagePath, yamlText);
-            SaveBackup(yamlText, GetFileName(storagePath));
+            File.WriteAllText(_splitsStoragePath, yamlText);
+            SaveBackup(yamlText, GetFileName(_splitsStoragePath));
         }
 
         private ulong GetDiff(ulong x, ulong y)
@@ -178,12 +179,31 @@ namespace JumpDiveClock.Settings
             PurgeOldBackups(newBackupN, backupFolder);
         }
 
+        private void ShowUninitializedFields(List<string> fields)
+        {
+            Console.WriteLine("YML file doesn't contain all necessary fields.");
+            fields.ForEach(f => Console.WriteLine($"{f} is missing."));
+            Console.WriteLine(
+                "If unsure about what to do, read docs, open an issue or ask for help."
+            );
+        }
+
         private AppConfig? TryLoadingConfig(string configText, string splitsPath, ref Result result)
         {
             try
             {
                 AppConfig config = _deserializer.Deserialize<AppConfig>(configText);
-                config.SplitsStoragePath = splitsPath;
+                List<string> uninitializedFields = InitializationChecker
+                                                    .GetUninitializedPrivateFields(config);
+
+                if (uninitializedFields.Count > 0)
+                {
+                    ShowUninitializedFields(uninitializedFields);
+                    result.Success = false;
+                    return null;
+                }
+
+                _splitsStoragePath = splitsPath;
                 result.Success = true;
                 return config;
             }
@@ -201,15 +221,13 @@ namespace JumpDiveClock.Settings
             try
             {
                 Splits splits = _deserializer.Deserialize<Splits>(splitsYml);
-                List<string> unitializedFields = splits.GetUninitializedFields();
+                // TODO: add null checks to all sub-configurations (e.g. hex_colors.background).
+                List<string> unitializedFields =
+                                        InitializationChecker.GetUninitializedPrivateFields(splits);
 
                 if (unitializedFields.Count > 0)
                 {
-                    Console.WriteLine("File doesn't contain all necessary fields.");
-                    unitializedFields.ForEach(f => Console.WriteLine($"{f} is missing."));
-                    Console.WriteLine(
-                        "If unsure about what to do, read docs, open an issue or ask for help."
-                    );
+                    ShowUninitializedFields(unitializedFields);
                     result.Success = false;
                     return null;
                 }
@@ -226,7 +244,6 @@ namespace JumpDiveClock.Settings
                 result.Success = false;
                 return null;
             }
-
         }
     }
 }

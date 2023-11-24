@@ -31,10 +31,10 @@ own. And made this to share to other people that may find it useful.
 I speedrun a Mario fangame where the fastest way to move without equipment is to repeatedly jump and
 dive.
 
-## Wayland?
+### Wayland support?
 
-I don't plan on adding it myself because I don't use Wayland and don't plan on doing so, but I'm
-open to pull requests.
+I don't plan on adding it myself because I don't use Wayland and don't plan on doing so in the short
+term, but I'm open to pull requests.
 
 ## Running
 
