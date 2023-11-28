@@ -39,6 +39,8 @@ namespace JumpDiveClock.Timing
         private Stats _stats = null!;
         private StorageManager _storage = null!;
 
+        private bool _timerLocked = false;
+
         public SpeedrunTimer(AppConfig AppConfig, Splits splits, StorageManager storage)
         {
             _config = AppConfig;
@@ -68,6 +70,8 @@ namespace JumpDiveClock.Timing
 
         public void Draw(Font font)
         {
+            Raylib.ClearBackground(_colors.Background);
+
             int segmentsToDraw = Math.Min(Splits.Segments.Length,
                                           Splits.SegmentsPerScreen);
 
@@ -83,12 +87,11 @@ namespace JumpDiveClock.Timing
                 (int)Math.Min(effectiveHeight / (segmentsToDraw + Splits.ExtraStats.Length),
                     Splits.MaxSegmentSize / 100 * effectiveHeight);
 
-            Raylib.ClearBackground(_colors.Background);
             DrawSeparators(headerHeight, segmentHeight, timerHeight, segmentsToDraw);
             DrawHeader(font, headerHeight);
             DrawSegments(font, headerHeight, segmentHeight, segmentsToDraw);
-            DrawTimer(font, timerHeight, segmentHeight, headerHeight);
             DrawExtraStats(font, segmentHeight);
+            DrawTimer(font, timerHeight, segmentHeight);
         }
 
         public int GetCurrentSegment() => _currentSegment;
@@ -101,10 +104,19 @@ namespace JumpDiveClock.Timing
         public bool HasPb() => _pbTimeSecs != NoPbTime;
 
         public bool HasStarted() => _currentSegment > -1;
-
         public void Update()
         {
             _globalInputManager.InputReader.UpdateKeyboardState();
+
+            if (Raylib.IsKeyPressed(KeyboardKey.KEY_L) && _currentSegment < 0)
+            {
+                _timerLocked = !_timerLocked;
+            }
+
+            if (!_timerLocked)
+            {
+                HandleGlobalInput();
+            }
 
             float deltaTime = Raylib.GetFrameTime();
 
@@ -113,7 +125,6 @@ namespace JumpDiveClock.Timing
                 _currentTimeSecs += deltaTime;
             }
 
-            HandleGlobalInput();
         }
 
         private void DrawExtraStats(Font font, float segmentHeight)
@@ -244,10 +255,11 @@ namespace JumpDiveClock.Timing
             }
         }
 
-        private void DrawTimer(Font font, float timerHeight, float segmentHeight,
-                float headerHeight)
+        private void DrawTimer(Font font, float timerHeight, float segmentHeight)
         {
-            string timerText = Formatter.SecondsToTime(_currentTimeSecs, true);
+            string timerText = _timerLocked
+                                ? _config.TimerLockingMessage
+                                : Formatter.SecondsToTime(_currentTimeSecs, true);
             Vector2 textSize = Raylib.MeasureTextEx(
                 font, timerText, Splits.TimerFontSize, Splits.TimerFontSpacing
             );

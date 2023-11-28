@@ -140,7 +140,7 @@ namespace JumpDiveClock.Timing
             }
             else
             {
-                result = "***";
+                result = "****";
             }
 
             return result;

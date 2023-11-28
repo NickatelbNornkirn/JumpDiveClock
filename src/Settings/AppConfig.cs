@@ -22,7 +22,6 @@ namespace JumpDiveClock.Settings
 {
     public class AppConfig
     {
-        private double? _configVersion;
         private int? _defaultHeight;
         private int? _defaultWidth;
         private string? _fontFile;
@@ -31,13 +30,8 @@ namespace JumpDiveClock.Settings
         private int? _maxBackups;
         private int? _maximumFramerate;
         private int? _minSegmentsAheadToShow;
+        private string? _timerLockingMessage;
         private bool? _windowResizable;
-
-        public double ConfigVersion
-        {
-            get => (double)_configVersion!;
-            private set => _configVersion = value;
-        }
 
         public int DefaultHeight
         {
@@ -85,6 +79,12 @@ namespace JumpDiveClock.Settings
         {
             get => (int)_minSegmentsAheadToShow!;
             private set => _minSegmentsAheadToShow = value;
+        }
+
+        public string TimerLockingMessage
+        {
+            get => _timerLockingMessage!;
+            private set => _timerLockingMessage = value;
         }
 
         public bool WindowResizable

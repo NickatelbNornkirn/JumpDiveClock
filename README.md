@@ -1,6 +1,7 @@
 # JumpDiveClock
 
-A speedrun timer for X. Intended for my personal use. I add features that seem useful to me.
+A speedrun timer for X. Intended for my personal use. I add features that seem useful to me. There
+aren't many timers for Linux so I suppose that it could be useful for somebody else.
 
 ## Installation
 
@@ -24,17 +25,27 @@ own. And made this to share to other people that may find it useful.
 * having a backup system that creates copies of the speedgame's data whenever a change is made to
     it;
 * being almost completely customizable via a config file;
+* locking the timer, preventing inputs from being triggered globally (useful if you want to do
+    something else while having your speedrun timer open);
 * running on Linux (and probably on *BSD, haven't tested it).
 
 ### Where did this name come from?
 
 I speedrun a Mario fangame where the fastest way to move without equipment is to repeatedly jump and
-dive.
+dive midair.
 
 ### Wayland support?
 
 I don't plan on adding it myself because I don't use Wayland and don't plan on doing so in the short
 term, but I'm open to pull requests.
+
+### Other OSes?
+
+I don't intend on doing ports, but I'm open to pull requests.
+
+### Why C#?
+
+Because it's convenient for me.
 
 ## Running
 
@@ -52,6 +63,17 @@ dotnet run --configuration Release
 ```
 
 ## Usage
+
+Jump dive clock is intended for more advanced users, but it shouldn't be too difficult for the less
+experienced ones, assuming that you read the [documentation](DOCS.md) and see the
+[example](splits/example.yml).
+
+And you are expected to manually compile it yourself, see #Running. If you aren't able to follow the
+instructions for compiling, you probably should be using something else.
+
+Also, it's still not stable yet. Expect having to slightly modify your config after updates.
+
+## Modification and redistribution
 
 You are free to modify and/or redistribute copies of this software, as long as you share the source
 code and keep it under the same (or a compatible) license. For details, see [License](LICENSE).

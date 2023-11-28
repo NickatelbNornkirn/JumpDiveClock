@@ -19,68 +19,81 @@ JumpDiveClock config_folder:$HOME/speedruns/ split:example
 
 ## Split configuration
 
-WIP. Just look at the example config and figure stuff out. GLHF.
+## Local keybindings
+
+Only work when the timer window is focused.
+
+Esc - closes window.
+L - locks timer (doesn't work after the run begins).
+
+
+### Initial setup
+
+I recommend you to copy and paste the [example](splits/example.yml) splits, modifying it to suit
+your needs. Then consult this config if you aren't sure about what something does.
 
 ### Positions
 
-Positions are always relative to whatever contains the object in question.
-X begins (i.e. is 0) at the leftmost part of the container.
-Y begins at the top of the container.
+Positions are always relative to whatever contains the object in question (e.g. a piece of text is
+contained inside a segment).
+X begins (i.e. is 0) at the leftmost part of the container and is 1 at the rightmost part.
+Y begins at the top of the container and ends on its bottom.
 
-Example:
+### Values
 
-```none
+WIP. Just look at the example config and figure stuff out. GLHF.
 
-(x: 0.4, y: 0.6)
-00000
-00000
-0#000
-00000
-00000
-
-```
-
-### attempt_size_text_pos_x
+#### attempt_size_text_pos_x
 
 Type: fractional number (e.g. 7.5).
 
 Relative horizontal position.
 
-### attempt_size_text_pos_y
+#### attempt_size_text_pos_y
 
 Type: fractional number (e.g. 7.5).
 
-### attempt_count
+#### attempt_count
 
 Type: integer (e.g. 7).
 
 How many attempts were completed in this split.
 
-### attempt_count_font_size
+Updated automatically whenever a run is finished or at every reset.
 
-How big is the font for the attempt count.
+#### attempt_count_font_size
 
-### attempt_count_font_spacing
+Type: integer (e.g. 7).
 
-How large is the font font for the attempt count.
+How large is the font for the attempt counter.
 
-### category
+#### attempt_count_font_spacing
 
-### category_title_font_size
+Type: integer (e.g. 7).
 
-### category_title_font_spacing
+How large is the spacing between the attempt counter's characters.
 
-### extra_stats
+#### category
 
-### game_name
+Type: text.
 
-### game_title_font_size
+The name of the category that's the being ran.
 
-### game_title_font_spacing
+#### category_title_font_size
 
-### header_height
+#### category_title_font_spacing
 
-### hex_colors
+#### extra_stats
+
+#### game_name
+
+#### game_title_font_size
+
+#### game_title_font_spacing
+
+#### header_height
+
+#### hex_colors
 
 #### background
 
@@ -98,15 +111,15 @@ How large is the font font for the attempt count.
 
 #### text_base
 
-### max_segment_size
+#### max_segment_size
 
-### segment_font_size
+#### segment_font_size
 
-### segment_font_spacing
+#### segment_font_spacing
 
-### segment_margin
+#### segment_margin
 
-### segments
+#### segments
 
 #### List format
 
@@ -118,18 +131,18 @@ How large is the font font for the attempt count.
 
 #### reset_count
 
-### segments_per_screen
+#### segments_per_screen
 
-### separator_size
+#### separator_size
 
-### timer_font_size
+#### timer_font_size
 
-### timer_font_spacing
+#### timer_font_spacing
 
-### timer_size
+#### timer_size
 
-### title_category_titles_gap
+#### title_category_titles_gap
 
-### world_record_seconds
+#### world_record_seconds
 
-## Stats
+#### Stats

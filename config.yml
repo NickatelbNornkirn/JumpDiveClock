@@ -1,6 +1,8 @@
-config_version: 1.0
+# The message that's displayed in place of the timer whenever it is locked.
+timer_locking_message: "Locked"
 
 # Reccomended value: the same as the framerate of your video/stream.
+# TODO: move this to splits.
 maximum_framerate: 35
 
 window_resizable: false
@@ -9,8 +11,10 @@ max_backups: 500
 default_width: 400
 default_height: 800
 
+# TODO: move this to splits.
 font_file: "default"
 
+# TODO: move this to splits.
 # Use "xinput list" to find the ID of your keyboard.
 keyboard_id: 10
 
@@ -20,6 +24,7 @@ keyboard_id: 10
 min_segments_ahead_to_show: 2
 
 # Use "xev" to find the IDs. Look for "keycode".
+# TODO: move this to splits.
 global_keybindings:
   key_id_type: "x11"
   split:
