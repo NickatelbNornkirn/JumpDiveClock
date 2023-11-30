@@ -1,3 +1,4 @@
+
 /*
     JumpDiveClock -  Simple-ish speedrun timer for X11.
     Copyright (C) 2023  Nickatelb Nornkirn
@@ -18,19 +19,9 @@
 
 namespace JumpDiveClock.Misc
 {
-    public static class Extensions
+    public enum ForEachDir
     {
-        /// <summary>
-        ///     Like a foreach, but the index is also known.
-        /// </summary>
-        /// <param name="reverse">
-        ///     If the enumerable should be iterated from the last element.</param>
-        public static void ForeachI<T>(this IEnumerable<T> enumerable, Action<T, int> action,
-            ForEachDir direction = ForEachDir.Ascending)
-        {
-            List<T> list = enumerable.ToList();
-            int i = direction == ForEachDir.Descending ? list.Count : 0;
-            list.ForEach(x => action(x, direction == ForEachDir.Descending ? --i : i++));
-        }
+        Ascending,
+        Descending,
     }
 }

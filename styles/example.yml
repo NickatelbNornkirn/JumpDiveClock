@@ -1,0 +1,57 @@
+attempt_size_text_pos_x: 0.98
+attempt_size_text_pos_y: 0.9
+
+attempt_count_font_size: 16
+attempt_count_font_spacing: 1
+
+category_title_font_size: 20
+category_title_font_spacing: 2
+
+game_title_font_size: 38
+game_title_font_spacing: 4
+
+segment_font_size: 24
+segment_font_spacing: 2
+
+header_height: 10
+max_segment_size: 8
+segment_margin: 3
+
+separator_size: 2
+
+timer_font_size: 48
+timer_font_spacing: 2
+timer_size: 15
+title_category_titles_gap: 3
+
+# Possible values: CurrentPace, PersonalBest, BestPossibleTime, SumOfBest, WorldRecord,
+# RunsThatReachHere. They will appear in order.
+extra_stats:
+- CurrentPace
+- PersonalBest
+- BestPossibleTime
+- SumOfBest
+- WorldRecord
+- RunsThatReachHere
+
+hex_colors:
+  background: '#252525'
+  pace_ahead_gaining: '#1dbd48'
+  pace_ahead_losing: '#6cbd82'
+  pace_behind_gaining: '#da7c7c'
+  pace_behind_losing: '#da2121'
+  pace_best: '#fff63e'
+  separator: '#555555'
+  text_base: '#f2f2f2'
+
+font_file: "default"
+
+# When a segment is configured to show a given amount of segments per screen, this specifies the
+# minimum amount of incomplete segments that must be shown.
+min_segments_ahead_to_show: 2
+
+default_window_width: 400
+default_window_height: 800
+
+# The message that's displayed in place of the timer whenever it is locked.
+timer_locking_message: "Locked"

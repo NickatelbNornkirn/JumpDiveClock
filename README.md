@@ -29,6 +29,11 @@ own. And made this to share to other people that may find it useful.
     something else while having your speedrun timer open);
 * running on Linux (and probably on *BSD, haven't tested it).
 
+### Should I use this?
+
+Probably not. It's still **extremely** unstable. Expect to make changes (and sometimes drastic ones)
+to your config after every update.
+
 ### Where did this name come from?
 
 I speedrun a Mario fangame where the fastest way to move without equipment is to repeatedly jump and
@@ -42,10 +47,6 @@ term, but I'm open to pull requests.
 ### Other OSes?
 
 I don't intend on doing ports, but I'm open to pull requests.
-
-### Why C#?
-
-Because it's convenient for me.
 
 ## Running
 
@@ -66,12 +67,10 @@ dotnet run --configuration Release
 
 Jump dive clock is intended for more advanced users, but it shouldn't be too difficult for the less
 experienced ones, assuming that you read the [documentation](DOCS.md) and see the
-[example](splits/example.yml).
+[example split](splits/example.yml) and the [example style](styles/example.yml).
 
 And you are expected to manually compile it yourself, see #Running. If you aren't able to follow the
 instructions for compiling, you probably should be using something else.
-
-Also, it's still not stable yet. Expect having to slightly modify your config after updates.
 
 ## Modification and redistribution
 

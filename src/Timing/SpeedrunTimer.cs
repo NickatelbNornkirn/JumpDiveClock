@@ -38,20 +38,22 @@ namespace JumpDiveClock.Timing
         private double _pbTimeSecs;
         private Stats _stats = null!;
         private StorageManager _storage = null!;
-
+        private TimerStyle _style;
         private bool _timerLocked = false;
 
-        public SpeedrunTimer(AppConfig AppConfig, Splits splits, StorageManager storage)
+        public SpeedrunTimer(AppConfig AppConfig, Splits splits, StorageManager storage,
+                            TimerStyle style)
         {
+            _style = style;
             _config = AppConfig;
             Splits = splits;
             _storage = storage;
-            _globalInputManager = new GlobalInputManager(_config);
+            _globalInputManager = new GlobalInputManager(splits.KeyboardId);
             _colors = new ColorManager(
-                Splits.HexColors.Background, Splits.HexColors.TextBase,
-                Splits.HexColors.PaceAheadGaining, Splits.HexColors.PaceAheadLosing,
-                Splits.HexColors.PaceBehindGaining, Splits.HexColors.PaceBehindLosing,
-                Splits.HexColors.PaceBest, Splits.HexColors.Separator
+                _style.HexColors.Background, _style.HexColors.TextBase,
+                _style.HexColors.PaceAheadGaining, _style.HexColors.PaceAheadLosing,
+                _style.HexColors.PaceBehindGaining, _style.HexColors.PaceBehindLosing,
+                _style.HexColors.PaceBest, _style.HexColors.Separator
             );
             _stats = new Stats(this);
 
@@ -76,16 +78,16 @@ namespace JumpDiveClock.Timing
                                           Splits.SegmentsPerScreen);
 
             int effectiveHeight = Raylib.GetScreenHeight()
-                                    - Splits.SeparatorSize * (segmentsToDraw - 1);
+                                    - _style.SeparatorSize * (segmentsToDraw - 1);
 
-            var headerHeight = (int)(effectiveHeight * (Splits.HeaderHeight / 100.0f));
-            var timerHeight = (int)(effectiveHeight * (Splits.TimerSize / 100.0f));
+            var headerHeight = (int)(effectiveHeight * (_style.HeaderHeight / 100.0f));
+            var timerHeight = (int)(effectiveHeight * (_style.TimerSize / 100.0f));
 
             effectiveHeight -= headerHeight + timerHeight;
 
             var segmentHeight =
-                (int)Math.Min(effectiveHeight / (segmentsToDraw + Splits.ExtraStats.Length),
-                    Splits.MaxSegmentSize / 100 * effectiveHeight);
+                (int)Math.Min(effectiveHeight / (segmentsToDraw + _style.ExtraStats.Length),
+                    _style.MaxSegmentSize / 100 * effectiveHeight);
 
             DrawSeparators(headerHeight, segmentHeight, timerHeight, segmentsToDraw);
             DrawHeader(font, headerHeight);
@@ -98,8 +100,7 @@ namespace JumpDiveClock.Timing
 
         public double GetCurrentTimeSecs() => _currentTimeSecs;
 
-        public double GetPbTime()
-            => _pbTimeSecs;
+        public double GetPbTime() => _pbTimeSecs;
 
         public bool HasPb() => _pbTimeSecs != NoPbTime;
 
@@ -129,54 +130,54 @@ namespace JumpDiveClock.Timing
 
         private void DrawExtraStats(Font font, float segmentHeight)
         {
-            Splits.ExtraStats.ForeachI((stat, i) =>
+            _style.ExtraStats.ForeachI((stat, i) =>
             {
                 string statName = _stats.GetStatName(stat);
                 Vector2 statNameSize = Raylib.MeasureTextEx(
-                    font, statName, Splits.SegmentFontSize, Splits.SegmentFontSpacing
+                    font, statName, _style.SegmentFontSize, _style.SegmentFontSpacing
                 );
-                var leftTextDrawPos = new Vector2(Splits.SegmentMargin,
+                var leftTextDrawPos = new Vector2(_style.SegmentMargin,
                     Raylib.GetRenderHeight() -
-                        ((i + 1) * segmentHeight + (i + 1) * Splits.SeparatorSize)
+                        ((i + 1) * segmentHeight + (i + 1) * _style.SeparatorSize)
                         + (segmentHeight - statNameSize.Y) / 2.0f
                 );
 
                 string statTxt = _stats.GetStatText(stat);
                 Vector2 statTimeSize = Raylib.MeasureTextEx(
-                    font, statTxt, Splits.SegmentFontSize, Splits.SegmentFontSpacing
+                    font, statTxt, _style.SegmentFontSize, _style.SegmentFontSpacing
                 );
                 var statTxtPos = new Vector2(
-                    Raylib.GetScreenWidth() - Splits.SegmentMargin - statTimeSize.X,
+                    Raylib.GetScreenWidth() - _style.SegmentMargin - statTimeSize.X,
                     leftTextDrawPos.Y
                 );
 
-                Raylib.DrawTextEx(font, statName, leftTextDrawPos, Splits.SegmentFontSize,
-                    Splits.SegmentFontSpacing, _colors.Base
+                Raylib.DrawTextEx(font, statName, leftTextDrawPos, _style.SegmentFontSize,
+                    _style.SegmentFontSpacing, _colors.Base
                 );
-                Raylib.DrawTextEx(font, statTxt, statTxtPos, Splits.SegmentFontSize,
-                    Splits.SegmentFontSpacing, _colors.Base
+                Raylib.DrawTextEx(font, statTxt, statTxtPos, _style.SegmentFontSize,
+                    _style.SegmentFontSpacing, _colors.Base
                 );
             },
-                true
+                ForEachDir.Descending
             );
         }
 
         private void DrawHeader(Font font, float headerHeight)
         {
             Vector2 gameTitleSize = Raylib.MeasureTextEx(font, Splits.GameName,
-                Splits.GameTitleFontSize, Splits.GameTitleFontSpacing
+                _style.GameTitleFontSize, _style.GameTitleFontSpacing
             );
             Vector2 categoryTitleSize = Raylib.MeasureTextEx(
-                font, Splits.Category, Splits.CategoryTitleFontSize,
-                Splits.CategoryTitleFontSpacing
+                font, Splits.Category, _style.CategoryTitleFontSize,
+                _style.CategoryTitleFontSpacing
             );
             Vector2 attemptCountSize = Raylib.MeasureTextEx(
-                font, $"{Splits.AttemptCount}", Splits.AttemptCountFontSize,
-                Splits.AttemptCountFontSpacing
+                font, $"{Splits.AttemptCount}", _style.AttemptCountFontSize,
+                _style.AttemptCountFontSpacing
             );
 
             float textLayoutHeight = gameTitleSize.Y + categoryTitleSize.Y
-                                     + Splits.TitleCategoryTitlesGap;
+                                     + _style.TitleCategoryTitlesGap;
             float textLayoutStartY = (headerHeight - textLayoutHeight) / 2.0f;
 
             var gameTitlePos = new Vector2((Raylib.GetScreenWidth() - gameTitleSize.X) / 2.0f,
@@ -184,23 +185,23 @@ namespace JumpDiveClock.Timing
             );
             var categoryTitlePos = new Vector2(
                 (Raylib.GetScreenWidth() - categoryTitleSize.X) / 2.0f,
-                textLayoutStartY + Splits.TitleCategoryTitlesGap + gameTitleSize.Y
+                textLayoutStartY + _style.TitleCategoryTitlesGap + gameTitleSize.Y
             );
             var attemptCountPos = new Vector2(
-                (Raylib.GetScreenWidth() * Splits.AttemptSizeTextPosX) - attemptCountSize.X,
-                (headerHeight * Splits.AttemptSizeTextPosY) - attemptCountSize.Y
+                (Raylib.GetScreenWidth() * _style.AttemptSizeTextPosX) - attemptCountSize.X,
+                (headerHeight * _style.AttemptSizeTextPosY) - attemptCountSize.Y
             );
 
             Raylib.DrawTextEx(font, Splits.GameName, gameTitlePos,
-                Splits.GameTitleFontSize, Splits.GameTitleFontSpacing, _colors.Base
+                _style.GameTitleFontSize, _style.GameTitleFontSpacing, _colors.Base
             );
             Raylib.DrawTextEx(
-                font, Splits.Category, categoryTitlePos, Splits.CategoryTitleFontSize,
-                Splits.CategoryTitleFontSpacing, _colors.Base
+                font, Splits.Category, categoryTitlePos, _style.CategoryTitleFontSize,
+                _style.CategoryTitleFontSpacing, _colors.Base
             );
             Raylib.DrawTextEx(
                 font, $"{Splits.AttemptCount}", attemptCountPos,
-                Splits.AttemptCountFontSize, Splits.AttemptCountFontSpacing,
+                _style.AttemptCountFontSize, _style.AttemptCountFontSpacing,
                 _colors.Base
             );
         }
@@ -209,15 +210,15 @@ namespace JumpDiveClock.Timing
             int segmentsToDraw)
         {
             int offset = Math.Min(
-                Math.Max(_currentSegment - (segmentsToDraw - _config.MinSegmentsAheadToShow), 0),
+                Math.Max(_currentSegment - (segmentsToDraw - _style.MinSegmentsAheadToShow), 0),
                 Splits.Segments.Length - segmentsToDraw
             );
 
             for (int i = offset; i < Splits.Segments.Length && i < offset + segmentsToDraw; i++)
             {
                 Splits.Segments[i].Draw(headerHeight, i - offset, segmentHeight, font,
-                    Splits.SegmentFontSpacing, _colors, Splits.SeparatorSize,
-                    Splits.SegmentFontSize, Splits.SegmentMargin
+                    _style.SegmentFontSpacing, _colors, _style.SeparatorSize,
+                    _style.SegmentFontSize, _style.SegmentMargin
                 );
             }
         }
@@ -225,7 +226,7 @@ namespace JumpDiveClock.Timing
         private void DrawSeparators(
             int headerHeight, int segmentSize, int timerHeight, int segmentsToDraw)
         {
-            Raylib.DrawRectangle(0, headerHeight, Raylib.GetRenderWidth(), Splits.SeparatorSize,
+            Raylib.DrawRectangle(0, headerHeight, Raylib.GetRenderWidth(), _style.SeparatorSize,
                 _colors.Separator
             );
 
@@ -233,24 +234,24 @@ namespace JumpDiveClock.Timing
             {
                 Raylib.DrawRectangle(
                     0, headerHeight + i * segmentSize, Raylib.GetRenderWidth(),
-                    Splits.SeparatorSize, _colors.Separator
+                    _style.SeparatorSize, _colors.Separator
                 );
             }
 
-            int timerOffset = Splits.ExtraStats.Length * segmentSize +
-                (Splits.ExtraStats.Length - 1) * Splits.SeparatorSize;
-            int timerY = Raylib.GetRenderHeight() - timerHeight - Splits.SeparatorSize
+            int timerOffset = _style.ExtraStats.Length * segmentSize +
+                (_style.ExtraStats.Length - 1) * _style.SeparatorSize;
+            int timerY = Raylib.GetRenderHeight() - timerHeight - _style.SeparatorSize
                          - timerOffset;
 
             Raylib.DrawRectangle(0, timerY + timerHeight, Raylib.GetRenderWidth(),
-                Splits.SeparatorSize, _colors.Separator
+                _style.SeparatorSize, _colors.Separator
             );
 
-            for (int i = 1; i < Splits.ExtraStats.Length; i++)
+            for (int i = 1; i < _style.ExtraStats.Length; i++)
             {
                 Raylib.DrawRectangle(0,
-                    timerY + timerHeight + i * segmentSize + Splits.SeparatorSize * (i - 1),
-                    Raylib.GetRenderWidth(), Splits.SeparatorSize, _colors.Separator
+                    timerY + timerHeight + i * segmentSize + _style.SeparatorSize * (i - 1),
+                    Raylib.GetRenderWidth(), _style.SeparatorSize, _colors.Separator
                 );
             }
         }
@@ -258,16 +259,16 @@ namespace JumpDiveClock.Timing
         private void DrawTimer(Font font, float timerHeight, float segmentHeight)
         {
             string timerText = _timerLocked
-                                ? _config.TimerLockingMessage
+                                ? _style.TimerLockingMessage
                                 : Formatter.SecondsToTime(_currentTimeSecs, true);
             Vector2 textSize = Raylib.MeasureTextEx(
-                font, timerText, Splits.TimerFontSize, Splits.TimerFontSpacing
+                font, timerText, _style.TimerFontSize, _style.TimerFontSpacing
             );
 
             var textPos = new Vector2(
                 (Raylib.GetRenderWidth() - textSize.X) / 2.0f,
-                Raylib.GetRenderHeight() - segmentHeight * Splits.ExtraStats.Length
-                    - Splits.SeparatorSize * (Splits.ExtraStats.Length - 1)
+                Raylib.GetRenderHeight() - segmentHeight * _style.ExtraStats.Length
+                    - _style.SeparatorSize * (_style.ExtraStats.Length - 1)
                     - (timerHeight + textSize.Y) / 2.0f
             );
 
@@ -303,29 +304,29 @@ namespace JumpDiveClock.Timing
             }
 
             Raylib.DrawTextEx(
-                font, timerText, textPos, Splits.TimerFontSize, Splits.TimerFontSpacing,
+                font, timerText, textPos, _style.TimerFontSize, _style.TimerFontSpacing,
                 (Color)drawColor
             );
         }
 
         private void HandleGlobalInput()
         {
-            if (_globalInputManager.InputReader.IsKeyPressed(_config.GlobalKeybindings.Split))
+            if (_globalInputManager.InputReader.IsKeyPressed(Splits.GlobalKeybindings.Split))
             {
                 Split();
             }
 
-            if (_globalInputManager.InputReader.AskingForReset(_config.GlobalKeybindings.Reset))
+            if (_globalInputManager.InputReader.AskingForReset(Splits.GlobalKeybindings.Reset))
             {
                 Reset();
             }
 
-            if (_globalInputManager.InputReader.IsKeyPressed(_config.GlobalKeybindings.Undo))
+            if (_globalInputManager.InputReader.IsKeyPressed(Splits.GlobalKeybindings.Undo))
             {
                 Undo();
             }
 
-            if (_globalInputManager.InputReader.IsKeyPressed(_config.GlobalKeybindings.Redo))
+            if (_globalInputManager.InputReader.IsKeyPressed(Splits.GlobalKeybindings.Redo))
             {
                 Redo();
             }

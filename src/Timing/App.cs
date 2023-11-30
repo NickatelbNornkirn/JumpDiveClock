@@ -42,8 +42,6 @@ namespace JumpDiveClock.Timing
             configFolder ??= $"{homeFolder}/.config/jump-dive-clock";
             Directory.CreateDirectory(configFolder);
 
-            _storage = new StorageManager(configFolder);
-
             string configPath = $"{configFolder}/config.yml";
             if (!File.Exists(configPath))
             {
@@ -53,44 +51,56 @@ namespace JumpDiveClock.Timing
             string splitFolder = $"{configFolder}/splits";
             Directory.CreateDirectory(splitFolder);
 
-            string splitPath = $"{splitFolder}/{splitName}.yml";
-            if (!File.Exists(splitPath))
+            string splitsPath = $"{splitFolder}/{splitName}.yml";
+            if (!File.Exists(splitsPath))
             {
-                result.Error = $"{splitPath} can't be found.";
+                result.Error = $"{splitsPath} can't be found.";
                 return result;
             }
 
-            string fontFolder = $"{configFolder}/fonts";
-            Directory.CreateDirectory(fontFolder);
+            _storage = new StorageManager(configFolder, splitsPath);
+
+            string fontDir = $"{configFolder}/fonts";
+            Directory.CreateDirectory(fontDir);
 
             Console.WriteLine("Initializing app...");
 
-            AppConfig? config = _storage.LoadConfig(configPath, splitPath, ref result);
-            if (config is null)
+            _appConfig = LoadFrom<AppConfig>(configPath, ref result);
+            if (!result.Success)
             {
                 return result;
-            }
-            else
-            {
-                _appConfig = config;
             }
 
             _storage.MaxBackups = _appConfig.MaxBackups;
 
-            SpeedrunTimer? loadedTimer = _storage.LoadTimer(splitPath, _appConfig, ref result);
-            if (loadedTimer is null)
+            Splits splits = LoadFrom<Splits>(splitsPath, ref result);
+            if (!result.Success)
             {
                 return result;
             }
-            else
+
+            string stylesDir = $"{configFolder}/styles";
+            Directory.CreateDirectory(stylesDir);
+            if (!File.Exists(splits.StylePath))
             {
-                _timer = loadedTimer;
+                result.Error = $"{splits.StylePath} can't be found.";
+                return result;
             }
 
-            SetupWindow();
+            TimerStyle timerStyle = LoadFrom<TimerStyle>(splits.StylePath, ref result);
 
-            string fontPath = $"{fontFolder}/{_appConfig.FontFile}";
-            if (_appConfig.FontFile != "default" && !File.Exists(fontPath))
+            _timer = new SpeedrunTimer(_appConfig, splits, _storage, timerStyle);
+            if (!result.Success)
+            {
+                return result;
+            }
+
+            SetupWindow(timerStyle.DefaultWindowWidth, timerStyle.DefaultWindowHeight,
+                splits.MaximumFramerate
+            );
+
+            string fontPath = $"{fontDir}/{timerStyle.FontFile}";
+            if (timerStyle.FontFile != "default" && !File.Exists(fontPath))
             {
                 result.Error = $"Could not find font '{fontPath}'.";
                 result.Success = false;
@@ -128,7 +138,13 @@ namespace JumpDiveClock.Timing
             Raylib.EndDrawing();
         }
 
-        private void SetupWindow()
+        private T LoadFrom<T>(string path, ref Result result)
+        {
+            T? loadedObj = _storage.CreateObjectFromYml<T>(path, ref result);
+            return loadedObj!;
+        }
+
+        private void SetupWindow(int defaultWidth, int defaultHeight, int maximumFramerate)
         {
             const string Title = "Jump Dive Clock";
 
@@ -137,8 +153,8 @@ namespace JumpDiveClock.Timing
                 Raylib.SetConfigFlags(ConfigFlags.FLAG_WINDOW_RESIZABLE);
             }
 
-            Raylib.InitWindow(_appConfig.DefaultWidth, _appConfig.DefaultHeight, Title);
-            Raylib.SetTargetFPS(_appConfig.MaximumFramerate);
+            Raylib.InitWindow(defaultWidth, defaultHeight, Title);
+            Raylib.SetTargetFPS(maximumFramerate);
         }
 
         private void Update()

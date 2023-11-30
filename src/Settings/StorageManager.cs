@@ -33,46 +33,45 @@ namespace JumpDiveClock.Settings
         private ISerializer _serializer = new SerializerBuilder()
             .WithNamingConvention(UnderscoredNamingConvention.Instance)
             .Build();
-        private string _splitsStoragePath = null!;
+        private string _splitsStoragePath;
 
-        public StorageManager(string configFolder)
+        public StorageManager(string configFolder, string splitsPath)
         {
             _configFolder = configFolder;
+            _splitsStoragePath = splitsPath;
         }
+
         public int MaxBackups { get; set; }
 
-        public AppConfig? LoadConfig(string configPath, string splitsPath, ref Result result)
+        public T? CreateObjectFromYml<T>(string path, ref Result result)
         {
-            if (!File.Exists(configPath))
+            if (!File.Exists(path))
             {
-                result.Error = $"Config file \"{configPath}\" could not be found.";
+                result.Error = $"Config file \"{path}\" could not be found.";
                 result.Success = false;
-                return null;
+                return default(T);
             }
 
-            if (LoadText(configPath) is string configText)
+            if (LoadText(path) is string text)
             {
-                return TryLoadingConfig(configText, splitsPath, ref result);
+                Console.WriteLine($"Trying to serialize \"{path}\"...");
+                T? obj = TrySerializeYml<T>(text, ref result);
+
+                if (obj is not null && obj is Splits)
+                {
+                    SaveBackup(text, GetFileName(path));
+                }
+
+                Console.WriteLine($"Serialized \"{path}\".");
+                return obj;
             }
             else
             {
-                result.Error = "Failed to read config.";
-                return null;
-            }
-        }
-
-        public SpeedrunTimer? LoadTimer(string splitPath, AppConfig config, ref Result result)
-        {
-            if (LoadText(splitPath) is string splitsYml)
-            {
-                return TryLoadingTimerFromSplits(config, splitsYml, splitPath, ref result);
-            }
-            else
-            {
-                result.Error = "Failed to read splits.";
+                result.Error = $"Failed to read \"{path}\".";
                 result.Success = false;
-                return null;
+                return default(T);
             }
+
         }
 
         public void SaveTimerSplits(SpeedrunTimer timer)
@@ -82,8 +81,7 @@ namespace JumpDiveClock.Settings
             SaveBackup(yamlText, GetFileName(_splitsStoragePath));
         }
 
-        private ulong GetDiff(ulong x, ulong y)
-            => x > y ? x - y : y - x;
+        private ulong GetDiff(ulong x, ulong y) => x > y ? x - y : y - x;
 
         private string GetFileName(string filePath)
         {
@@ -135,8 +133,7 @@ namespace JumpDiveClock.Settings
             return text;
         }
 
-        private ulong ParseFileNumber(string fileName)
-            => UInt64.Parse(fileName.Split("_").Last());
+        private ulong ParseFileNumber(string fileName) => UInt64.Parse(fileName.Split("_").Last());
 
         private void PurgeOldBackups(ulong newestBackupN, string backupFolder)
         {
@@ -171,8 +168,7 @@ namespace JumpDiveClock.Settings
             if (lastBackup != yamlText)
             {
                 File.WriteAllText(
-                    $"{backupFolder}/{splitFileName}_{newBackupN}.yml",
-                    yamlText
+                    $"{backupFolder}/{splitFileName}_{newBackupN}.yml", yamlText
                 );
             }
 
@@ -188,61 +184,31 @@ namespace JumpDiveClock.Settings
             );
         }
 
-        private AppConfig? TryLoadingConfig(string configText, string splitsPath, ref Result result)
+        private T? TrySerializeYml<T>(string yamlText, ref Result result)
         {
             try
             {
-                AppConfig config = _deserializer.Deserialize<AppConfig>(configText);
-                List<string> uninitializedFields = InitializationChecker
-                                                    .GetUninitializedPrivateFields(config);
-
-                if (uninitializedFields.Count > 0)
-                {
-                    ShowUninitializedFields(uninitializedFields);
-                    result.Success = false;
-                    return null;
-                }
-
-                _splitsStoragePath = splitsPath;
-                result.Success = true;
-                return config;
-            }
-            catch (YamlException ex)
-            {
-                result.Error = "Failed to deserialize config.\n" + ex.Message;
-                result.Success = false;
-                return null;
-            }
-        }
-
-        private SpeedrunTimer? TryLoadingTimerFromSplits(
-            AppConfig config, string splitsYml, string splitFilePath, ref Result result)
-        {
-            try
-            {
-                Splits splits = _deserializer.Deserialize<Splits>(splitsYml);
-                // TODO: add null checks to all sub-configurations (e.g. hex_colors.background).
-                List<string> unitializedFields =
-                                        InitializationChecker.GetUninitializedPrivateFields(splits);
+                // TODO: check if sub-fields are null.
+                T obj = _deserializer.Deserialize<T>(yamlText)!;
+                List<string> unitializedFields = InitializationChecker
+                                                    .GetUninitializedPrivateFields(obj);
 
                 if (unitializedFields.Count > 0)
                 {
                     ShowUninitializedFields(unitializedFields);
                     result.Success = false;
-                    return null;
+                    return default(T);
                 }
 
-                SpeedrunTimer timer = new SpeedrunTimer(config, splits, this);
-                SaveBackup(splitsYml, GetFileName(splitFilePath));
                 result.Success = true;
-                return timer;
+                return obj;
             }
             catch (YamlException ex)
             {
                 Console.WriteLine(ex.InnerException);
-                result.Error = "Failed to deserialize splits.\n" + ex.Message;
+                result.Error = "Failed to deserialize yaml file.\n" + ex.Message;
                 result.Success = false;
-                return null;
+                return default(T);
             }
         }
     }

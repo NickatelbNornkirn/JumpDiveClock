@@ -24,20 +24,20 @@ namespace JumpDiveClock.Input
     {
         public readonly IGlobalInputReader InputReader;
 
-        public GlobalInputManager(AppConfig config)
+        public GlobalInputManager(int keyboardId)
         {
-            InputReader = ChooseInputReader(config);
+            InputReader = ChooseInputReader(keyboardId);
         }
 
         /// <summary>
         /// Chooses input reader.
         /// Crashes if no available implementation is found.
         /// </summary>
-        private IGlobalInputReader ChooseInputReader(AppConfig config)
+        private IGlobalInputReader ChooseInputReader(int keyboardId)
         {
             if (XReader.IsBackendAvailable())
             {
-                return new XReader(config.KeyboardId);
+                return new XReader(keyboardId);
             }
             else
             {

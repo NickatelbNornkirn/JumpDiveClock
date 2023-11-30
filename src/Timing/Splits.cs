@@ -16,36 +16,22 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+using JumpDiveClock.Input;
+
 namespace JumpDiveClock.Timing
 {
     public class Splits
     {
         private int? _attemptCount;
-        private int? _attemptCountFontSize;
-        private int? _attemptCountFontSpacing;
-        private float? _attemptSizeTextPosX;
-        private float? _attemptSizeTextPosY;
         private string? _category;
-        private int? _categoryTitleFontSize;
-        private int? _categoryTitleFontSpacing;
         private bool? _completedRunBefore;
-        private StatType[]? _extraStats;
         private string? _gameName;
-        private int? _gameTitleFontSize;
-        private int? _gameTitleFontSpacing;
-        private float? _headerHeight;
-        private HexColors? _hexColors;
-        private float? _maxSegmentSize;
-        private int? _segmentFontSize;
-        private int? _segmentFontSpacing;
-        private int? _segmentMargin;
+        private Keybindings? _globalKeybindings;
+        private int? _keyboardId;
+        private int? _maximumFramerate;
         private Segment[]? _segments;
         private int? _segmentsPerScreen;
-        private int? _separatorSize;
-        private int? _timerFontSize;
-        private int? _timerFontSpacing;
-        private float? _timerSize;
-        private int? _titleCategoryTitlesGap;
+        private string? _stylePath;
         private string? _worldRecordOwner;
         private double? _worldRecordSeconds;
 
@@ -55,46 +41,10 @@ namespace JumpDiveClock.Timing
             set => _attemptCount = value;
         }
 
-        public int AttemptCountFontSize
-        {
-            get => (int)_attemptCountFontSize!;
-            private set => _attemptCountFontSize = value;
-        }
-
-        public int AttemptCountFontSpacing
-        {
-            get => (int)_attemptCountFontSpacing!;
-            private set => _attemptCountFontSpacing = value;
-        }
-
-        public float AttemptSizeTextPosX
-        {
-            get => (float)_attemptSizeTextPosX!;
-            set => _attemptSizeTextPosX = value;
-        }
-
-        public float AttemptSizeTextPosY
-        {
-            get => (float)_attemptSizeTextPosY!;
-            set => _attemptSizeTextPosY = value;
-        }
-
         public string Category
         {
             get => _category!;
             private set => _category = value;
-        }
-
-        public int CategoryTitleFontSize
-        {
-            get => (int)_categoryTitleFontSize!;
-            private set => _categoryTitleFontSize = value;
-        }
-
-        public int CategoryTitleFontSpacing
-        {
-            get => (int)_categoryTitleFontSpacing!;
-            set => _categoryTitleFontSpacing = value;
         }
 
         public bool CompletedRunBefore
@@ -103,64 +53,28 @@ namespace JumpDiveClock.Timing
             set => _completedRunBefore = value;
         }
 
-        public StatType[] ExtraStats
-        {
-            get => _extraStats!;
-            private set => _extraStats = value;
-        }
-
         public string GameName
         {
             get => _gameName!;
             private set => _gameName = value;
         }
 
-        public int GameTitleFontSize
+        public Keybindings GlobalKeybindings
         {
-            get => (int)_gameTitleFontSize!;
-            private set => _gameTitleFontSize = value;
+            get => (Keybindings)_globalKeybindings!;
+            private set => _globalKeybindings = value;
         }
 
-        public int GameTitleFontSpacing
+        public int KeyboardId
         {
-            get => (int)_gameTitleFontSpacing!;
-            private set => _gameTitleFontSpacing = value;
+            get => (int)_keyboardId!;
+            private set => _keyboardId = value;
         }
 
-        public float HeaderHeight
+        public int MaximumFramerate
         {
-            get => (float)_headerHeight!;
-            private set => _headerHeight = value;
-        }
-
-        public HexColors HexColors
-        {
-            get => _hexColors!;
-            private set => _hexColors = value;
-        }
-
-        public float MaxSegmentSize
-        {
-            get => (float)_maxSegmentSize!;
-            private set => _maxSegmentSize = value;
-        }
-
-        public int SegmentFontSize
-        {
-            get => (int)_segmentFontSize!;
-            private set => _segmentFontSize = value;
-        }
-
-        public int SegmentFontSpacing
-        {
-            get => (int)_segmentFontSpacing!;
-            private set => _segmentFontSpacing = value;
-        }
-
-        public int SegmentMargin
-        {
-            get => (int)_segmentMargin!;
-            private set => _segmentMargin = value;
+            get => (int)_maximumFramerate!;
+            private set => _maximumFramerate = value;
         }
 
         public Segment[] Segments
@@ -175,34 +89,10 @@ namespace JumpDiveClock.Timing
             private set => _segmentsPerScreen = value;
         }
 
-        public int SeparatorSize
+        public string StylePath
         {
-            get => (int)_separatorSize!;
-            private set => _separatorSize = value;
-        }
-
-        public int TimerFontSize
-        {
-            get => (int)_timerFontSize!;
-            private set => _timerFontSize = value;
-        }
-
-        public int TimerFontSpacing
-        {
-            get => (int)_timerFontSpacing!;
-            private set => _timerFontSpacing = value;
-        }
-
-        public float TimerSize
-        {
-            get => (float)_timerSize!;
-            private set => _timerSize = value;
-        }
-
-        public int TitleCategoryTitlesGap
-        {
-            get => (int)_titleCategoryTitlesGap!;
-            private set => _titleCategoryTitlesGap = value;
+            get => _stylePath!;
+            private set => _stylePath = value;
         }
 
         public string WorldRecordOwner
