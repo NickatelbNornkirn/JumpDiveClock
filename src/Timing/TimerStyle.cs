@@ -39,6 +39,7 @@ namespace JumpDiveClock.Timing
         private int? _segmentFontSize;
         private int? _segmentFontSpacing;
         private int? _segmentMargin;
+        private int? _segmentsPerScreen;
         private int? _separatorSize;
         private int? _timerFontSize;
         private int? _timerFontSpacing;
@@ -158,6 +159,13 @@ namespace JumpDiveClock.Timing
         {
             get => (int)_segmentMargin!;
             private set => _segmentMargin = value;
+        }
+
+        public int SegmentsPerScreen
+        {
+            get => (int)_segmentsPerScreen!;
+            private set => _segmentsPerScreen = value;
+
         }
 
         public int SeparatorSize

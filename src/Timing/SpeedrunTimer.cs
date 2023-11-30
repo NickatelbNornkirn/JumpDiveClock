@@ -74,8 +74,7 @@ namespace JumpDiveClock.Timing
         {
             Raylib.ClearBackground(_colors.Background);
 
-            int segmentsToDraw = Math.Min(Splits.Segments.Length,
-                                          Splits.SegmentsPerScreen);
+            int segmentsToDraw = Math.Min(Splits.Segments.Length, _style.SegmentsPerScreen);
 
             int effectiveHeight = Raylib.GetScreenHeight()
                                     - _style.SeparatorSize * (segmentsToDraw - 1);

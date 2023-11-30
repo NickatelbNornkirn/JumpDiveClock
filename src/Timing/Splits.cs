@@ -30,7 +30,6 @@ namespace JumpDiveClock.Timing
         private int? _keyboardId;
         private int? _maximumFramerate;
         private Segment[]? _segments;
-        private int? _segmentsPerScreen;
         private string? _stylePath;
         private string? _worldRecordOwner;
         private double? _worldRecordSeconds;
@@ -81,12 +80,6 @@ namespace JumpDiveClock.Timing
         {
             get => _segments!;
             private set => _segments = value;
-        }
-
-        public int SegmentsPerScreen
-        {
-            get => (int)_segmentsPerScreen!;
-            private set => _segmentsPerScreen = value;
         }
 
         public string StylePath

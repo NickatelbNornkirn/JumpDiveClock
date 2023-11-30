@@ -24,6 +24,8 @@ timer_font_spacing: 2
 timer_size: 15
 title_category_titles_gap: 3
 
+segments_per_screen: 10
+
 # Possible values: CurrentPace, PersonalBest, BestPossibleTime, SumOfBest, WorldRecord,
 # RunsThatReachHere. They will appear in order.
 extra_stats:
