@@ -30,7 +30,7 @@ namespace JumpDiveClock.Timing
         private int? _keyboardId;
         private int? _maximumFramerate;
         private Segment[]? _segments;
-        private string? _stylePath;
+        private string? _styleName;
         private string? _worldRecordOwner;
         private double? _worldRecordSeconds;
 
@@ -82,10 +82,10 @@ namespace JumpDiveClock.Timing
             private set => _segments = value;
         }
 
-        public string StylePath
+        public string StyleName
         {
-            get => _stylePath!;
-            private set => _stylePath = value;
+            get => _styleName!;
+            private set => _styleName = value;
         }
 
         public string WorldRecordOwner

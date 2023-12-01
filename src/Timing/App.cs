@@ -36,7 +36,7 @@ namespace JumpDiveClock.Timing
 
         public Result Init(string splitName, string? configFolder)
         {
-            var result = new Result() { Success = false };
+            var result = new Result();
 
             string homeFolder = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
             configFolder ??= $"{homeFolder}/.config/jump-dive-clock";
@@ -80,20 +80,22 @@ namespace JumpDiveClock.Timing
             }
 
             string stylesDir = $"{configFolder}/styles";
+            string styleFile = $"{stylesDir}/{splits.StyleName}";
             Directory.CreateDirectory(stylesDir);
-            if (!File.Exists(splits.StylePath))
+            if (!File.Exists(styleFile))
             {
-                result.Error = $"{splits.StylePath} can't be found.";
+                result.Error = $"{styleFile} can't be found.";
+                result.Success = false;
                 return result;
             }
 
-            TimerStyle timerStyle = LoadFrom<TimerStyle>(splits.StylePath, ref result);
-
-            _timer = new SpeedrunTimer(_appConfig, splits, _storage, timerStyle);
+            TimerStyle timerStyle = LoadFrom<TimerStyle>(styleFile, ref result);
             if (!result.Success)
             {
+                result.Success = false;
                 return result;
             }
+            _timer = new SpeedrunTimer(_appConfig, splits, _storage, timerStyle);
 
             SetupWindow(timerStyle.DefaultWindowWidth, timerStyle.DefaultWindowHeight,
                 splits.MaximumFramerate

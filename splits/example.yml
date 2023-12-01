@@ -35,6 +35,6 @@ segments:
   name: Final boss
   pb_time_rel: 10
   reset_count: 0
-style_path: styles/example.yml
+style_name: example.yml
 world_record_owner: John Doe
 world_record_seconds: 9.5

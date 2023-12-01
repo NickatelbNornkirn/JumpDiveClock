@@ -86,7 +86,7 @@ namespace JumpDiveClock.Timing
 
             var segmentHeight =
                 (int)Math.Min(effectiveHeight / (segmentsToDraw + _style.ExtraStats.Length),
-                    _style.MaxSegmentSize / 100 * effectiveHeight);
+                        _style.MaxSegmentSize / 100 * effectiveHeight);
 
             DrawSeparators(headerHeight, segmentHeight, timerHeight, segmentsToDraw);
             DrawHeader(font, headerHeight);
