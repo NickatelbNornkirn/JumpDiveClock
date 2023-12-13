@@ -25,7 +25,7 @@ namespace JumpDiveClock.Timing
         {
             { StatType.CurrentPace, "Current pace:" },
             { StatType.SumOfBest, "Sum of best:" },
-            { StatType.RunsThatReachHere, "Runs that reach here:" },
+            { StatType.RunsThatReachHere, "Sgmt. reach rate:" },
             { StatType.BestPossibleTime, "Best possible time:" },
             { StatType.PersonalBest, "Personal best: "},
             { StatType.WorldRecord, "World record: "}
@@ -131,7 +131,7 @@ namespace JumpDiveClock.Timing
                     }
                     double p = (_timer.Splits.AttemptCount - rc)
                                 / Math.Max(_timer.Splits.AttemptCount, 1) * 100.0;
-                    result = p.ToString("00.00") + "%";
+                    result = p.ToString("00.0") + "%";
                 }
                 else
                 {

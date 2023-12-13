@@ -40,11 +40,9 @@ namespace JumpDiveClock.Timing
             }
 
             result += $"{mm.ToString("D2")}{Separator}";
-            result += $"{(detailed ? ss : RoundSecs(ss)).ToString("00" + (detailed ? ".0" : ""))}";
+            result += $"{(detailed ? ss : (int)ss).ToString("00" + (detailed ? ".0" : ""))}";
 
             return result;
         }
-
-        private static double RoundSecs(double ss) => Math.Min(Math.Round(ss), 59);
     }
 }
