@@ -129,7 +129,7 @@ namespace JumpDiveClock.Input
             _xinput.Close();
         }
 
-        private int GetKeyCode(Keybinding k) => Int32.Parse(k.KeyId);
+        private int GetKeyCode(Keybinding k) => int.Parse(k.KeyId);
 
         private bool KeystrokeDown(Keybinding key)
             => _pressedKeys.Contains(GetKeyCode(key)) && (!key.RequiresShift || ShiftPressed());

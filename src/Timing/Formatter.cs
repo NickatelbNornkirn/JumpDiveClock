@@ -39,7 +39,7 @@ namespace JumpDiveClock.Timing
                 result += $"{hh}{Separator}";
             }
 
-            result += $"{mm.ToString("D2")}{Separator}";
+            result += $"{mm:D2}{Separator}";
             result += $"{(detailed ? ss : (int)ss).ToString("00" + (detailed ? ".0" : ""))}";
 
             return result;

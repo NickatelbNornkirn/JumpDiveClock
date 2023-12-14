@@ -33,6 +33,7 @@ namespace JumpDiveClock.Timing
         private AppConfig _config = null!;
         private int _currentSegment;
         private double _currentTimeSecs;
+        private double _finishTime;
         private GlobalInputManager _globalInputManager = null!;
         private HistoryManager _history = new HistoryManager();
         private double _pbTimeSecs;
@@ -104,6 +105,7 @@ namespace JumpDiveClock.Timing
         public bool HasPb() => _pbTimeSecs != NoPbTime;
 
         public bool HasStarted() => _currentSegment > -1;
+
         public void Update()
         {
             _globalInputManager.InputReader.UpdateKeyboardState();
@@ -120,11 +122,10 @@ namespace JumpDiveClock.Timing
 
             float deltaTime = Raylib.GetFrameTime();
 
-            if (_currentSegment >= 0 && _currentSegment < Splits.Segments.Length)
+            if (_currentSegment >= 0)
             {
                 _currentTimeSecs += deltaTime;
             }
-
         }
 
         private void DrawExtraStats(Font font, float segmentHeight)
@@ -257,9 +258,10 @@ namespace JumpDiveClock.Timing
 
         private void DrawTimer(Font font, float timerHeight, float segmentHeight)
         {
+            double t = IsRunFinished() ? _finishTime : _currentTimeSecs;
+
             string timerText = _timerLocked
-                                ? _style.TimerLockingMessage
-                                : Formatter.SecondsToTime(_currentTimeSecs, true);
+                                ? _style.TimerLockingMessage : Formatter.SecondsToTime(t, true);
             Vector2 textSize = Raylib.MeasureTextEx(
                 font, timerText, _style.TimerFontSize, _style.TimerFontSpacing
             );
@@ -272,17 +274,16 @@ namespace JumpDiveClock.Timing
             );
 
             Color? drawColor = null;
-            if (_currentTimeSecs == 0.0 || !RanAllSegmentsBefore())
+            if (t == 0.0 || !RanAllSegmentsBefore())
             {
                 drawColor = _colors.Base;
             }
             else
             {
                 int segI = Math.Min(_currentSegment, Splits.Segments.Length - 1);
-                bool ahead = _currentTimeSecs
-                                < Splits.Segments[segI].GetAbsolutePbCompletionTime();
+                bool ahead = t < Splits.Segments[segI].GetAbsolutePbCompletionTime();
 
-                if (!Splits.Segments.Last().IsAhead(_currentTimeSecs))
+                if (!Splits.Segments.Last().IsAhead(t))
                 {
                     drawColor = _colors.BehindLosing;
                 }
@@ -462,6 +463,11 @@ namespace JumpDiveClock.Timing
             }
 
             _history.ClearHistory();
+
+            if (IsRunFinished())
+            {
+                _finishTime = _currentTimeSecs;
+            }
         }
 
         private void Undo()

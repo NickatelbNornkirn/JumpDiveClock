@@ -1,4 +1,4 @@
-attempt_count: 0
+attempt_count: 5
 category: Any% Glitchless
 completed_run_before: true
 game_name: Super Cool Example
@@ -19,22 +19,22 @@ global_keybindings:
 keyboard_id: 10
 maximum_framerate: 35
 segments:
-- best_segment_time_rel: 7
+- best_segment_time_rel: 1.000022828578949
   name: First level
-  pb_time_rel: 10
+  pb_time_rel: 1.2000244334340096
   reset_count: 1
-- best_segment_time_rel: 3.4159488873556256
+- best_segment_time_rel: 1.028598591685295
   name: Second level
-  pb_time_rel: 10
+  pb_time_rel: 1.2571862023323774
   reset_count: 0
-- best_segment_time_rel: 7
+- best_segment_time_rel: -3.142939167097211
   name: Third level
-  pb_time_rel: 10
-  reset_count: 0
-- best_segment_time_rel: 7
+  pb_time_rel: 1.0571762267500162
+  reset_count: 1
+- best_segment_time_rel: 1.5429234262555838
   name: Final boss
-  pb_time_rel: 10
-  reset_count: 0
+  pb_time_rel: 1.5429234262555838
+  reset_count: 1
 style_name: example.yml
-world_record_owner: John Doe
-world_record_seconds: 9.5
+world_record_owner: me
+world_record_seconds: 8.46748168580234
