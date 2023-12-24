@@ -21,20 +21,21 @@ maximum_framerate: 35
 segments:
 - best_segment_time_rel: 10.000022828578949
   name: First level
-  pb_time_rel: 15.2000244334340096
+  pb_time_rel: 15.20002443343401
   reset_count: 3
 - best_segment_time_rel: 10.028598591685295
   name: Second level
-  pb_time_rel: 15.2571862023323774
+  pb_time_rel: 15.257186202332377
   reset_count: 0
-- best_segment_time_rel: 30.142939167097211
+- best_segment_time_rel: 30.14293916709721
   name: Third level
-  pb_time_rel: 60.0571762267500162
+  pb_time_rel: 60.057176226750016
   reset_count: 1
-- best_segment_time_rel: 30.5429234262555838
+- best_segment_time_rel: 30.542923426255584
   name: Final boss
-  pb_time_rel: 61.5429234262555838
+  pb_time_rel: 61.542923426255584
   reset_count: 1
+splits_version: 1
 style_name: example.yml
 world_record_owner: me
 world_record_seconds: 8.46748168580234

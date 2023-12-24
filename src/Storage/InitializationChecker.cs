@@ -18,18 +18,14 @@
 
 using System.Reflection;
 
-namespace JumpDiveClock.Misc
+namespace JumpDiveClock.Storage
 {
     public static class InitializationChecker
     {
-        // Ignore deprecated fields.
-        private static string[] _deprecatedFields = { "_configVersion"};
-
         public static List<String> GetUninitializedPrivateFields(Object classInstance)
         {
             FieldInfo[] fil = classInstance.GetType()
-                              .GetFields(BindingFlags.Instance | BindingFlags.NonPublic)
-                              .Where(f => !_deprecatedFields.Contains(f.Name)).ToArray();
+                                .GetFields(BindingFlags.Instance | BindingFlags.NonPublic);
             var unitializedFieldNames = new List<String>();
             foreach (FieldInfo fi in fil)
             {

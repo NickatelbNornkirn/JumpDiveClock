@@ -16,9 +16,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-using JumpDiveClock.Misc;
-
-namespace JumpDiveClock.Settings
+namespace JumpDiveClock.Misc
 {
     public static class CliArgsParser
     {

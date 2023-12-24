@@ -16,11 +16,11 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-namespace JumpDiveClock.Settings
+namespace JumpDiveClock.Storage
 {
-    public struct ParsedArgs
+    public enum UpgradeResult
     {
-        public string ConfigFolder;
-        public string SplitName;
+        KeptAsIs,
+        Upgraded
     }
 }

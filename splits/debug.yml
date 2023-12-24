@@ -1,0 +1,32 @@
+attempt_count: 0
+category: Category name
+completed_run_before: false
+game_name: Game name
+global_keybindings:
+  key_id_type: x11
+  redo:
+    key_id: 27
+    requires_shift: false
+  reset:
+    key_id: 22
+    requires_shift: false
+  split:
+    key_id: 41
+    requires_shift: false
+  undo:
+    key_id: 30
+    requires_shift: false
+keyboard_id: 10
+maximum_framerate: 30
+segments:
+- best_segment_time_rel: -1
+  name: Segment
+  pb_time_rel: -1
+  reset_count: 0
+- best_segment_time_rel: -1
+  name: Segment
+  pb_time_rel: -1
+  reset_count: 0
+style_name: example.yml
+world_record_owner: John Doe
+world_record_seconds: 8612.1298

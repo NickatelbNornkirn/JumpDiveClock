@@ -18,11 +18,12 @@
 
 using JumpDiveClock.Misc;
 using JumpDiveClock.Timing;
+using System.Diagnostics;
 using YamlDotNet.Core;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
-namespace JumpDiveClock.Settings
+namespace JumpDiveClock.Storage
 {
     public class StorageManager
     {
@@ -43,40 +44,52 @@ namespace JumpDiveClock.Settings
 
         public int MaxBackups { get; set; }
 
-        public T? CreateObjectFromYml<T>(string path, ref Result result)
+        public UpgradableYml? CreateObjectFromYml<T>(string path, ref Result result)
         {
+            Debug.Assert(typeof(UpgradableYml).IsAssignableFrom(typeof(T)));
+
             if (!File.Exists(path))
             {
                 result.Error = $"Config file \"{path}\" could not be found.";
                 result.Success = false;
-                return default(T);
+                return null;
             }
 
             if (LoadText(path) is string text)
             {
                 Console.WriteLine($"Trying to serialize \"{path}\"...");
-                T? obj = TrySerializeYml<T>(text, ref result);
+                UpgradableYml? uYml = TrySerializeYml<T>(text, path, ref result);
 
-                if (obj is not null && obj is Splits)
+                if (uYml is not null)
                 {
-                    SaveBackup(text, GetFileName(path));
+                    if (uYml is Splits)
+                    {
+                        SaveBackup(text, GetFileName(path));
+                    }
                 }
 
                 Console.WriteLine($"Serialized \"{path}\".");
-                return obj;
+                return uYml;
             }
             else
             {
                 result.Error = $"Failed to read \"{path}\".";
                 result.Success = false;
-                return default(T);
+                return null;
             }
 
         }
 
-        public void SaveTimerSplits(SpeedrunTimer timer)
+        public void SaveToYmlFile<T>(string path, T obj)
         {
-            string yamlText = _serializer.Serialize(timer.Splits);
+            string yml = _serializer.Serialize(obj);
+            Console.WriteLine(yml);
+            File.WriteAllText(path, yml);
+        }
+
+        public void SaveTimerSplits(Splits splits)
+        {
+            string yamlText = _serializer.Serialize(splits);
             File.WriteAllText(_splitsStoragePath, yamlText);
             SaveBackup(yamlText, GetFileName(_splitsStoragePath));
         }
@@ -184,31 +197,42 @@ namespace JumpDiveClock.Settings
             );
         }
 
-        private T? TrySerializeYml<T>(string yamlText, ref Result result)
+        private UpgradableYml? TrySerializeYml<T>(string yamlText, string path, ref Result result)
         {
             try
             {
+                /* 
+                    We need to pass the exact type to Deserialize(), hence the use of
+                    generics. But we also need to call UpgradeYml.SetDefaultValue()
+                    and there's no way to directly cast the generic directly to
+                    UpgradableYml, so we cast to Object first
+                */
+                // You may not like it, but that's what peak programming looks like.
+                UpgradableYml objFromYml = (UpgradableYml)(Object)_deserializer.Deserialize<T>(yamlText)!;
+
+                objFromYml.UpgradeConfig();
+
                 // TODO: check if sub-fields are null.
-                T obj = _deserializer.Deserialize<T>(yamlText)!;
                 List<string> unitializedFields = InitializationChecker
-                                                    .GetUninitializedPrivateFields(obj);
+                                                    .GetUninitializedPrivateFields(objFromYml);
 
                 if (unitializedFields.Count > 0)
                 {
                     ShowUninitializedFields(unitializedFields);
                     result.Success = false;
-                    return default(T);
+                    return null;
                 }
 
                 result.Success = true;
-                return obj;
+                return objFromYml;
             }
             catch (YamlException ex)
             {
                 Console.WriteLine(ex.InnerException);
                 result.Error = "Failed to deserialize yaml file.\n" + ex.Message;
+                Console.WriteLine(ex.StackTrace);
                 result.Success = false;
-                return default(T);
+                return null;
             }
         }
     }

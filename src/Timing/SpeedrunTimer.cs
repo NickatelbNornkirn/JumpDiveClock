@@ -18,7 +18,7 @@
 
 using JumpDiveClock.Input;
 using JumpDiveClock.Misc;
-using JumpDiveClock.Settings;
+using JumpDiveClock.Storage;
 using Raylib_cs;
 using System.Numerics;
 
@@ -65,10 +65,8 @@ namespace JumpDiveClock.Timing
 
         public void AutoSave()
         {
-            if (HasStarted())
-            {
-                SaveTimes();
-            }
+            SaveTimes();
+            Console.WriteLine("Autosaved splits");
         }
 
         public void Draw(Font font)
@@ -440,7 +438,7 @@ namespace JumpDiveClock.Timing
                 Splits.CompletedRunBefore = true;
             }
 
-            _storage.SaveTimerSplits(this);
+            _storage.SaveTimerSplits(Splits);
         }
 
         private void Split()

@@ -51,6 +51,7 @@ namespace JumpDiveClock.Input
         {
             try
             {
+                // The X11 backend requires xinput to work.
                 var p = new Process
                 {
                     StartInfo = new ProcessStartInfo
@@ -73,6 +74,10 @@ namespace JumpDiveClock.Input
             }
         }
 
+        /// <summary>
+        /// True if the reset key has being held either for a signicant amount of time
+        /// or twice in a row.
+        /// </summary>
         public bool AskingForReset(Keybinding key)
         {
             const double MinPressInterval = 0.1;
@@ -123,7 +128,7 @@ namespace JumpDiveClock.Input
             lines
                 .Where(line => line.Contains("=down")).ToList()
                 .ForEach(line => _pressedKeys.Add(
-                    Int32.Parse(line.Split('[')[1].Split(']')[0])
+                    int.Parse(line.Split('[')[1].Split(']')[0])
             ));
 
             _xinput.Close();

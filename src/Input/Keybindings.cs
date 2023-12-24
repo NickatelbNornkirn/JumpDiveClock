@@ -20,7 +20,7 @@ namespace JumpDiveClock.Input
 {
     public struct Keybindings
     {
-        public string KeyIdType { get; private set; }
+        public string KeyIdType { get; private set; } // e.g. "x11", "wayland".
         public Keybinding Redo { get; set; }
         public Keybinding Reset { get; set; }
         public Keybinding Split { get; set; }

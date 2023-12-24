@@ -16,23 +16,11 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-namespace JumpDiveClock.Settings
+namespace JumpDiveClock.Misc
 {
-    public class AppConfig
+    public struct ParsedArgs
     {
-        private int? _maxBackups;
-        private bool? _windowResizable;
-
-        public int MaxBackups
-        {
-            get => (int)_maxBackups!;
-            private set => _maxBackups = value;
-        }
-
-        public bool WindowResizable
-        {
-            get => (bool)_windowResizable!;
-            private set => _windowResizable = value;
-        }
+        public string ConfigFolder;
+        public string SplitName;
     }
 }

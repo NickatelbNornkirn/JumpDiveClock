@@ -28,5 +28,25 @@ namespace JumpDiveClock.Timing
         public string PaceBest { get; set; } = null!;
         public string Separator { get; set; } = null!;
         public string TextBase { get; set; } = null!;
+
+        /*
+            This is used instead of a construct because YAML deserialization requires
+            a parameterless constructor.
+        */
+        public HexColors Construct(string background, string paceAheadGaining, string paceAheadLosing,
+                string paceBehindGaining, string paceBehindLosing, string paceBest,
+                string separator, string textBase)
+        {
+            Background = "#252525";
+            PaceAheadGaining = "#1dbd48";
+            PaceAheadLosing = "#6cbd82";
+            PaceBehindGaining = "#da7c7c";
+            PaceBehindLosing = "#da2121";
+            PaceBest = "#fff63e";
+            Separator = "#555555";
+            TextBase = "#f2f2f2";
+
+            return this;
+        }
     }
 }

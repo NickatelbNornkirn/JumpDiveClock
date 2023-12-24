@@ -18,6 +18,10 @@
 
 namespace JumpDiveClock.Input
 {
+    /*
+        Depending on things like the display server and OS, the methods for
+        reading input might be different, so this interface abstracts things.
+    */
     public interface IGlobalInputReader
     {
         public static abstract bool IsBackendAvailable();

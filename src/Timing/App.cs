@@ -17,7 +17,7 @@
 */
 
 using JumpDiveClock.Misc;
-using JumpDiveClock.Settings;
+using JumpDiveClock.Storage;
 using Raylib_cs;
 
 namespace JumpDiveClock.Timing
@@ -65,15 +65,20 @@ namespace JumpDiveClock.Timing
 
             Console.WriteLine("Initializing app...");
 
-            _appConfig = LoadFrom<AppConfig>(configPath, ref result);
+            _appConfig = (AppConfig)LoadFrom<AppConfig>(configPath, ref result);
             if (!result.Success)
             {
                 return result;
             }
+            if (_appConfig.NeedsSaving())
+            {
+                _storage.SaveToYmlFile(configPath, _appConfig);
+                Console.WriteLine("Saved the upgrades to the config");
+            }
 
             _storage.MaxBackups = _appConfig.MaxBackups;
 
-            Splits splits = LoadFrom<Splits>(splitsPath, ref result);
+            Splits splits = (Splits)LoadFrom<Splits>(splitsPath, ref result);
             if (!result.Success)
             {
                 return result;
@@ -89,12 +94,18 @@ namespace JumpDiveClock.Timing
                 return result;
             }
 
-            TimerStyle timerStyle = LoadFrom<TimerStyle>(styleFile, ref result);
+            TimerStyle timerStyle = (TimerStyle)LoadFrom<TimerStyle>(styleFile, ref result);
             if (!result.Success)
             {
                 result.Success = false;
                 return result;
             }
+            if (timerStyle.NeedsSaving())
+            {
+                _storage.SaveToYmlFile(styleFile, timerStyle);
+                Console.WriteLine("Saved upgrades for the style");
+            }
+
             _timer = new SpeedrunTimer(_appConfig, splits, _storage, timerStyle);
 
             SetupWindow(timerStyle.DefaultWindowWidth, timerStyle.DefaultWindowHeight,
@@ -128,6 +139,7 @@ namespace JumpDiveClock.Timing
                 if (Raylib.WindowShouldClose())
                 {
                     running = false;
+                    Console.WriteLine("Closing app");
                     _timer.AutoSave();
                 }
             }
@@ -140,10 +152,9 @@ namespace JumpDiveClock.Timing
             Raylib.EndDrawing();
         }
 
-        private T LoadFrom<T>(string path, ref Result result)
+        private UpgradableYml LoadFrom<T>(string path, ref Result result)
         {
-            T? loadedObj = _storage.CreateObjectFromYml<T>(path, ref result);
-            return loadedObj!;
+            return _storage.CreateObjectFromYml<T>(path, ref result)!;
         }
 
         private void SetupWindow(int defaultWidth, int defaultHeight, int maximumFramerate)

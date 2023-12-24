@@ -9,9 +9,7 @@
 
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
@@ -29,7 +27,7 @@ namespace JumpDiveClock.Timing
         private double _pbCompletedTimeAbs;
         private double _startedSegmentTimeAbs;
         public double BestSegmentTimeRel { get; private set; }
-        public string Name { get; private set; } = null!;
+        public string Name { get; set; } = null!;
         public double PbTimeRel { get; private set; }
         public int ResetCount { get; set; }
 
@@ -132,6 +130,14 @@ namespace JumpDiveClock.Timing
 
         public double GetRelTime() => _completedTimeAbs - _startedSegmentTimeAbs;
 
+        public void InitializeGenericValues()
+        {
+            BestSegmentTimeRel = -1;
+            Name = "Segment";
+            PbTimeRel = -1;
+            ResetCount = 0;
+        }
+            
         public bool IsAhead(double timeAbs) => timeAbs < _pbCompletedTimeAbs;
 
         public bool IsBest() => GetRelTime() < BestSegmentTimeRel || BestSegmentTimeRel == NoPbTime;

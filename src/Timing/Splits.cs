@@ -17,11 +17,14 @@
 */
 
 using JumpDiveClock.Input;
+using JumpDiveClock.Storage;
 
 namespace JumpDiveClock.Timing
 {
-    public class Splits
+    public class Splits : UpgradableYml
     {
+        private const double CurrentSplitsVersion = 1.0;
+
         private int? _attemptCount;
         private string? _category;
         private bool? _completedRunBefore;
@@ -30,6 +33,7 @@ namespace JumpDiveClock.Timing
         private int? _keyboardId;
         private int? _maximumFramerate;
         private Segment[]? _segments;
+        private double? _splitsVersion;
         private string? _styleName;
         private string? _worldRecordOwner;
         private double? _worldRecordSeconds;
@@ -82,6 +86,12 @@ namespace JumpDiveClock.Timing
             private set => _segments = value;
         }
 
+        public double SplitsVersion
+        {
+            get => (double)_splitsVersion!;
+            private set => _splitsVersion = value;
+        }
+
         public string StyleName
         {
             get => _styleName!;
@@ -98,6 +108,51 @@ namespace JumpDiveClock.Timing
         {
             get => (double)_worldRecordSeconds!;
             set => _worldRecordSeconds = value;
+        }
+
+        public override void UpgradeConfig()
+        {
+           SetDefaultValues();
+
+            // Upgrade things here.
+
+           if (_splitsVersion != CurrentSplitsVersion)
+           {
+               _splitsVersion = CurrentSplitsVersion;
+               _upgradeResult = UpgradeResult.Upgraded;
+           }
+        }
+
+        internal override void SetDefaultValues()
+        {
+            SetDefaultValue(ref _attemptCount, 0, "attempt_count");
+            SetDefaultValue(ref _category, "Category name", "category");
+            SetDefaultValue(ref _completedRunBefore, false, "completed_run_before");
+            SetDefaultValue(ref _gameName, "Game name", "game_name");
+
+            /*
+                There are no possible sane defaults for keybindings and keyboard ID, since it's
+                different for every person and device.
+            */
+
+            SetDefaultValue(ref _maximumFramerate, 30, "maximum_framerate");
+
+            SetDefaultValue(ref _segments,
+                    new Segment[]{ GenerateMockSegment(), GenerateMockSegment() },
+                "segments"
+            );
+
+            // No reasonable default for style_name.
+            
+            SetDefaultValue(ref _worldRecordOwner, "John Doe", "world_record_owner");
+            SetDefaultValue(ref _worldRecordSeconds, 8612.1298, "world_record_seconds");
+        }
+
+        private Segment GenerateMockSegment()
+        {
+            var s = new Segment();
+            s.InitializeGenericValues();
+            return s;
         }
     }
 }

@@ -1,2 +1,4 @@
+config_version: 1.0
+
 window_resizable: false
 max_backups: 500

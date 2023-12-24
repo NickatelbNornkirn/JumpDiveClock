@@ -16,10 +16,14 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+using JumpDiveClock.Storage;
+
 namespace JumpDiveClock.Timing
 {
-    public class TimerStyle
+    public class TimerStyle : UpgradableYml
     {
+        private const double CurrentStyleVersion = 1.0;
+
         private int? _attemptCountFontSize;
         private int? _attemptCountFontSpacing;
         private float? _attemptSizeTextPosX;
@@ -41,6 +45,7 @@ namespace JumpDiveClock.Timing
         private int? _segmentMargin;
         private int? _segmentsPerScreen;
         private int? _separatorSize;
+        private double? _styleVersion;
         private int? _timerFontSize;
         private int? _timerFontSpacing;
         private string? _timerLockingMessage;
@@ -174,6 +179,12 @@ namespace JumpDiveClock.Timing
             private set => _separatorSize = value;
         }
 
+        public double StyleVersion
+        {
+            get => (double)_styleVersion!;
+            private set => _styleVersion = value;
+        }
+
         public int TimerFontSize
         {
             get => (int)_timerFontSize!;
@@ -202,6 +213,61 @@ namespace JumpDiveClock.Timing
         {
             get => (int)_titleCategoryTitlesGap!;
             private set => _titleCategoryTitlesGap = value;
+        }
+
+        public override void UpgradeConfig()
+        {
+            SetDefaultValues();
+
+            // Upgrade stuff here.
+            
+            if (_styleVersion != CurrentStyleVersion)
+            {
+                _styleVersion = CurrentStyleVersion;
+                _upgradeResult = UpgradeResult.Upgraded;
+            }
+        }
+
+        internal override void SetDefaultValues()
+        {
+            SetDefaultValue(ref _styleVersion, CurrentStyleVersion, "style_version");
+            SetDefaultValue(ref _attemptSizeTextPosX, 0.98f, "attempt_size_text_pos_x");
+            SetDefaultValue(ref _attemptSizeTextPosY, 0.9f, "attempt_size_text_pos_y");
+            SetDefaultValue(ref _attemptCountFontSize, 16, "attempt_count_font_size");
+            SetDefaultValue(ref _attemptCountFontSpacing, 1, "attempt_count_font_spacing");
+            SetDefaultValue(ref _categoryTitleFontSize, 20, "category_title_font_size");
+            SetDefaultValue(ref _categoryTitleFontSpacing, 2, "category_title_font_spacing");
+            SetDefaultValue(ref _gameTitleFontSize, 38, "game_title_font_size");
+            SetDefaultValue(ref _gameTitleFontSpacing, 4, "game_title_font_spacing");
+            SetDefaultValue(ref _segmentFontSize, 24, "segment_font_size");
+            SetDefaultValue(ref _segmentFontSpacing, 2, "segment_font_spacing");
+            SetDefaultValue(ref _headerHeight, 10, "header_height");
+            SetDefaultValue(ref _maxSegmentSize, 8, "max_segment_size");
+            SetDefaultValue(ref _segmentMargin, 3, "segment_margin");
+            SetDefaultValue(ref _separatorSize, 2, "separator_size");
+            SetDefaultValue(ref _timerFontSize, 48, "timer_font_size");
+            SetDefaultValue(ref _timerFontSpacing, 2, "timer_font_spacing");
+            SetDefaultValue(ref _timerSize, 15, "timer_size");
+            SetDefaultValue(ref _titleCategoryTitlesGap, 3, "title_category_titles_gap");
+            SetDefaultValue(ref _segmentsPerScreen, 10, "segments_per_screen");
+            SetDefaultValue(ref _extraStats,
+                new StatType[] {
+                    StatType.CurrentPace, StatType.PersonalBest, StatType.BestPossibleTime,
+                    StatType.SumOfBest, StatType.WorldRecord, StatType.RunsThatReachHere},
+                "extra_stats"
+            );
+            SetDefaultValue(ref _hexColors,
+                 new HexColors().Construct(background: "#252525", paceAheadGaining: "#1dbd48",
+                    paceAheadLosing: "#6cbd82", paceBehindGaining: "#da7c7c",
+                    paceBehindLosing: "#da2121", paceBest: "#fff63e", separator: "#555555",
+                    textBase: "#f2f2f2"),
+                "hex_colors"
+            );
+            SetDefaultValue(ref _fontFile, "default", "font_file");
+            SetDefaultValue(ref _minSegmentsAheadToShow, 2, "min_segments_ahead_to_show");
+            SetDefaultValue(ref _defaultWindowWidth, 400, "default_window_width");
+            SetDefaultValue(ref _defaultWindowHeight, 800, "default_window_height");
+            SetDefaultValue(ref _timerLockingMessage, "Locked", "timer_locking_message");
         }
     }
 }
