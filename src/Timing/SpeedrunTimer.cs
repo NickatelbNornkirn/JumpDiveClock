@@ -353,8 +353,8 @@ namespace JumpDiveClock.Timing
 
         private double GetDetailedTime()
         {
-            double st = _currentTimeSecs;
-            for (int i = _currentSegment - 1; i >= 0; i--)
+            double st = IsRunFinished() ? _finishTime : _currentTimeSecs;
+            for (int i = _currentSegment - (IsRunFinished() ? 2 : 1); i >= 0; i--)
             {
                 st -= Splits.Segments[i].GetRelTime();
             }
