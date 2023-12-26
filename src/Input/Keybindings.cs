@@ -25,5 +25,6 @@ namespace JumpDiveClock.Input
         public Keybinding Reset { get; set; }
         public Keybinding Split { get; set; }
         public Keybinding Undo { get; set; }
+        public Keybinding LockTimer { get; set; }
     }
 }

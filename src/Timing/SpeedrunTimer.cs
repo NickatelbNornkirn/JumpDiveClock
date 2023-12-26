@@ -108,7 +108,7 @@ namespace JumpDiveClock.Timing
         {
             _globalInputManager.InputReader.UpdateKeyboardState();
 
-            if (Raylib.IsKeyPressed(KeyboardKey.KEY_L) && _currentSegment < 0)
+            if (Raylib.IsWindowFocused() && _globalInputManager.InputReader.IsKeyPressed(Splits.GlobalKeybindings.LockTimer) && _currentSegment < 0)
             {
                 _timerLocked = !_timerLocked;
             }
@@ -335,9 +335,7 @@ namespace JumpDiveClock.Timing
                                             _style.TimerFontSize * _style.DetailedTimerSize);
             int detailedTimerFontSpacing = (int)Math.Max(1, Math.Round(
                                             _style.TimerFontSpacing * _style.DetailedTimerSize));
-            string detailedTimeText = _timerLocked
-                ? _style.TimerLockingMessage
-                : Formatter.SecondsToTime(detailedTime, true);
+            string detailedTimeText = Formatter.SecondsToTime(_timerLocked ? 0 : detailedTime, true);
             Vector2 detailedTimerTextSize = Raylib.MeasureTextEx(
                 font, detailedTimeText, detailedTimerFontSize, detailedTimerFontSpacing
             );

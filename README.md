@@ -20,6 +20,7 @@ own. And made this to share to other people that may find it useful.
 
 * marking time (duh);
 * comparing the current time with your personal best;
+* detailed timer;
 * having stats (best possible time, current pace, % of runs that reach each segment, personal best,
     world record, sum of best);
 * having a backup system that creates copies of the speedgame's data whenever a change is made to

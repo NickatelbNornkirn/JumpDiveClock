@@ -16,6 +16,9 @@ global_keybindings:
   undo:
     key_id: 30
     requires_shift: false
+  lock_timer:
+    key_id: 46
+    requires_shift: false
 keyboard_id: 10
 maximum_framerate: 35
 segments:
