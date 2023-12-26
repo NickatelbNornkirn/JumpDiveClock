@@ -36,6 +36,7 @@ namespace JumpDiveClock.Timing
         private float? _detailedTimerSize;
         private float? _detailedTimerMarginX;
         private float? _detailedTimerMarginY;
+        private bool? _drawTimerContainerTopSeparator;
         private StatType[]? _extraStats;
         private string? _fontFile;
         private int? _gameTitleFontSize;
@@ -126,6 +127,12 @@ namespace JumpDiveClock.Timing
         {
             get => (float)_detailedTimerMarginY!;
             private set => _detailedTimerMarginY = value;
+        }
+
+        public bool DrawTimerContainerTopSeparator
+        {
+            get => (bool)_drawTimerContainerTopSeparator!;
+            private set => _drawTimerContainerTopSeparator = value;
         }
 
         public StatType[] ExtraStats
@@ -319,6 +326,8 @@ namespace JumpDiveClock.Timing
             SetDefaultValue(ref _detailedTimerMarginX, 0.85f, "detailed_timer_margin_x");
             SetDefaultValue(ref _detailedTimerMarginY, 0.8f, "detailed_timer_margin_y");
             SetDefaultValue(ref _detailedTimer, true, "detailed_timer");
+
+            SetDefaultValue(ref _drawTimerContainerTopSeparator, false, "draw_timer_container_top_separator");
         }
     }
 }

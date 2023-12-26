@@ -10,6 +10,7 @@ detailed_timer: true
 detailed_timer_size: 0.75
 detailed_timer_margin_x: 0.85
 detailed_timer_margin_y: 0.8
+draw_timer_container_top_separator: false
 extra_stats:
 - CurrentPace
 - PersonalBest

@@ -224,9 +224,6 @@ namespace JumpDiveClock.Timing
         private void DrawSeparators(
             int headerHeight, int segmentSize, int timerHeight, int segmentsToDraw)
         {
-            // TODO: move this to config
-            const bool DrawTimerContainerTopSeparator = true;
-
             Raylib.DrawRectangle(0, headerHeight, Raylib.GetRenderWidth(), _style.SeparatorSize,
                 _colors.Separator
             );
@@ -244,7 +241,7 @@ namespace JumpDiveClock.Timing
             int timerY = Raylib.GetRenderHeight() - timerHeight - _style.SeparatorSize
                          - timerOffset;
 
-            if (DrawTimerContainerTopSeparator)
+            if (_style.DrawTimerContainerTopSeparator)
             {
                 Raylib.DrawRectangle(0, timerY, Raylib.GetRenderWidth(),
                     _style.SeparatorSize, _colors.Separator
