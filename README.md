@@ -24,29 +24,28 @@ own. And made this to share to other people that may find it useful.
     world record, sum of best);
 * having a backup system that creates copies of the speedgame's data whenever a change is made to
     it;
-* being almost completely customizable via a config file;
+* being almost completely customizable via YML files;
 * locking the timer, preventing inputs from being triggered globally (useful if you want to do
     something else while having your speedrun timer open);
 * running on Linux (and probably on *BSD, haven't tested it).
 
 ### Should I use this?
 
-Probably not. It's still **extremely** unstable. Expect to make changes (and sometimes drastic ones)
-to your config after every update.
+It's still poorly documented and missing features. It's usable and it's
+getting more stable, though.
 
 ### Where did this name come from?
 
 I speedrun a Mario fangame where the fastest way to move without equipment is to repeatedly jump and
 dive midair.
 
-### Wayland support?
+### Wayland support? Other OSes?
 
-I don't plan on adding it myself because I don't use Wayland and don't plan on doing so in the short
-term, but I'm open to pull requests.
+I don't plan on adding it myself because I don't use Wayland and don't plan on doing so in the mid
+term, but I'm open to pull requests. All it would require would implementing an interface for
+getting global inputs in Wayland.
 
-### Other OSes?
-
-I don't intend on doing ports, but I'm open to pull requests.
+I don't intend on doing ports for other OSes, but I'm open to pull requests.
 
 ## Running
 

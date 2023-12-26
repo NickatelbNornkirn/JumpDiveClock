@@ -20,14 +20,15 @@ namespace JumpDiveClock.Timing
 {
     public class HexColors
     {
-        public string Background { get; set; } = null!;
-        public string PaceAheadGaining { get; set; } = null!;
-        public string PaceAheadLosing { get; set; } = null!;
-        public string PaceBehindGaining { get; set; } = null!;
-        public string PaceBehindLosing { get; set; } = null!;
-        public string PaceBest { get; set; } = null!;
-        public string Separator { get; set; } = null!;
-        public string TextBase { get; set; } = null!;
+        public string Background = null!;
+        public string DetailedTimer = null!;
+        public string PaceAheadGaining = null!;
+        public string PaceAheadLosing = null!;
+        public string PaceBehindGaining = null!;
+        public string PaceBehindLosing = null!;
+        public string PaceBest = null!;
+        public string Separator = null!;
+        public string TextBase = null!;
 
         /*
             This is used instead of a construct because YAML deserialization requires
@@ -35,16 +36,17 @@ namespace JumpDiveClock.Timing
         */
         public HexColors Construct(string background, string paceAheadGaining, string paceAheadLosing,
                 string paceBehindGaining, string paceBehindLosing, string paceBest,
-                string separator, string textBase)
+                string separator, string textBase, string detailedTimer)
         {
-            Background = "#252525";
-            PaceAheadGaining = "#1dbd48";
-            PaceAheadLosing = "#6cbd82";
-            PaceBehindGaining = "#da7c7c";
-            PaceBehindLosing = "#da2121";
-            PaceBest = "#fff63e";
-            Separator = "#555555";
-            TextBase = "#f2f2f2";
+            Background = background;
+            PaceAheadGaining = paceAheadGaining;
+            PaceAheadLosing = paceAheadLosing;
+            PaceBehindGaining = paceBehindGaining;
+            PaceBehindLosing = paceBehindLosing;
+            PaceBest = paceBest;
+            Separator = separator;
+            TextBase = textBase;
+            DetailedTimer = detailedTimer;
 
             return this;
         }

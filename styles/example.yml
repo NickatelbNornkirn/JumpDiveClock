@@ -6,6 +6,10 @@ category_title_font_size: 20
 category_title_font_spacing: 2
 default_window_height: 800
 default_window_width: 400
+detailed_timer: true
+detailed_timer_size: 0.75
+detailed_timer_margin_x: 0.85
+detailed_timer_margin_y: 0.8
 extra_stats:
 - CurrentPace
 - PersonalBest
@@ -19,8 +23,9 @@ game_title_font_spacing: 4
 header_height: 10
 hex_colors:
   background: '#252525'
+  detailed_timer: '#f2f2f27f'
   pace_ahead_gaining: '#1dbd48'
-  pace_ahead_losing: '#6cbd82'
+  pace_ahead_losing: '#6cbd82ff'
   pace_behind_gaining: '#da7c7c'
   pace_behind_losing: '#da2121'
   pace_best: '#fff63e'

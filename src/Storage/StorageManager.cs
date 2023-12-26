@@ -83,7 +83,6 @@ namespace JumpDiveClock.Storage
         public void SaveToYmlFile<T>(string path, T obj)
         {
             string yml = _serializer.Serialize(obj);
-            Console.WriteLine(yml);
             File.WriteAllText(path, yml);
         }
 
@@ -94,7 +93,8 @@ namespace JumpDiveClock.Storage
             SaveBackup(yamlText, GetFileName(_splitsStoragePath));
         }
 
-        private ulong GetDiff(ulong x, ulong y) => x > y ? x - y : y - x;
+        private ulong GetDiff(ulong x, ulong y)
+            => x > y ? x - y : y - x;
 
         private string GetFileName(string filePath)
         {

@@ -32,6 +32,10 @@ namespace JumpDiveClock.Timing
         private int? _categoryTitleFontSpacing;
         private int? _defaultWindowHeight;
         private int? _defaultWindowWidth;
+        private bool? _detailedTimer;
+        private float? _detailedTimerSize;
+        private float? _detailedTimerMarginX;
+        private float? _detailedTimerMarginY;
         private StatType[]? _extraStats;
         private string? _fontFile;
         private int? _gameTitleFontSize;
@@ -98,6 +102,30 @@ namespace JumpDiveClock.Timing
         {
             get => (int)_defaultWindowWidth!;
             private set => _defaultWindowWidth = value;
+        }
+
+        public bool DetailedTimer
+        {
+            get => (bool)_detailedTimer!;
+            private set => _detailedTimer = value;
+        }
+
+        public float DetailedTimerSize
+        {
+            get => (float)_detailedTimerSize!;
+            private set => _detailedTimerSize = value;
+        }
+
+        public float DetailedTimerMarginX
+        {
+            get => (float)_detailedTimerMarginX!;
+            private set => _detailedTimerMarginX = value;
+        }
+
+        public float DetailedTimerMarginY
+        {
+            get => (float)_detailedTimerMarginY!;
+            private set => _detailedTimerMarginY = value;
         }
 
         public StatType[] ExtraStats
@@ -256,18 +284,41 @@ namespace JumpDiveClock.Timing
                     StatType.SumOfBest, StatType.WorldRecord, StatType.RunsThatReachHere},
                 "extra_stats"
             );
+
+            const string DefBackground = "#252525ff";
+            const string DefPaceAheadGaining = "#1dbd48ff";
+            const string DefPaceAheadLosing = "#6cbd82ff";
+            const string DefPaceBehindGaining = "#da7c7cff";
+            const string DefPaceBehindLosing = "#da2121ff";
+            const string DefPaceBest = "#fff663ff";
+            const string DefSeparator = "#555555ff";
+            const string DefTextBase = "#f2f2f2ff";
+            const string DefDetailedTimer = "#f2f2f27f";
             SetDefaultValue(ref _hexColors,
-                 new HexColors().Construct(background: "#252525", paceAheadGaining: "#1dbd48",
-                    paceAheadLosing: "#6cbd82", paceBehindGaining: "#da7c7c",
-                    paceBehindLosing: "#da2121", paceBest: "#fff63e", separator: "#555555",
-                    textBase: "#f2f2f2"),
+                 new HexColors().Construct(DefBackground, DefPaceAheadGaining,
+                    DefPaceAheadLosing, DefPaceBehindGaining, DefPaceBehindLosing,
+                    DefPaceBest, DefSeparator, DefTextBase, DefDetailedTimer),
                 "hex_colors"
             );
+            SetDefaultValue(ref _hexColors!.Background, DefBackground, "hex_colors.background");
+            SetDefaultValue(ref _hexColors!.DetailedTimer, DefDetailedTimer, "hex_colors.detailed_timer");
+            SetDefaultValue(ref _hexColors!.PaceAheadGaining, DefPaceAheadGaining, "hex_colors.pace_ahead_gaining");
+            SetDefaultValue(ref _hexColors!.PaceAheadLosing, DefPaceAheadLosing, "hex_colors.pace_ahead_losing");
+            SetDefaultValue(ref _hexColors!.PaceBehindGaining, DefPaceBehindGaining, "hex_colors.pace_behind_gaining");
+            SetDefaultValue(ref _hexColors!.PaceBehindLosing, DefPaceBehindLosing, "hex_colors.pace_behind_losing");
+            SetDefaultValue(ref _hexColors!.PaceBest, DefPaceBest, "hex_colors.pace_best");
+            SetDefaultValue(ref _hexColors!.Separator, DefSeparator, "hex_colors.separator");
+            SetDefaultValue(ref _hexColors!.TextBase, DefTextBase, "hex_colors.text_base");
+
             SetDefaultValue(ref _fontFile, "default", "font_file");
             SetDefaultValue(ref _minSegmentsAheadToShow, 2, "min_segments_ahead_to_show");
             SetDefaultValue(ref _defaultWindowWidth, 400, "default_window_width");
             SetDefaultValue(ref _defaultWindowHeight, 800, "default_window_height");
             SetDefaultValue(ref _timerLockingMessage, "Locked", "timer_locking_message");
+            SetDefaultValue(ref _detailedTimerSize, 0.75f, "detailed_timer_size");
+            SetDefaultValue(ref _detailedTimerMarginX, 0.85f, "detailed_timer_margin_x");
+            SetDefaultValue(ref _detailedTimerMarginY, 0.8f, "detailed_timer_margin_y");
+            SetDefaultValue(ref _detailedTimer, true, "detailed_timer");
         }
     }
 }

@@ -25,7 +25,8 @@ namespace JumpDiveClock.Storage
 
         protected UpgradeResult _upgradeResult = UpgradeResult.KeptAsIs;
 
-        public bool NeedsSaving() => _upgradeResult == UpgradeResult.Upgraded;
+        public bool NeedsSaving()
+            => _upgradeResult == UpgradeResult.Upgraded;
 
         public void SetDefaultValue<T>(ref T property, T defaultValue, string ymlPropertyName)
         {
@@ -34,7 +35,7 @@ namespace JumpDiveClock.Storage
                 return;
             }
 
-            Console.WriteLine($"[INFO] {ymlPropertyName} was not initialized." +
+            Console.WriteLine($"[INFO] {ymlPropertyName} was not initialized. " +
                     $"The default value of {defaultValue} was used.");
             property = defaultValue; 
 

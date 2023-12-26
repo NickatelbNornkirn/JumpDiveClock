@@ -24,11 +24,12 @@ namespace JumpDiveClock.Timing
     {
 
         /*
-            The constructors receives #rrggbb colors.
+            The constructors receives #rrggbb or #rrggbbaa colors.
         */
         public ColorManager(string backgroundColor, string baseColor, string aheadGainingColor,
                             string aheadLosingColor, string behindGainingColor,
-                            string behindLosingColor, string bestColor, string separatorColor)
+                            string behindLosingColor, string bestColor, string separatorColor,
+                            string detailedTimer)
         {
             Background = ToColor(backgroundColor);
             Base = ToColor(baseColor);
@@ -38,6 +39,7 @@ namespace JumpDiveClock.Timing
             BehindLosing = ToColor(behindLosingColor);
             Best = ToColor(bestColor);
             Separator = ToColor(separatorColor);
+            DetailedTimer = ToColor(detailedTimer);
         }
 
         public Color AheadGaining { get; }
@@ -48,15 +50,30 @@ namespace JumpDiveClock.Timing
         public Color BehindLosing { get; }
         public Color Best { get; }
         public Color Separator { get; }
+        public Color DetailedTimer { get; }
 
         private Color ToColor(string hexColor)
         {
-            // Colors are in the #rrggbb format.
+            Console.WriteLine($"Parsing color '{hexColor}'");
+
+            if (hexColor.Length != 7 && hexColor.Length != 9)
+            {
+                Console.WriteLine($"Failed to parse color '{hexColor}'. Not in the correct format");
+                Console.WriteLine("Valid formats are '#rrggbb' and '#rrggbbaa'");
+                Console.WriteLine("Returning default color (transparent yellow)");
+                // Arbitrary color as default.
+                return new Color(0xFF, 0xFF, 0x00, 0x7f);
+            }
+
+            // Length 9 means #rrggbbaa format
+            int alpha = hexColor.Length == 9 ? Convert.ToInt32(hexColor.Substring(7, 2), 16) : 0xff;
+
+            // Colors are in the #rrggbbaa format.
             return new Color(
                 Convert.ToInt32(hexColor.Substring(1, 2), 16),
                 Convert.ToInt32(hexColor.Substring(3, 2), 16),
                 Convert.ToInt32(hexColor.Substring(5, 2), 16),
-                255
+                alpha
             );
         }
     }

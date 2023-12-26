@@ -48,7 +48,6 @@ namespace JumpDiveClock.Timing
             Reset();
         }
 
-        // TODO: REFACTOR: make these parameters properties and pass them through Construct().
         /// <summary>
         /// Draw segment.
         /// </summary>

@@ -27,6 +27,7 @@ segments:
   name: Segment
   pb_time_rel: -1
   reset_count: 0
+splits_version: 1
 style_name: example.yml
 world_record_owner: John Doe
 world_record_seconds: 8612.1298

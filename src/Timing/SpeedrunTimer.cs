@@ -15,7 +15,6 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-
 using JumpDiveClock.Input;
 using JumpDiveClock.Misc;
 using JumpDiveClock.Storage;
@@ -42,6 +41,8 @@ namespace JumpDiveClock.Timing
         private TimerStyle _style;
         private bool _timerLocked = false;
 
+        public Splits Splits { get; private set; } = null!;
+
         public SpeedrunTimer(AppConfig AppConfig, Splits splits, StorageManager storage,
                             TimerStyle style)
         {
@@ -54,14 +55,13 @@ namespace JumpDiveClock.Timing
                 _style.HexColors.Background, _style.HexColors.TextBase,
                 _style.HexColors.PaceAheadGaining, _style.HexColors.PaceAheadLosing,
                 _style.HexColors.PaceBehindGaining, _style.HexColors.PaceBehindLosing,
-                _style.HexColors.PaceBest, _style.HexColors.Separator
+                _style.HexColors.PaceBest, _style.HexColors.Separator,
+                _style.HexColors.DetailedTimer
             );
             _stats = new Stats(this);
 
             Reset(true);
         }
-
-        public Splits Splits { get; private set; } = null!;
 
         public void AutoSave()
         {
@@ -224,6 +224,9 @@ namespace JumpDiveClock.Timing
         private void DrawSeparators(
             int headerHeight, int segmentSize, int timerHeight, int segmentsToDraw)
         {
+            // TODO: move this to config
+            const bool DrawTimerContainerTopSeparator = true;
+
             Raylib.DrawRectangle(0, headerHeight, Raylib.GetRenderWidth(), _style.SeparatorSize,
                 _colors.Separator
             );
@@ -240,6 +243,14 @@ namespace JumpDiveClock.Timing
                 (_style.ExtraStats.Length - 1) * _style.SeparatorSize;
             int timerY = Raylib.GetRenderHeight() - timerHeight - _style.SeparatorSize
                          - timerOffset;
+
+            if (DrawTimerContainerTopSeparator)
+            {
+                Raylib.DrawRectangle(0, timerY, Raylib.GetRenderWidth(),
+                    _style.SeparatorSize, _colors.Separator
+                );
+
+            }
 
             Raylib.DrawRectangle(0, timerY + timerHeight, Raylib.GetRenderWidth(),
                 _style.SeparatorSize, _colors.Separator
@@ -263,25 +274,41 @@ namespace JumpDiveClock.Timing
             Vector2 textSize = Raylib.MeasureTextEx(
                 font, timerText, _style.TimerFontSize, _style.TimerFontSpacing
             );
+            float bottomHeight = segmentHeight * _style.ExtraStats.Length
+                                + _style.SeparatorSize * (_style.ExtraStats.Length - 1);
 
-            var textPos = new Vector2(
-                (Raylib.GetRenderWidth() - textSize.X) / 2.0f,
-                Raylib.GetRenderHeight() - segmentHeight * _style.ExtraStats.Length
-                    - _style.SeparatorSize * (_style.ExtraStats.Length - 1)
-                    - (timerHeight + textSize.Y) / 2.0f
+            var timerTextPos = new Vector2(
+                (Raylib.GetRenderWidth() - textSize.X) * 0.5f,
+                Raylib.GetRenderHeight() - bottomHeight
+                    - (timerHeight + textSize.Y) * 0.5f
             );
 
+            Color drawColor = GetTimerDrawColor(t);
+
+            Raylib.DrawTextEx(
+                font, timerText, timerTextPos, _style.TimerFontSize, _style.TimerFontSpacing,
+                (Color)drawColor
+            );
+
+            if (_style.DetailedTimer)
+            {
+                DrawDetailedTimer(font, timerHeight, bottomHeight);
+            }
+        }
+
+        private Color GetTimerDrawColor(double time)
+        {
             Color? drawColor = null;
-            if (t == 0.0 || !RanAllSegmentsBefore())
+            if (time == 0.0 || !RanAllSegmentsBefore())
             {
                 drawColor = _colors.Base;
             }
             else
             {
                 int segI = Math.Min(_currentSegment, Splits.Segments.Length - 1);
-                bool ahead = t < Splits.Segments[segI].GetAbsolutePbCompletionTime();
+                bool ahead = time < Splits.Segments[segI].GetAbsolutePbCompletionTime();
 
-                if (!Splits.Segments.Last().IsAhead(t))
+                if (!Splits.Segments.Last().IsAhead(time))
                 {
                     drawColor = _colors.BehindLosing;
                 }
@@ -301,10 +328,42 @@ namespace JumpDiveClock.Timing
                 }
             }
 
-            Raylib.DrawTextEx(
-                font, timerText, textPos, _style.TimerFontSize, _style.TimerFontSpacing,
-                (Color)drawColor
+            return (Color)drawColor;
+        }
+
+        private void DrawDetailedTimer(Font font, float timerHeight,float bottomHeight)
+        {
+            double detailedTime = GetDetailedTime();
+            int detailedTimerFontSize = (int)Math.Round(
+                                            _style.TimerFontSize * _style.DetailedTimerSize);
+            int detailedTimerFontSpacing = (int)Math.Max(1, Math.Round(
+                                            _style.TimerFontSpacing * _style.DetailedTimerSize));
+            string detailedTimeText = _timerLocked
+                ? _style.TimerLockingMessage
+                : Formatter.SecondsToTime(detailedTime, true);
+            Vector2 detailedTimerTextSize = Raylib.MeasureTextEx(
+                font, detailedTimeText, detailedTimerFontSize, detailedTimerFontSpacing
             );
+            var detailedTimerPos = new Vector2(
+                (Raylib.GetRenderWidth() - detailedTimerTextSize.X)
+                    - (Raylib.GetRenderWidth()) * (1 - _style.DetailedTimerMarginX) + detailedTimerTextSize.X / 2,
+                Raylib.GetRenderHeight() - bottomHeight
+                    - (timerHeight) / (1.0f / (1 - _style.DetailedTimerMarginY)) - detailedTimerTextSize.Y / 2
+            );
+            Raylib.DrawTextEx(
+                font, detailedTimeText, detailedTimerPos, detailedTimerFontSize,
+                detailedTimerFontSpacing, _colors.DetailedTimer
+            );
+        }
+
+        private double GetDetailedTime()
+        {
+            double st = _currentTimeSecs;
+            for (int i = _currentSegment - 1; i >= 0; i--)
+            {
+                st -= Splits.Segments[i].GetRelTime();
+            }
+            return st;
         }
 
         private void HandleGlobalInput()
