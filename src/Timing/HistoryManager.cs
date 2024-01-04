@@ -33,6 +33,8 @@ namespace JumpDiveClock.Timing
             _undoSplitTimes.Clear();
         }
 
+        public bool IsEmpty() => _undoSplitTimes.Count == 0;
+
         public double RegisterRedo()
         {
             double result = -1;

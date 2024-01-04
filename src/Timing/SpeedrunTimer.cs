@@ -420,7 +420,7 @@ namespace JumpDiveClock.Timing
 
         private void Redo()
         {
-            if (!HasStarted() || _currentSegment >= Splits.Segments.Length)
+            if (!HasStarted() || _currentSegment >= Splits.Segments.Length || _history.IsEmpty())
             {
                 return;
             }
